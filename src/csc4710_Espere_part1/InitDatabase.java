@@ -42,7 +42,7 @@ protected void connect_function() throws SQLException {
 			throw new SQLException(e);
 		}
 		connect = (Connection) DriverManager
-				.getConnection("jdbc:mysql://127.0.0.1:3306/testdb?"
+				.getConnection("jdbc:mysql://127.0.0.1:3306/projectdb?"
 	  			          + "user=john&password=pass1234");
 		System.out.println(connect);
 	}
