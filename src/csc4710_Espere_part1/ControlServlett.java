@@ -31,7 +31,7 @@ public class ControlServlett extends HttpServlet{
         doGet(request, response);
     }
     
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+   /* protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getServletPath();
         System.out.println(action);
@@ -59,5 +59,13 @@ public class ControlServlett extends HttpServlet{
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
-    }
+    }'*/
+    
+    private void listItem(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+            	List<item> listItem = InitDatabase.listAllItems();
+            	request.setAttribute("listItem", listItem);
+            	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
+                dispatcher.forward(request, response);
+            }
 }

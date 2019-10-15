@@ -27,7 +27,6 @@ public class InitDatabase extends HttpServlet {
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
-}
 
 public InitDatabase() {
 	
@@ -66,12 +65,12 @@ public List<item> listAllItems() throws SQLException{
 		String itemCategory = resultSet.getString("itemCategory");
 		
 		item items = new item(itemID,itemDescription,date,itemPrice,itemCategory);
-		listItem.add(items);		
+		listItems.add(items);		
 	}
 	resultSet.close();
 	statement.close();
 	disconnect();
-	return listItem;
+	return listItems;
 }
 
 protected void disconnect() throws SQLException {
