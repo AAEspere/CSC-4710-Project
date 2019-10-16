@@ -1,3 +1,8 @@
+//Aaron Espere gb1962
+
+/* InitDatabase covers the creation of the tables. This will create 
+ * database, create the tables, and list the information in the tables */
+
 package csc4710_Espere_part1;
 
 import java.io.IOException;
@@ -28,13 +33,41 @@ public class InitDatabase extends HttpServlet {
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-
+//create the Database
+public void createDatabase() {
+	try {
+		String dropDataBase = "DROP DATABASE IF EXISTS projectdb";
+		String createDataBase = "CREATE DATABASE IF NOT EXISTS projectdb";
+		
+		preparedStatement = connect.prepareStatement(dropDataBase);
+		preparedStatement = connect.prepareStatement(createDataBase);
+	}
+	catch(SQLException e) {
+		System.out.print("Exception: "+e+"\n");
+	}
+	
+}
+	
+	
 //function that initializes both the tables, and adds tuples in them
-	//basically for the button
+//basically for the button
 public void InitDatabaseButton() throws SQLException{
+	//connect to server
+	connect_function();
+	
+	//drop and create database
+	createDatabase();
+	
+	//drop and create item table
 	createItemTable();
+	
+	//list items in the Items Table
 	listAllItems();
+	
+	//drop and create user table
 	createUserTable();
+	
+	//list users in the Users Table
 	listAllUsers();
 }
 

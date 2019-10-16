@@ -1,13 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
       <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Espere - CSC 4710 Project</title>
 </head>
 <body>
+
+	<%
+		if(session.getAttribute("username") == null) {
+			response.sendRedirect("login.jsp");
+		}
+	
+	%>
+
 
 <h1>Espere - CSC 4710 Project</h1>
 <button>Initialize Database</button>
@@ -35,7 +44,7 @@
 		</tr>
 	</c:forEach>
 	</table>
-
+<!-- 
 <table border = "1" cellpadding = "5">
 <caption>Users</caption>
 	<tr>
@@ -48,6 +57,7 @@
 		<th>Age</th>
 	</tr>
 </table>
+-->
 </div>
 
 
