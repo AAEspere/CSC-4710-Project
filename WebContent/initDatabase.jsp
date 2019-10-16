@@ -7,6 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="web.css">
 <title>Espere - CSC 4710 Project</title>
 </head>
 <body>

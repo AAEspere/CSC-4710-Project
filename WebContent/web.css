@@ -1,0 +1,56 @@
+@charset "ISO-8859-1";
+
+body {
+	background: WhiteSmoke;
+}
+
+#websiteheader {
+	font-family: Arial;
+	background: black;
+	color: white;
+	height: 100px;
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+.twocolumn {
+	width: 50%;
+}
+
+.twocolumnXL {
+	width: 80%;
+}
+
+.twocolumnXS {
+	width: 20%;
+}
+
+.floatleft {
+	float: left;
+}
+
+.floatright {
+	float: right;
+}
+
+#titletext {
+	padding-left: 20px;
+	padding-top: 10px;
+}
+
+#LogRegister {
+	display: inline;
+	margin-top: 30px;
+	background-color: cornflowerblue;
+	color: white;
+	font-family: Arial;
+	border-color: cornflowerblue;
+	height: 40px;
+	width: 100px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.inlineBlock {
+	display: inline-block;
+}
