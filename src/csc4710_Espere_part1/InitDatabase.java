@@ -106,8 +106,8 @@ public void createItemTable() throws SQLException {
 //Project Part 1 just says to initialize tables with at least 10 tuples, so I'm just adding
 //10 random items. Will probably implement some way for user to input their own thing late
 public void addItems() throws SQLException {
+	connect_function();
 	statement = (Statement)connect.createStatement();
-	
 	String addItem = "INSERT INTO item VALUES('123456789','Cactus','Pointy Plant','06/21/1998','Plants');"
 			+"INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','Outdoors');"
 			+"INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','Electronics');"
@@ -132,6 +132,7 @@ public void addItems() throws SQLException {
 }
 //create the table for users
 public void createUserTable() throws SQLException {
+	connect_function();
 	//the two statements required for making table
 	String dropUserTable = "DROP TABLE IF EXISTS users";
 	String createUserTable = "CREATE TABLE IF NOT EXISTS users" +
@@ -157,6 +158,7 @@ public void createUserTable() throws SQLException {
 }
 //Part 1 Requires About 10 tuples, so I just input 10 user stuff to show on the table
 public void addUsers() throws SQLException {
+	connect_function();
 	//adding the items
 	String addUsers = "INSERT INTO users VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21');"
 			+"INSERT INTO users VALUES('54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21');"
@@ -182,6 +184,7 @@ public void addUsers() throws SQLException {
 
 public void addOneUser(String username, String password, String firstName, String lastName, String gender, String age) throws SQLException {
 	//adding a singular user, this is to add the user who registers onto the server
+	connect_function();
 	String addUser = "INSERT INTO user VALUES('" + username + "','"
 			+ password + "','"
 			+ firstName + "','"

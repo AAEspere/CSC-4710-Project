@@ -23,7 +23,7 @@
 
 </div>
 <div>
-<form action = "ControlServlett">
+<form action = "initDatabase" method = "post">
 <input type = "submit" value = "Initialize Database">
 </form>
 </div>
