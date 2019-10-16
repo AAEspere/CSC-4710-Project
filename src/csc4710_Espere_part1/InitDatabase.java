@@ -33,6 +33,11 @@ public class InitDatabase extends HttpServlet {
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
+	
+public InitDatabase() {
+	
+}
+	
 //create the Database
 public void createDatabase() {
 	try {
