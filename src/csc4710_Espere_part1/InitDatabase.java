@@ -11,12 +11,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Date;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,17 +18,30 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/InitDatabase")
-
-public class InitDatabase extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+public class InitDatabase {
+	
 	private Connection connect = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
+	//function that initializes both the tables, and adds tuples in them
+	//basically for the button	
+public InitDatabase() throws SQLException{
+	//connect to server
+	connect_function();
 	
-public InitDatabase() {
+	//drop and create database
+	createDatabase();
+	
+	//drop and create item table
+	createItemTable();
+	
+	//add items
+	addItems();
+	
+	//drop and create user table
+	createUserTable();
 	
 }
 	
@@ -52,29 +59,7 @@ public void createDatabase() {
 	}
 	
 }
-	
-	
-//function that initializes both the tables, and adds tuples in them
-//basically for the button
-public void InitDatabaseButton() throws SQLException{
-	//connect to server
-	connect_function();
-	
-	//drop and create database
-	createDatabase();
-	
-	//drop and create item table
-	createItemTable();
-	
-	//list items in the Items Table
-	listAllItems();
-	
-	//drop and create user table
-	createUserTable();
-	
-	//list users in the Users Table
-	listAllUsers();
-}
+
 
 //initialize connection to the Server
 protected void connect_function() throws SQLException {
@@ -98,6 +83,7 @@ public void createItemTable() throws SQLException {
 	String dropItemTable = "DROP TABLE IF EXISTS item";
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
 			"(itemID INTEGER, " +
+			"itemTitle VARCHAR(50)," +
 			"itemDescription VARCHAR(100), " +
 			"itemDate DATE, " +
 			"itemPrice INTEGER, " +
@@ -115,6 +101,25 @@ public void createItemTable() throws SQLException {
 	finally {
 		connect.close();
 	}
+}
+
+//Project Part 1 just says to initialize tables with at least 10 tuples, so I'm just adding
+//10 random items. Will probably implement some way for user to input their own thing late
+public void addItems() throws SQLException {
+	statement = (Statement)connect.createStatement();
+	
+	String addItem = "INSERT INTO item VALUES('123456789','Cactus','A spiky plant','06/21/1998','plant'";
+	
+	try {
+		statement.executeUpdate(addItem);
+	}
+	catch (SQLException e) {
+		
+	}
+	finally {
+		connect.close();
+	}
+	
 }
 
 //create the table for users
@@ -155,12 +160,13 @@ public List<item> listAllItems() throws SQLException{
 	while(resultSet.next()){
 	
 		int itemID = resultSet.getInt("itemID");
+		String itemTitle = resultSet.getString("itemTitle");
 		String itemDescription = resultSet.getString("itemDescription");
 		Date date = resultSet.getDate("date");
 		int itemPrice = resultSet.getInt("itemPrice");
 		String itemCategory = resultSet.getString("itemCategory");
 		
-		item items = new item(itemID,itemDescription,date,itemPrice,itemCategory);
+		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
 		listItems.add(items);		
 	}
 	resultSet.close();

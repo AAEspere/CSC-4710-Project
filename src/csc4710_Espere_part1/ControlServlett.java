@@ -22,8 +22,13 @@ public class ControlServlett extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private InitDatabase InitDatabase;
 	
-	public void init() {
+	public void init(){
+		try {
 		InitDatabase = new InitDatabase();
+		}
+		catch(SQLException e) {
+			
+		}
 	}
 	
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -31,35 +36,18 @@ public class ControlServlett extends HttpServlet{
         doGet(request, response);
     }
     
-   /* protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getServletPath();
         System.out.println(action);
-        try {
-            switch (action) {
-            case "/new":
-                showNewForm(request, response);
-                break;
-            case "/insert":
-            	insertPeople(request, response);
-                break;
-            case "/delete":
-            	deletePeople(request, response);
-                break;
-            case "/edit":
-                showEditForm(request, response);
-                break;
-            case "/update":
-            	updatePeople(request, response);
-                break;
-            default:          	
-            	listPeople(request, response);           	
-                break;
-            }
-        } catch (SQLException ex) {
+        try {     	
+            	listItem(request, response); 
+            	listUsers(request,response);
+        } 
+        catch (SQLException ex) {
             throw new ServletException(ex);
         }
-    }'*/
+    }
     
     private void listItem(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {

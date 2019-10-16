@@ -3,6 +3,7 @@ import java.util.Date;
 
 public class item {
 	protected int itemID;
+	protected String itemTitle;
 	protected String itemDescription;
 	protected Date date;
 	protected int itemPrice;
@@ -16,12 +17,13 @@ public class item {
 	}
 	
 	//need itemID since it is primary key
-	public item(int itemID, String itemDescription, Date date, int itemPrice, String itemCategory) {
-		this(itemDescription, date, itemPrice, itemCategory);
+	public item(int itemID, String itemTitle, String itemDescription, Date date, int itemPrice, String itemCategory) {
+		this(itemTitle, itemDescription, date, itemPrice, itemCategory);
 		this.itemID = itemID;
 	}
 	
-	public item(String itemDescription, Date date, int itemPrice, String itemCategory) {
+	public item(String itemTitle, String itemDescription, Date date, int itemPrice, String itemCategory) {
+		this.itemTitle = itemTitle;
 		this.itemDescription = itemDescription;
 		this.date = date;
 		this.itemPrice = itemPrice;
@@ -34,6 +36,14 @@ public class item {
 	
 	public void setitemID(int itemID) {
 		this.itemID = itemID;
+	}
+	
+	public String getitemTitle() {
+		return itemTitle;
+	}
+	
+	public void setitemTitle(String itemTitle) {
+		this.itemTitle = itemTitle;
 	}
 	
 	public String getitemDescription() {

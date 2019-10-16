@@ -28,30 +28,30 @@ public class Login extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		String username = request.getParameter("username");
+		String pass = request.getParameter("pass");
+		
+		if(username == "root" && pass == "pass1234") {
+			request.getSession().setAttribute("username", username);
+			response.sendRedirect("loginSuccess.jsp");
+		}
+		else if (username != null) {
+			request.getSession().setAttribute("username", username);
+			response.sendRedirect("loginSuccess.jsp");
+		}
+		else {
+			response.sendRedirect("login.jsp");
+		}
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	//protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-			String username = request.getParameter("username");
-			String pass = request.getParameter("pass");
 			
-			if(username == "root" && pass == "pass1234") {
-				request.getSession().setAttribute("username", username);
-				response.sendRedirect("loginSuccess.jsp");
-			}
-			else if (username != null) {
-				request.getSession().setAttribute("username", username);
-				response.sendRedirect("loginSucess.jsp");
-			}
-			else {
-				response.sendRedirect("login.jsp");
-			}
 		
-	}
+	//}
 
 }

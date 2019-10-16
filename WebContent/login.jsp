@@ -5,7 +5,7 @@
 <head>
 <meta charset="ISO-8859-1">
 <link rel="stylesheet" href="web.css">
-<title>Insert title here</title>
+<title>Espere - CSC 4710 Project</title>
 </head>
 <body>
 <div id = "websiteheader">
