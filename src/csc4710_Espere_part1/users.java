@@ -63,7 +63,7 @@ public class users {
 		this.lastName = lastName;
 	}
 	
-	public String getemail() {
+	public String getEmail() {
 		return email;
 	}
 

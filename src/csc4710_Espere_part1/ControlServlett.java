@@ -22,34 +22,46 @@ import java.sql.PreparedStatement;
 @WebServlet("/ControlServlett")
 public class ControlServlett extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private InitDatabase InitDatabase;
+	public InitDatabase InitDatabase;
 	
 	public void init(){
-		try {
 		InitDatabase = new InitDatabase();
-		}
-		catch(SQLException e) {
-		}
 	}
 	
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	doGet(request, response);
     }
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	init();
         String action = request.getServletPath();
         System.out.println(action);
-        try {     	
+        
+        try {
+        	RequestDispatcher dispatcher;
+        	
+        	switch(action) {
+        	case "/initDatabase":
+        		initDatabase(request,response);
             	listItem(request, response); 
             	listUsers(request,response);
-        } 
+        	}
+        }
         catch (SQLException ex) {
             throw new ServletException(ex);
         }
     }
+    private void initDatabase(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+            	InitDatabase.createDatabase();
+            	InitDatabase.createItemTable();
+            	InitDatabase.addItems();
+            	InitDatabase.createUserTable();
+            	InitDatabase.addUsers();	
+            	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");
+            	dispatcher.forward(request,response);
+            }
     
     private void listItem(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {

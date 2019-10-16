@@ -27,7 +27,7 @@ public class InitDatabase {
 
 	//function that initializes both the tables, and adds tuples in them
 	//basically for the button	
-public InitDatabase() throws SQLException{
+/*public InitDatabase() throws SQLException{
 	//connect to server
 	connect_function();
 	
@@ -45,7 +45,7 @@ public InitDatabase() throws SQLException{
 	
 	//add the users
 	addUsers();
-}
+} */
 	
 //create the Database
 public void createDatabase() {
@@ -72,7 +72,7 @@ protected void connect_function() throws SQLException {
 		}
 		connect = (Connection) DriverManager
 				.getConnection("jdbc:mysql://127.0.0.1:3306/projectdb?"
-	  			          + "user=john&password=pass1234");
+	  			          + "user=root&password=Superiormelee98");
 		System.out.println(connect);
 	}
 }
@@ -80,6 +80,8 @@ protected void connect_function() throws SQLException {
 //create the table for items
 public void createItemTable() throws SQLException {
 	//the two statements required for making table
+	connect_function();
+	statement = (Statement)connect.createStatement();
 	String dropItemTable = "DROP TABLE IF EXISTS item";
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
 			"(itemID INTEGER, " +
@@ -90,7 +92,6 @@ public void createItemTable() throws SQLException {
 			"PRIMARY KEY (itemID)";
 	
 	try {
-	statement = (Statement)connect.createStatement();
 	statement.executeUpdate(dropItemTable);
 	statement.executeUpdate(createItemTable);
 	}
@@ -107,16 +108,16 @@ public void createItemTable() throws SQLException {
 public void addItems() throws SQLException {
 	statement = (Statement)connect.createStatement();
 	
-	String addItem = "INSERT INTO item VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','Outdoors'"
-			+"INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','Electronics'"
-			+"INSERT INTO item VALUES('123123123','Couch','Lounge Furniture','02/01/2019, 'Furniture"
-			+"INSERT INTO item VALUES('987987987','Spear','A thrusting weapon','03/01/2019,'Outdoors'"
-			+"INSERT INTO item VALUES('678543987','Macbook','Apple Computer','06/21/1998','Electronics'"
-			+"INSERT INTO item VALUES('444444444','Headphones', 'Headphones','06/10/2018','Electronics'"
-			+"INSERT INTO item VALUES('000000001','Table','Dining Table', '05/22/2017','Furniture'"
-			+"INSERT INTO item VALUES('666666666','Bible','Holy Book for Christians','12/25/2018, 'Books"
-			+"INSERT INTO item VALUES('101010101','Phone','Phone','10/10/2019,'Electronics'"
+	String addItem = "INSERT INTO item VALUES('123456789','Cactus','Pointy Plant','06/21/1998','Plants');"
+			+"INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','Outdoors');"
+			+"INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','Electronics');"
+			+"INSERT INTO item VALUES('123123123','Couch','Lounge Furniture','02/01/2019, 'Furniture');"
+			+"INSERT INTO item VALUES('987987987','Spear','A thrusting weapon','03/01/2019,'Outdoors');"
+			+"INSERT INTO item VALUES('678543987','Macbook','Apple Computer','06/21/1998','Electronics');"
+			+"INSERT INTO item VALUES('444444444','Headphones', 'Headphones','06/10/2018','Electronics');"
+			+"INSERT INTO item VALUES('000000001','Table','Dining Table', '05/22/2017','Furniture');"
+			+"INSERT INTO item VALUES('666666666','Bible','Holy Book for Christians','12/25/2018, 'Books');"
+			+"INSERT INTO item VALUES('101010101','Phone','Phone','10/10/2019,'Electronics');"
 			;
 	
 	try {
@@ -157,16 +158,16 @@ public void createUserTable() throws SQLException {
 //Part 1 Requires About 10 tuples, so I just input 10 user stuff to show on the table
 public void addUsers() throws SQLException {
 	//adding the items
-	String addUsers = "INSERT INTO item VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21'"
-			+"INSERT INTO item VALUES('11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21'"
+	String addUsers = "INSERT INTO users VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');"
+			+"INSERT INTO users VALUES('11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');"
 			;
 	try {
 		statement.executeUpdate(addUsers);
@@ -178,6 +179,28 @@ public void addUsers() throws SQLException {
 		disconnect();
 	}
 }
+
+public void addOneUser(String username, String password, String firstName, String lastName, String gender, String age) throws SQLException {
+	//adding a singular user, this is to add the user who registers onto the server
+	String addUser = "INSERT INTO user VALUES('" + username + "','"
+			+ password + "','"
+			+ firstName + "','"
+			+ lastName + "','"
+			+ gender + "','"
+			+ age + "');";
+	try {
+		statement.executeUpdate(addUser);
+	}
+	catch (SQLException e) {	
+	}
+	finally {
+		disconnect();
+	}
+	
+	
+}
+
+
 //this is for listing the items table
 public List<item> listAllItems() throws SQLException{
 	List<item> listItems = new ArrayList<item>();
