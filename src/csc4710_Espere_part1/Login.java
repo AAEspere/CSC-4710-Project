@@ -33,12 +33,12 @@ public class Login extends HttpServlet {
 		
 		if(username == "root" && pass == "pass1234") {
 			request.getSession().setAttribute("username", username);
-			response.sendRedirect("loginSuccess.jsp");
+			response.sendRedirect("login.jsp");
 		}
-		else if (username != null) {
-			request.getSession().setAttribute("username", username);
-			response.sendRedirect("loginSuccess.jsp");
-		}
+		//else if (username != null) {
+		//	request.getSession().setAttribute("username", username);
+		//	response.sendRedirect("login.jsp");
+		//}
 		else {
 			response.sendRedirect("login.jsp");
 		}
