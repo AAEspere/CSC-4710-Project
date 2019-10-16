@@ -10,13 +10,13 @@
 <body>
 <div id = "websiteheader">
 <div class = "twocolumnXL floatleft">
-<h1 id = "titletext">Espere - CSC 4710 Project</h1>
+<h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
 <div class = "twocolumnXS floatright">
-	<form action = "login.jsp" class = "inlineBlock">
+	<form action = "register.jsp" class = "inlineBlock">
 	<input type = "submit" value = "Sign Up" id = "LogRegister">
 	</form>
-	<form action = "register.jsp" class = "inlineBlock">
+	<form action = "login.jsp" class = "inlineBlock">
 	<input type = "submit" value = "Log in" id = "LogRegister">
 	</form>
 </div>

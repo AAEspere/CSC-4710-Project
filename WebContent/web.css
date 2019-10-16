@@ -33,6 +33,15 @@ body {
 	float: right;
 }
 
+.clearboth {
+	clear: both;
+}
+
+.tdnone {
+	text-decoration: none;
+	color: inherit;
+}
+
 #titletext {
 	padding-left: 20px;
 	padding-top: 10px;
@@ -53,4 +62,26 @@ body {
 
 .inlineBlock {
 	display: inline-block;
+}
+
+#registerBlock {
+	background-color: black;
+	width: 400px;
+	height: 200px;
+	color: white;
+	font-family: Arial;
+}
+
+#LRFillin {
+	height: 30px;
+	width: 300px;
+	margin-left: 50px;
+	margin-top: 15px;
+}
+
+#LRSubmit {
+	height: 30px;
+	width: 200px;
+	margin-left: 100px;
+	margin-top: 10px;
 }

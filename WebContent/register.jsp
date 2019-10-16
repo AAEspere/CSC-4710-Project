@@ -4,14 +4,23 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
+<link rel="stylesheet" href="web.css">
 <title>Insert title here</title>
 </head>
 <body>
+<div id = "websiteheader">
+<div class = "twocolumnXL floatleft">
+<h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
+</div>
+</div>
+<div class = "clearboth" style ="height: 150px"></div>
+<div id = "registerBlock">
 	<form action = "Register">
-		Username: <input type = "text" name = "username"><br>
-		Password: <input type = "password" name = "password"><br>
-		Re-Enter Password: <input type = "password" name = "password"><br>
-		<input type = "submit" value = "REGISTER">
+		<input type = "text" name = "username" placeholder = "username" id = "LRFillin"><br>
+		<input type = "password" name = "password" placeholder = "password" id = "LRFillin"><br>
+		<input type = "password" name = "password" placeholder = "re-enter password" id = "LRFillin"><br>
+		<input type = "submit" value = "REGISTER" id = "LRSubmit">
 	</form>
+	</div>
 </body>
 </html>
