@@ -64,10 +64,18 @@ body {
 	display: inline-block;
 }
 
-#registerBlock {
+#loginBlock {
 	background-color: black;
 	width: 400px;
 	height: 200px;
+	color: white;
+	font-family: Arial;
+}
+
+#registerBlock {
+	background-color: black;
+	width: 400px;
+	height: 350px;
 	color: white;
 	font-family: Arial;
 }

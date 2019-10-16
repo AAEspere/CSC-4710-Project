@@ -37,12 +37,14 @@ public InitDatabase() throws SQLException{
 	//drop and create item table
 	createItemTable();
 	
-	//add items
-	addItems();
-	
 	//drop and create user table
 	createUserTable();
 	
+	//add items
+	addItems();
+	
+	//add the users
+	addUsers();
 }
 	
 //create the Database
@@ -56,10 +58,8 @@ public void createDatabase() {
 	}
 	catch(SQLException e) {
 		System.out.print("Exception: "+e+"\n");
-	}
-	
+	}	
 }
-
 
 //initialize connection to the Server
 protected void connect_function() throws SQLException {
@@ -91,7 +91,6 @@ public void createItemTable() throws SQLException {
 	
 	try {
 	statement = (Statement)connect.createStatement();
-	
 	statement.executeUpdate(dropItemTable);
 	statement.executeUpdate(createItemTable);
 	}
@@ -108,7 +107,17 @@ public void createItemTable() throws SQLException {
 public void addItems() throws SQLException {
 	statement = (Statement)connect.createStatement();
 	
-	String addItem = "INSERT INTO item VALUES('123456789','Cactus','A spiky plant','06/21/1998','plant'";
+	String addItem = "INSERT INTO item VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','Outdoors'"
+			+"INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','Electronics'"
+			+"INSERT INTO item VALUES('123123123','Couch','Lounge Furniture','02/01/2019, 'Furniture"
+			+"INSERT INTO item VALUES('987987987','Spear','A thrusting weapon','03/01/2019,'Outdoors'"
+			+"INSERT INTO item VALUES('678543987','Macbook','Apple Computer','06/21/1998','Electronics'"
+			+"INSERT INTO item VALUES('444444444','Headphones', 'Headphones','06/10/2018','Electronics'"
+			+"INSERT INTO item VALUES('000000001','Table','Dining Table', '05/22/2017','Furniture'"
+			+"INSERT INTO item VALUES('666666666','Bible','Holy Book for Christians','12/25/2018, 'Books"
+			+"INSERT INTO item VALUES('101010101','Phone','Phone','10/10/2019,'Electronics'"
+			;
 	
 	try {
 		statement.executeUpdate(addItem);
@@ -118,10 +127,8 @@ public void addItems() throws SQLException {
 	}
 	finally {
 		connect.close();
-	}
-	
+	}	
 }
-
 //create the table for users
 public void createUserTable() throws SQLException {
 	//the two statements required for making table
@@ -137,7 +144,6 @@ public void createUserTable() throws SQLException {
 	
 	try {
 	statement = (Statement)connect.createStatement();
-	
 	statement.executeUpdate(dropUserTable);
 	statement.executeUpdate(createUserTable);
 
@@ -145,10 +151,33 @@ public void createUserTable() throws SQLException {
 	catch (SQLException e) {
 	}
 	finally {
-		connect.close();
+		disconnect();
 	}
 }
-
+//Part 1 Requires About 10 tuples, so I just input 10 user stuff to show on the table
+public void addUsers() throws SQLException {
+	//adding the items
+	String addUsers = "INSERT INTO item VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21'"
+			+"INSERT INTO item VALUES('11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21'"
+			;
+	try {
+		statement.executeUpdate(addUsers);
+	}
+	catch (SQLException e) {
+		
+	}
+	finally {
+		disconnect();
+	}
+}
 //this is for listing the items table
 public List<item> listAllItems() throws SQLException{
 	List<item> listItems = new ArrayList<item>();
@@ -174,7 +203,6 @@ public List<item> listAllItems() throws SQLException{
 	disconnect();
 	return listItems;
 }
-
 //this is for listing the users
 public List<users> listAllUsers() throws SQLException{
 	List<users> listUsers = new ArrayList<users>();
@@ -201,7 +229,6 @@ public List<users> listAllUsers() throws SQLException{
 	disconnect();
 	return listUsers;
 }
-
 protected void disconnect() throws SQLException {
 	if (connect != null && !connect.isClosed()) {
 		connect.close();

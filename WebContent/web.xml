@@ -47,7 +47,7 @@
   </servlet>
   <servlet-mapping>
   <servlet-name>ControlServlett</serlvet-name>
-  <url-pattern>/<url-pattern>
+  <url-pattern>/ControlServlett<url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>

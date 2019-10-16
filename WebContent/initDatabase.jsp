@@ -32,7 +32,6 @@
 <table border="1" cellpadding="5">
             <caption>List of Items</caption>
             <tr>
-            	<th>Item</th>
                 <th>ID</th>
                 <th>Title</th>
                 <th>Description</th>
@@ -49,7 +48,32 @@
                     <td><c:out value="${item.Price}" /></td>
                     </tr>
             </c:forEach>
-            </table>
-</div>
+		</table>
+		<br>
+		<br>
+<table border="1" cellpadding="5">
+            <caption>List of Users</caption>
+            <tr>
+                <th>ID</th>
+                <th>Password</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Age</th>
+            </tr>
+            <c:forEach var="users" items = "${listUsers}">
+            <tr>
+                    <td><c:out value="${users.userID}" /></td>
+                    <td><c:out value="${users.pass}" /></td>
+                    <td><c:out value="${users.firstName}" /></td>
+                    <td><c:out value="${users.lastName}" /></td>
+                    <td><c:out value="${users.email}"/></td>
+                    <td><c:out value="${users.gender}"/></td>
+                    <td><c:out value="${users.age}"/></td>
+                    </tr>
+            </c:forEach>
+		</table>
+		
 </body>
 </html>

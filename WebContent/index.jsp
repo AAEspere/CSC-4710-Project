@@ -23,7 +23,7 @@
 
 </div>
 <div>
-<form action = "initDatabase.jsp">
+<form action = "ControlServlett">
 <input type = "submit" value = "Initialize Database">
 </form>
 </div>

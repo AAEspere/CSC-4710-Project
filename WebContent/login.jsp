@@ -14,7 +14,7 @@
 </div>
 </div>
 <div class = "clearboth" style ="height: 150px"></div>
-<div id = "registerBlock">
+<div id = "loginBlock">
 	<form action = "Login">
 		<input type = "text" name = "username" placeholder = "username" id = "LRFillin"><br>
 		<input type = "password" name = "password" placeholder = "password" id = "LRFillin"><br>
