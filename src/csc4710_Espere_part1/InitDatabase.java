@@ -23,17 +23,23 @@ import java.util.List;
 
 public class InitDatabase extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static Connection connect = null;
+	private Connection connect = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 
-public InitDatabase() {
-	
+
+//function that initializes both the tables, and adds tuples in them
+	//basically for the button
+public void InitDatabaseButton() throws SQLException{
+	createItemTable();
+	listAllItems();
+	createUserTable();
+	listAllUsers();
 }
 
 //initialize connection to the Server
-protected static Connection connect_function() throws SQLException {
+protected void connect_function() throws SQLException {
 	if(connect == null || connect.isClosed()) {
 		try {
 			Class.forName("come.mysql.jdbc.Driver");
@@ -46,11 +52,11 @@ protected static Connection connect_function() throws SQLException {
 	  			          + "user=john&password=pass1234");
 		System.out.println(connect);
 	}
-	return connect;
 }
 
-//create the table
+//create the table for items
 public void createItemTable() throws SQLException {
+	//the two statements required for making table
 	String dropItemTable = "DROP TABLE IF EXISTS item";
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
 			"(itemID INTEGER, " +
@@ -60,8 +66,7 @@ public void createItemTable() throws SQLException {
 			"PRIMARY KEY (itemID)";
 	
 	try {
-	connect = InitDatabase.connect_function();
-	statement = connect.createStatement();
+	statement = (Statement)connect.createStatement();
 	
 	statement.executeUpdate(dropItemTable);
 	statement.executeUpdate(createItemTable);
@@ -74,7 +79,9 @@ public void createItemTable() throws SQLException {
 	}
 }
 
+//create the table for users
 public void createUserTable() throws SQLException {
+	//the two statements required for making table
 	String dropUserTable = "DROP TABLE IF EXISTS users";
 	String createUserTable = "CREATE TABLE IF NOT EXISTS users" +
 			"(userID INTEGER, " +
@@ -86,8 +93,7 @@ public void createUserTable() throws SQLException {
 			"PRIMARY KEY (userID)";
 	
 	try {
-	connect = InitDatabase.connect_function();
-	statement = connect.createStatement();
+	statement = (Statement)connect.createStatement();
 	
 	statement.executeUpdate(dropUserTable);
 	statement.executeUpdate(createUserTable);
@@ -110,7 +116,7 @@ public List<item> listAllItems() throws SQLException{
 	
 	while(resultSet.next()){
 	
-		int itemID = resultSet.getInt("id");
+		int itemID = resultSet.getInt("itemID");
 		String itemDescription = resultSet.getString("itemDescription");
 		Date date = resultSet.getDate("date");
 		int itemPrice = resultSet.getInt("itemPrice");
@@ -123,6 +129,33 @@ public List<item> listAllItems() throws SQLException{
 	statement.close();
 	disconnect();
 	return listItems;
+}
+
+//this is for listing the users
+public List<users> listAllUsers() throws SQLException{
+	List<users> listUsers = new ArrayList<users>();
+	String sql = "SELECT * FROM item";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+	
+		int userID = resultSet.getInt("userID");
+		String pass = resultSet.getString("pass");
+		String firstName = resultSet.getString("firstName");
+		String lastName = resultSet.getString("lastName");
+		String email = resultSet.getString("email");
+		String gender = resultSet.getString("gender");
+		int age = resultSet.getInt("age");
+		
+		users users = new users(userID, pass, firstName, lastName, email, gender,age);;
+		listUsers.add(users);		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
 }
 
 protected void disconnect() throws SQLException {

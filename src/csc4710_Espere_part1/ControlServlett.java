@@ -68,4 +68,11 @@ public class ControlServlett extends HttpServlet{
             	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
                 dispatcher.forward(request, response);
             }
+    private void listUsers(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+            	List<users> listUsers = InitDatabase.listAllUsers();
+            	request.setAttribute("listUsers", listUsers);
+            	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
+                dispatcher.forward(request, response);
+            }
 }
