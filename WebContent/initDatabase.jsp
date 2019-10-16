@@ -17,7 +17,7 @@
 <div>
 <%
 InitDatabase DB1 = new InitDatabase();
-DB1.InitDatabaseButton();
+DB1.createItemTable();
 %>
 </div>
 </body>

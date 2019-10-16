@@ -40,10 +40,13 @@ public class Login extends HttpServlet {
 			String username = request.getParameter("username");
 			String pass = request.getParameter("pass");
 			
-			if(username.equals("root") && pass.equals("pass1234")) {
-				HttpSession session = request.getSession();
-				session.setAttribute("username", username); 
-				response.sendRedirect("initDatabase.jsp");
+			if(username == "root" && pass == "pass1234") {
+				request.getSession().setAttribute("username", username);
+				response.sendRedirect("loginSuccess.jsp");
+			}
+			else if (username != null) {
+				request.getSession().setAttribute("username", username);
+				response.sendRedirect("loginSucess.jsp");
 			}
 			else {
 				response.sendRedirect("login.jsp");
