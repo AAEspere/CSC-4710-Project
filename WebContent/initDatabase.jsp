@@ -5,7 +5,7 @@
  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="ISO-8859-1">
 <link rel="stylesheet" href="web.css">
 <title>Espere - CSC 4710 Project</title>
 </head>
@@ -14,14 +14,7 @@
 <div class = "twocolumnXL floatleft">
 <h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
-<div class = "twocolumnXS floatright">
-	<form action = "register.jsp" class = "inlineBlock">
-	<input type = "submit" value = "Sign Up" id = "LogRegister">
-	</form>
-	<form action = "login.jsp" class = "inlineBlock">
-	<input type = "submit" value = "Log in" id = "LogRegister">
-	</form>
-</div>
+<div class = "clearboth">
 </div>
 
 <table border="1" cellpadding="5">
@@ -39,8 +32,9 @@
                     <td><c:out value="${item.itemID}" /></td>
                     <td><c:out value="${item.itemTitle}" /></td>
                     <td><c:out value="${item.itemDescription}" /></td>
-                    <td><c:out value="${item.itemDate}" /></td>
-                    <td><c:out value="${item.Price}" /></td>
+                    <td><c:out value="${item.date}" /></td>
+                    <td><c:out value="${item.itemPrice}" /></td>
+                    <td><c:out value="${item.itemCategory}"/></td>
                     </tr>
             </c:forEach>
 		</table>
@@ -69,7 +63,8 @@
                     </tr>
             </c:forEach>
 		</table>
-		
+		<br>
+		<br>
 <table border="1" cellpadding="5">
             <caption>List of Reviews</caption>
             <tr>

@@ -1,10 +1,8 @@
-import java.util.Date;
-
 public class item {
 	protected int itemID;
 	protected String itemTitle;
 	protected String itemDescription;
-	protected Date date;
+	protected String date;
 	protected int itemPrice;
 	protected String itemCategory;
 	
@@ -16,12 +14,12 @@ public class item {
 	}
 	
 	//need itemID since it is primary key
-	public item(int itemID, String itemTitle, String itemDescription, Date date, int itemPrice, String itemCategory) {
+	public item(int itemID, String itemTitle, String itemDescription, String date, int itemPrice, String itemCategory) {
 		this(itemTitle, itemDescription, date, itemPrice, itemCategory);
 		this.itemID = itemID;
 	}
 	
-	public item(String itemTitle, String itemDescription, Date date, int itemPrice, String itemCategory) {
+	public item(String itemTitle, String itemDescription, String date, int itemPrice, String itemCategory) {
 		this.itemTitle = itemTitle;
 		this.itemDescription = itemDescription;
 		this.date = date;
@@ -53,11 +51,11 @@ public class item {
 		this.itemDescription = itemDescription;
 	}
 	
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 	
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	

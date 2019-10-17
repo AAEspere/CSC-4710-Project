@@ -43,7 +43,8 @@ public class ControlServlett extends HttpServlet{
         	case "/initDatabase":
         		initDatabase(request,response);
             	listItem(request, response); 
-            	listUsers(request,response);
+            	listUsers(request, response);
+            	listReviews(request, response);
             	break;
         	case "/login":
         		login(request,response);
@@ -64,24 +65,32 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.addItems();
             	InitDatabase.createUserTable();
             	InitDatabase.addUsers();	
-            	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");
-            	dispatcher.forward(request,response);
+            	InitDatabase.createReviewTable();
+            	InitDatabase.addReviews();
             }
     
+    //these are for showing the results of the table
     private void listItem(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
             	List<item> listItem = InitDatabase.listAllItems();
             	request.setAttribute("listItem", listItem);
-            	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
-                dispatcher.forward(request, response);
+            	
             }
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
             	List<users> listUsers = InitDatabase.listAllUsers();
             	request.setAttribute("listUsers", listUsers);
+            }
+    
+    //this is the last function when initializing the database, so it forwards the page to initDatabase.jsp
+    private void listReviews(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+            	List<reviews> listReviews = InitDatabase.listAllReviews();
+            	request.setAttribute("listReviews", listReviews);
             	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
                 dispatcher.forward(request, response);
             }
+    
     private void login(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     		RequestDispatcher dispatcher;
@@ -90,7 +99,7 @@ public class ControlServlett extends HttpServlet{
 			if(InitDatabase.loginCheck(username, pass) == true) {
 				usersession = request.getSession();
 				usersession.setAttribute("currentUser", username);
-				dispatcher = request.getRequestDispatcher("index.jsp");
+				dispatcher = request.getRequestDispatcher("Welcome.jsp");
 				dispatcher.forward(request,response);
 			}
 			else {
@@ -112,7 +121,6 @@ public class ControlServlett extends HttpServlet{
     		//add the user to the database
     		//InitDatabase.addOneUser(username, password, firstName, lastName, gender, age);
     		
-    		
     		/*try {
     			//InitDatabase.addOneUser(username,password,firstName,lastName,gender,age);
     		} catch (SQLException e) {
@@ -122,7 +130,7 @@ public class ControlServlett extends HttpServlet{
     		//add the name to the users table in the database
     		usersession = request.getSession();
     		usersession.setAttribute("currentUser", username);
-    		response.sendRedirect("index.jsp");
+    		response.sendRedirect("Welcome.jsp");
     		
     }
 }
