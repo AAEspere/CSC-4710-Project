@@ -1,5 +1,3 @@
-package csc4710_Espere_part1;
-
 public class users {
 
 	protected int userID;

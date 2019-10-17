@@ -16,7 +16,7 @@
 <div class = "clearboth" style ="height: 80px">
 <p>Sign Up: Please fill all of the following blanks</div>
 <div id = "registerBlock">
-	<form action = "Register">
+	<form action = "register">
 		<input type = "text" name = "username" placeholder = "username" id = "LRFillin"><br>
 		<input type = "password" name = "password" placeholder = "password" id = "LRFillin"><br>
 		<input type = "text" name = "firstName" placeholder = "First Name" id = "LRFillin"><br>

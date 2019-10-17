@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.DriverManager;
@@ -17,10 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
+import javax.servlet.http.HttpSession;
+
+@WebServlet(name = "/ControlServlett", urlPatterns = { "/"})
 
 public class ControlServlett extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	public InitDatabase InitDatabase;
+	private HttpSession usersession;
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
@@ -43,7 +45,13 @@ public class ControlServlett extends HttpServlet{
             	listItem(request, response); 
             	listUsers(request,response);
             	break;
-        	}
+        	case "/login":
+        		login(request,response);
+        		break;
+        	case "/register":
+        		register(request,response);
+        		break;
+        }
         }
         catch (SQLException ex) {
             throw new ServletException(ex);
@@ -74,4 +82,47 @@ public class ControlServlett extends HttpServlet{
             	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
                 dispatcher.forward(request, response);
             }
+    private void login(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    		RequestDispatcher dispatcher;
+			String username = request.getParameter("username");
+			String pass = request.getParameter("pass");
+			if(InitDatabase.loginCheck(username, pass) == true) {
+				usersession = request.getSession();
+				usersession.setAttribute("currentUser", username);
+				dispatcher = request.getRequestDispatcher("index.jsp");
+				dispatcher.forward(request,response);
+			}
+			else {
+				dispatcher = request.getRequestDispatcher("login.jsp");
+				dispatcher.forward(request,response);
+			}
+    }
+    
+    private void register(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    		RequestDispatcher dispatcher;
+    		String username = request.getParameter("username");
+    		String password = request.getParameter("password");
+    		String firstName = request.getParameter("firstName");
+    		String lastName = request.getParameter("lastName");
+    		String gender = request.getParameter("gender");
+    		int age = Integer.parseInt(request.getParameter("age"));
+    		
+    		//add the user to the database
+    		//InitDatabase.addOneUser(username, password, firstName, lastName, gender, age);
+    		
+    		
+    		/*try {
+    			//InitDatabase.addOneUser(username,password,firstName,lastName,gender,age);
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}*/
+    		//add the name to the users table in the database
+    		usersession = request.getSession();
+    		usersession.setAttribute("currentUser", username);
+    		response.sendRedirect("index.jsp");
+    		
+    }
 }

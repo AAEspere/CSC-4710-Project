@@ -1,4 +1,3 @@
-package csc4710_Espere_part1;
 import java.util.Date;
 
 public class item {

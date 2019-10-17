@@ -15,7 +15,7 @@
 </div>
 <div class = "clearboth" style ="height: 150px"></div>
 <div id = "loginBlock">
-	<form action = "Login">
+	<form action = "login" method = "post">
 		<input type = "text" name = "username" placeholder = "username" id = "LRFillin"><br>
 		<input type = "password" name = "password" placeholder = "password" id = "LRFillin"><br>
 		<input type = "submit" value = "LOGIN" id = "LRSubmit">

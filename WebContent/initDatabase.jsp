@@ -1,11 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
       <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-      <%@ page import = "csc4710_Espere_part1.InitDatabase"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.Statement"%>
-<%@page import="java.sql.Connection"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -71,6 +66,24 @@
                     <td><c:out value="${users.email}"/></td>
                     <td><c:out value="${users.gender}"/></td>
                     <td><c:out value="${users.age}"/></td>
+                    </tr>
+            </c:forEach>
+		</table>
+		
+<table border="1" cellpadding="5">
+            <caption>List of Reviews</caption>
+            <tr>
+                <th>Item ID</th>
+                <th>User ID</th>
+                <th>Score</th>
+                <th>Remark</th>
+            </tr>
+            <c:forEach var="users" items = "${listReviews}">
+            <tr>
+                    <td><c:out value="${review.itemID}" /></td>
+                    <td><c:out value="${review.userID}" /></td>
+                    <td><c:out value="${review.score}" /></td>
+                    <td><c:out value="${review.remark}" /></td>
                     </tr>
             </c:forEach>
 		</table>
