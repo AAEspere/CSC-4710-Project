@@ -52,6 +52,9 @@ public class ControlServlett extends HttpServlet{
         	case "/register":
         		register(request,response);
         		break;
+        		
+        		
+        	//Pertaining to Project Part 2
         	case "/insertItem":
         		insertItem(request,response);
         		break;
@@ -63,6 +66,12 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/sortExpensive":
         		sortExpensive(request, response);
+        		break;
+        	case "/favoriteItem":
+        		break;
+        	case "/favoriteUser":
+        		break;
+        		
         }
         }
         catch (SQLException ex) {
@@ -84,24 +93,40 @@ public class ControlServlett extends HttpServlet{
     private void insertItem(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     
-    	
+    	//basically you get all the parameters that were added, and create a new item with it
+    	//which then goes to insertItem which inserts the item into the SQL
     	String itemName = request.getParameter("itemName");
     	String description = request.getParameter("description");
     	String category = request.getParameter("category");
     	Double price = Double.valueOf(request.getParameter("price"));
-    	InitDatabase.insertItem(itemName, description, category, price);
     	
-        response.sendRedirect("initDatabase.jsp");
+    	//had to create a new constructor in this case because the itemID will be autoincremented
+    	//and the date will be added within the insert function
+    	item insertItem = new item(itemName, description, price, category);
+    	
+    	//indication if the item was successfully added
+    	if(InitDatabase.insertItem(insertItem) == true) {
+    		System.out.println("Successfully inserted");
+    		response.sendRedirect("initDatabase.jsp");
+    	}
+    	else {
+    		System.out.println("Item unsuccessful in inserting");
+    		response.sendRedirect("problemItem.jsp");
+    	}
     	
     }
     
     //for searching items based on categories
     private void searchItem(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    	
     			String category = request.getParameter("category");
     			List<item> searchItem = InitDatabase.searchItem(category);
     			request.setAttribute("searchItem", searchItem);
+    			
+    			
+    			//after attribute is set redirect to the same page, but this time the results will be posted
+    			RequestDispatcher dispatcher = request.getRequestDispatcher("searchItem.jsp");       
+                dispatcher.forward(request, response);
     	
     }
     

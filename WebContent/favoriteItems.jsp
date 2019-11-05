@@ -17,9 +17,8 @@
 <div class = "clearboth" style ="height: 80px">
 <h1>Item Search</h1>
 <h2>Enter Item Category:</h2>
-<form action = "searchItem" method = "post">
+<form action = "searchItem">
 	<input type = "text" name = "category" placeholder = "Enter category(s)..." id = "LRFillin">
-	<input type = "submit" value = "Submit Category">
 </form>
 </div>
 <br>
@@ -36,6 +35,7 @@
                 <th>Date</th>
                 <th>Price</th>
                 <th>Categories</th>
+                <th>Add/
             </tr>
             <c:forEach var="item" items = "${listItem}">
             <tr>

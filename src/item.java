@@ -27,6 +27,13 @@ public class item {
 		this.itemCategory = itemCategory;
 	}
 	
+	public item(String itemTitle, String itemDescription, double itemPrice, String itemCategory) {
+		this.itemTitle = itemTitle;
+		this.itemDescription = itemDescription;
+		this.itemPrice = itemPrice;
+		this.itemCategory = itemCategory;
+	}
+	
 	public int getitemID() {
 		return itemID;
 	}

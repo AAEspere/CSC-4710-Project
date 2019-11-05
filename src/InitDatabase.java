@@ -15,6 +15,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.time.LocalDateTime;
 //project 2 - refactor this when you get the chance.
 //will need to separate into
 //itemDAO
@@ -70,7 +71,9 @@ public void createItemTable() throws SQLException {
 	statement = (Statement)connect.createStatement();
 	String dropItemTable = "DROP TABLE IF EXISTS item";
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
-			"(itemID INTEGER, " +
+			
+			//Project Part 2, editing statement so that AUTO_INCREMENT is added
+			"(itemID INTEGER AUTO_INCREMENT, " +
 			"itemTitle VARCHAR(50) NOT NULL," +
 			"itemDescription VARCHAR(100), " +
 			"itemDate VARCHAR(50), " +
@@ -91,14 +94,18 @@ public void createItemTable() throws SQLException {
 }
 
 //Project Part 2 Requirement 1 -- inserting an item
-public boolean insertItem() throws SQLException {
+public boolean insertItem(item item) throws SQLException {
 	
 	connect_function();         
-	String sql = "INSERT INTO item(itemID, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
+	String sql = "INSERT INTO item(itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, item.itemID);
-	preparedStatement.setString(2, people.address);
-	preparedStatement.setString(3, people.status);
+	preparedStatement.setString(1, item.itemDescription);
+	preparedStatement.setInt(2, item.itemID);
+	//gets the local time. When this function is called, that means the user has submitted an item
+	//and will take the date of when that item was created
+	preparedStatement.setString(3,java.time.LocalDate.now().toString());
+	preparedStatement.setDouble(4,item.itemPrice);
+	preparedStatement.setString(5,item.itemCategory);
 //	preparedStatement.executeUpdate();
 	
     boolean rowInserted = preparedStatement.executeUpdate() > 0;
@@ -109,8 +116,7 @@ public boolean insertItem() throws SQLException {
 	
 }
 
-//Project Part 1 just says to initialize tables with at least 10 tuples, so I'm just adding
-//10 random items. Will probably implement some way for user to input their own thing late
+//Project Part 1 just says to initialize tables with at least 10 tuples, so I'm just adding 10 random items
 public void addItems() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
@@ -123,18 +129,7 @@ public void addItems() throws SQLException {
 	String addItem7 = "INSERT INTO item VALUES('423465674','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
 	String addItem8 = "INSERT INTO item VALUES('343242351','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
 	String addItem9 = "INSERT INTO item VALUES('654764567','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem10 = "INSERT INTO item VALUES('235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	
-	
-	//adding this code makes the tables stop appearing
-	/*String addItem4 ="INSERT INTO item VALUES('123123123','Couch','Lounge Furniture','02/01/2019, '300.00', 'Furniture');";
-	String addItem5 ="INSERT INTO item VALUES('987987987','Spear','A thrusting weapon','03/01/2019,'1000.00','Outdoors');";
-	String addItem6 ="INSERT INTO item VALUES('678543987','Macbook','Apple Computer','06/21/1998','1000.00','Electronics');";
-	String addItem7 ="INSERT INTO item VALUES('444444444','Headphones', 'Headphones','06/10/2018','200.00','Electronics');";
-	String addItem8 ="INSERT INTO item VALUES('000000001','Table','Dining Table', '05/22/2017','100.00','Furniture');";
-	String addItem9 ="INSERT INTO item VALUES('666666666','Bible','Holy Book for Christians','1.00','12/25/2018, 'Books');";
-	String addItem10 ="INSERT INTO item VALUES('101010101','Phone','Phone','10/10/2019,'899.00','Electronics');";*/
-			
+	String addItem10 = "INSERT INTO item VALUES('235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -157,7 +152,8 @@ public void addItems() throws SQLException {
 }
 
 //Project Part 2 --> Search function which displays all items under a certain category
-//making this similar to the listall function
+//This should be similar to the listItems function because instead of listing all items
+//you are listing all items that match a specific category
 public List<item> searchItem(String category) throws SQLException{
 	
 	List<item> listItems = new ArrayList<item>();
@@ -185,6 +181,35 @@ public List<item> searchItem(String category) throws SQLException{
 	statement.close();
 	disconnect();
 	return listItems;
+}
+
+//for listing favorite Items
+//NOTE: im noticing a lot of these functions are just the same code, so I have more time later on for Part 3
+//i'll probably refactor this code
+public List<item> listFavoriteItem() throws SQLException {
+	
+	List<item> listFavoriteItems = new ArrayList<item>();
+	String sql = "SELECT * FROM item";
+	connect_function();
+	
+	while(resultSet.next()){
+		
+		int itemID = resultSet.getInt("itemID");
+		String itemTitle = resultSet.getString("itemTitle");
+		String itemDescription = resultSet.getString("itemDescription");
+		String date = resultSet.getString("itemDate");
+		double itemPrice = resultSet.getDouble("itemPrice");
+		String itemCategory = resultSet.getString("itemCategory");
+		
+		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+		listFavoriteItems.add(items);		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	
+	
+	return listFavoriteItems;
 }
 
 //create the table for users
