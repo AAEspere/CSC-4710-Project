@@ -61,6 +61,8 @@ public class ControlServlett extends HttpServlet{
         	case "/addReview":
         		addReview(request, response);
         		break;
+        	case "/sortExpensive":
+        		sortExpensive(request, response);
         }
         }
         catch (SQLException ex) {
@@ -179,6 +181,14 @@ public class ControlServlett extends HttpServlet{
     		usersession.setAttribute("currentUser", username);
     		response.sendRedirect("Welcome.jsp");
     		
+    }
+    
+    public void sortExpensive(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	
+    		
+    	
+    	
     }
     
 }
