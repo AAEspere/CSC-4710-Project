@@ -52,6 +52,15 @@ public class ControlServlett extends HttpServlet{
         	case "/register":
         		register(request,response);
         		break;
+        	case "/insertItem":
+        		insertItem(request,response);
+        		break;
+        	case "/searchItem":
+        		searchItem(request, response);
+        		break;
+        	case "/addReview":
+        		addReview(request, response);
+        		break;
         }
         }
         catch (SQLException ex) {
@@ -68,6 +77,31 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.createReviewTable();
             	InitDatabase.addReviews();
             }
+    
+    //for inserting a singular item into the list
+    private void insertItem(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    
+    	
+    	String itemName = request.getParameter("itemName");
+    	String description = request.getParameter("description");
+    	String category = request.getParameter("category");
+    	Double price = Double.valueOf(request.getParameter("price"));
+    	InitDatabase.insertItem(itemName, description, category, price);
+    	
+        response.sendRedirect("initDatabase.jsp");
+    	
+    }
+    
+    //for searching items based on categories
+    private void searchItem(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	
+    			String category = request.getParameter("category");
+    			List<item> searchItem = InitDatabase.searchItem(category);
+    			request.setAttribute("searchItem", searchItem);
+    	
+    }
     
     //these are for showing the results of the table
     private void listItem(HttpServletRequest request, HttpServletResponse response)
@@ -91,6 +125,19 @@ public class ControlServlett extends HttpServlet{
                 dispatcher.forward(request, response);
             }
     
+    private void addReview(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException {
+    	
+    		RequestDispatcher dispatcher;
+    		String itemID = request.getParameter("itemID");
+    		String userID = request.getParameter("userID");
+    		String score = request.getParameter("score");
+    		String remark = request.getParameter("remark");
+    		
+    		InitDatabase.addReviews(itemID, userID, score, remark);
+    		
+    }
+        
     private void login(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     		RequestDispatcher dispatcher;
@@ -133,4 +180,5 @@ public class ControlServlett extends HttpServlet{
     		response.sendRedirect("Welcome.jsp");
     		
     }
+    
 }

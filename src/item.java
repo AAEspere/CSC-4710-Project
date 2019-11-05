@@ -3,7 +3,7 @@ public class item {
 	protected String itemTitle;
 	protected String itemDescription;
 	protected String date;
-	protected int itemPrice;
+	protected double itemPrice;
 	protected String itemCategory;
 	
 	public item() {
@@ -14,12 +14,12 @@ public class item {
 	}
 	
 	//need itemID since it is primary key
-	public item(int itemID, String itemTitle, String itemDescription, String date, int itemPrice, String itemCategory) {
+	public item(int itemID, String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
 		this(itemTitle, itemDescription, date, itemPrice, itemCategory);
 		this.itemID = itemID;
 	}
 	
-	public item(String itemTitle, String itemDescription, String date, int itemPrice, String itemCategory) {
+	public item(String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
 		this.itemTitle = itemTitle;
 		this.itemDescription = itemDescription;
 		this.date = date;
@@ -59,11 +59,11 @@ public class item {
 		this.date = date;
 	}
 	
-	public int getitemPrice() {
+	public double getitemPrice() {
 		return itemPrice;
 	}
 	
-	public void setitemPrice(int itemPrice) {
+	public void setitemPrice(double itemPrice) {
 		this.itemPrice = itemPrice;
 	}
 	

@@ -15,35 +15,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+//project 2 - refactor this when you get the chance.
+//will need to separate into
+//itemDAO
+//userDAO
+//reviewDAO
 public class InitDatabase {
 	
 	private Connection connect = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
-
-	//function that initializes both the tables, and adds tuples in them
-	//basically for the button	
-	//OLD INIT BUTTON
-/*public InitDatabase() throws SQLException{
-	//connect to server
-	connect_function();
-	
-	//drop and create database
-	createDatabase();
-	
-	//drop and create item table
-	createItemTable();
-	
-	//drop and create user table
-	createUserTable();
-	
-	//add items
-	addItems();
-	
-	//add the users
-	addUsers();
-} */
 
 	public InitDatabase() {
 		
@@ -58,6 +40,7 @@ protected void connect_function() throws SQLException {
 		catch (ClassNotFoundException e) {
 			throw new SQLException(e);
 		}
+		//changed connect to match with what project said i should use
 		connect = (Connection) DriverManager
 				.getConnection("jdbc:mysql://127.0.0.1:3306/projectdb?"
 	  			          + "user=root&password=Superiormelee98");
@@ -91,7 +74,7 @@ public void createItemTable() throws SQLException {
 			"itemTitle VARCHAR(50) NOT NULL," +
 			"itemDescription VARCHAR(100), " +
 			"itemDate VARCHAR(50), " +
-			"itemPrice INTEGER NOT NULL, " +
+			"itemPrice DOUBLE NOT NULL, " +
 			"itemCategory VARCHAR(50), " +
 			"PRIMARY KEY (itemID));";
 	
@@ -105,6 +88,25 @@ public void createItemTable() throws SQLException {
 	finally {
 		connect.close();
 	}
+}
+
+//Project Part 2 Requirement 1 -- inserting an item
+public boolean insertItem() throws SQLException {
+	
+	connect_function();         
+	String sql = "INSERT INTO item(itemID, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, item.itemID);
+	preparedStatement.setString(2, people.address);
+	preparedStatement.setString(3, people.status);
+//	preparedStatement.executeUpdate();
+	
+    boolean rowInserted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowInserted;
+	
+	
 }
 
 //Project Part 1 just says to initialize tables with at least 10 tuples, so I'm just adding
@@ -153,6 +155,38 @@ public void addItems() throws SQLException {
 		disconnect();
 	}	
 }
+
+//Project Part 2 --> Search function which displays all items under a certain category
+//making this similar to the listall function
+public List<item> searchItem(String category) throws SQLException{
+	
+	List<item> listItems = new ArrayList<item>();
+	String sql = "SELECT * FROM item";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+	//so scan all of the categories, and if one matches an item then add it onto the items
+	//that will be listed
+	if(category == resultSet.getString("itemCategory")) {
+		int itemID = resultSet.getInt("itemID");
+		String itemTitle = resultSet.getString("itemTitle");
+		String itemDescription = resultSet.getString("itemDescription");
+		String date = resultSet.getString("itemDate");
+		double itemPrice = resultSet.getDouble("itemPrice");
+		String itemCategory = resultSet.getString("itemCategory");
+		
+		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+		listItems.add(items);		
+		}
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listItems;
+}
+
 //create the table for users
 public void createUserTable() throws SQLException {
 	connect_function();
@@ -246,7 +280,7 @@ public void createReviewTable() throws SQLException {
 			"userID INTEGER, " +
 			"score VARCHAR(10) NOT NULL, " +
 			"remark VARCHAR(100));";
-			//"CONSTRAINT IID FOREIGN KEY (itemID) REFERENCES item(itemID));";
+			//"CONSTRAINT IID FOREIGN KEY (itemID) REFERENCES item(itemID);";
 			//"CONSTRAINT UID FOREIGN KEY (userID) REFERENCES user(userID), " +
 			//"PRIMARY KEY (itemID, userID));";
 	
@@ -296,6 +330,24 @@ public void addReviews() throws SQLException {
 	}
 }
 
+public boolean insertReview(String score, String remark) {
+	connect_function();         
+	String sql = "INSERT INTO reviews(itemID, userID, score, remark) "
+			+ "VALUES(?,?,?,?)";
+	
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, reviews.itemID);
+	preparedStatement.setString(2, reviews.userID);
+	preparedStatement.setString(3, reviews.score);
+	preparedStatement.setString(4, reviews.remark);
+//	preparedStatement.executeUpdate();
+	
+    boolean rowInserted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowInserted;
+}
+
 //this function is for checking if the correct username and password was used for login
 public boolean loginCheck(String username, String pass) throws SQLException {
 	connect_function();
@@ -325,7 +377,7 @@ public List<item> listAllItems() throws SQLException{
 		String itemTitle = resultSet.getString("itemTitle");
 		String itemDescription = resultSet.getString("itemDescription");
 		String date = resultSet.getString("itemDate");
-		int itemPrice = resultSet.getInt("itemPrice");
+		double itemPrice = resultSet.getDouble("itemPrice");
 		String itemCategory = resultSet.getString("itemCategory");
 		
 		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
@@ -336,6 +388,10 @@ public List<item> listAllItems() throws SQLException{
 	disconnect();
 	return listItems;
 }
+
+//this is for listing the most expensive items in each category
+
+
 //this is for listing the users
 public List<users> listAllUsers() throws SQLException{
 	List<users> listUsers = new ArrayList<users>();
