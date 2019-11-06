@@ -45,7 +45,7 @@
                     <td><c:out value="${item.itemPrice}" /></td>
                     <td><c:out value="${item.itemCategory}"/></td>
                     <td><form action = "addFavorite"><input type = "submit" value = "Add to Favorites"></form></td>
-                    <td><a href = "addReview.jsp">Write a Review</a>
+                    <td><a href = "writeReview.jsp">Write a Review</a>
                     </tr>
             </c:forEach>
 		</table>

@@ -101,8 +101,6 @@ public class ControlServlett extends HttpServlet{
     	//CHECK HOW MANY ITEMS THE USER HAS SUBMITTEED
     	//IF GOOD THEN PROCEED WITH THE INSERT ITEM FUNCTION
     	
-    	
-    	
     	//basically you get all the parameters that were added, and create a new item with it
     	//which then goes to insertItem which inserts the item into the SQL
     	String itemName = request.getParameter("itemName");
@@ -164,17 +162,16 @@ public class ControlServlett extends HttpServlet{
     private void addReview(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	
-    		int itemID = request.getParameter("itemID");
-    		int userID = request.getParameter("userID");
+    		//I need to use parseInt in order to convert the ID's into integers
+    		//needed to look this up
+    		int itemID = Integer.parseInt(request.getParameter("itemID"));
+    		int userID = Integer.parseInt(request.getParameter("userID"));
     		String score = request.getParameter("score");
     		String remark = request.getParameter("remark");
     		
     		reviews addReview = new reviews(itemID, userID, score, remark);
     		
-    		InitDatabase.addReviews(addReview);
-    		
-    		//InitDatabase.addReviews(itemID, userID, score, remark);
-    		
+    		InitDatabase.insertReview(writeReview);
     }
         
     private void login(HttpServletRequest request, HttpServletResponse response)
@@ -210,12 +207,11 @@ public class ControlServlett extends HttpServlet{
     		
     		usersession = request.getSession();
     		usersession.setAttribute("currentUser", username);
-    		
     }
     
+    //Project Part 2 - sorting the most expensive items in a category
     public void sortExpensive(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-  
     	List<item> sortExpensive = InitDatabase.sortExpensive();
     	request.setAttribute("listItem", sortExpensive);
     }

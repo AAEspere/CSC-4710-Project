@@ -42,7 +42,7 @@
                 <th>Price</th>
                 <th>Categories</th>
             </tr>
-            <c:forEach var="item" items = "${listItem}">
+            <c:forEach var="item" items = "${searchItem}">
             <tr>
                     <td><c:out value="${item.itemID}" /></td>
                     <td><c:out value="${item.itemTitle}" /></td>
