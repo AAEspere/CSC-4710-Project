@@ -12,10 +12,17 @@
 <body>
 <div id = "websiteheader">
 <div class = "twocolumnXL floatleft">
-<h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
+<h1 id = "titletext"><a href = initDatabase.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
 <div class = "clearboth">
 </div>
+
+<a href = "insertItem.jsp">Insert an Item</a>
+<a href = "favoriteSellers.jsp">Favorite Sellers</a>
+<a href = "favoriteItems.jsp">Favorite Items</a>
+<form action = "sortExpensive">
+<input type = "submit" value = "Sort by Expensive">
+</form> 
 
 <table border="1" cellpadding="5">
             <caption>List of Items</caption>
@@ -26,6 +33,8 @@
                 <th>Date</th>
                 <th>Price</th>
                 <th>Categories</th>
+                <th>Favorite?</th>
+                <th>Write a Review</th>
             </tr>
             <c:forEach var="item" items = "${listItem}">
             <tr>
@@ -35,6 +44,8 @@
                     <td><c:out value="${item.date}" /></td>
                     <td><c:out value="${item.itemPrice}" /></td>
                     <td><c:out value="${item.itemCategory}"/></td>
+                    <td><form action = "addFavorite"><input type = "submit" value = "Add to Favorites"></form></td>
+                    <td><a href = "addReview.jsp">Write a Review</a>
                     </tr>
             </c:forEach>
 		</table>

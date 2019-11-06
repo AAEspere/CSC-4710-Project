@@ -21,6 +21,11 @@
 	<input type = "text" name = "category" placeholder = "Enter category(s)..." id = "LRFillin">
 	<input type = "submit" value = "Submit Category">
 </form>
+<a href = "favoriteSellers.jsp">Favorite Sellers</a>
+<a href = "favoriteItems.jsp">Favorite Items</a>
+<form action = "sortExpensive">
+<input type = "submit" value = "Sort by Expensive">
+</form> 
 </div>
 <br>
 <br>
@@ -45,6 +50,8 @@
                     <td><c:out value="${item.date}" /></td>
                     <td><c:out value="${item.itemPrice}" /></td>
                     <td><c:out value="${item.itemCategory}"/></td>
+                    <td><form action = "addFavorite"><input type = "submit" value = "Add to Favorites"></form></td>
+                    <td><a href = "addReview.jsp">Write a Review</a>
                     </tr>
             </c:forEach>
 		</table>

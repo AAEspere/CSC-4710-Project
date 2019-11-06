@@ -96,11 +96,14 @@ public void createItemTable() throws SQLException {
 //Project Part 2 Requirement 1 -- inserting an item
 public boolean insertItem(item item) throws SQLException {
 	
+	
+	//need to insert conditional which will limit the amount of times a person can post a review
+	
 	connect_function();         
 	String sql = "INSERT INTO item(itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, item.itemDescription);
-	preparedStatement.setInt(2, item.itemID);
+	preparedStatement.setString(1, item.itemTitle);
+	preparedStatement.setString(2, item.itemDescription);
 	//gets the local time. When this function is called, that means the user has submitted an item
 	//and will take the date of when that item was created
 	preparedStatement.setString(3,java.time.LocalDate.now().toString());
@@ -191,6 +194,8 @@ public List<item> listFavoriteItem() throws SQLException {
 	List<item> listFavoriteItems = new ArrayList<item>();
 	String sql = "SELECT * FROM item";
 	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
 	
 	while(resultSet.next()){
 		
@@ -212,13 +217,41 @@ public List<item> listFavoriteItem() throws SQLException {
 	return listFavoriteItems;
 }
 
+public List<item> sortExpensive() throws SQLException {
+	
+	List<item> sortExpensive = new ArrayList<item>();
+	String sql = "SELECT * FROM item ORDER BY itemPrice";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		
+		int itemID = resultSet.getInt("itemID");
+		String itemTitle = resultSet.getString("itemTitle");
+		String itemDescription = resultSet.getString("itemDescription");
+		String date = resultSet.getString("itemDate");
+		double itemPrice = resultSet.getDouble("itemPrice");
+		String itemCategory = resultSet.getString("itemCategory");
+		
+		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+		sortExpensive.add(items);		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	
+	
+	return sortExpensive;
+}
+
 //create the table for users
 public void createUserTable() throws SQLException {
 	connect_function();
 	//the two statements required for making table
 	String dropUserTable = "DROP TABLE IF EXISTS users";
 	String createUserTable = "CREATE TABLE IF NOT EXISTS users" +
-			"(userID INTEGER, " +
+			"(userID INTEGER AUTO_INCREMENT, " +
 			"pass VARCHAR(20) NOT NULL, " +
 			"firstName VARCHAR(50) NOT NULL, " +
 			"lastName VARCHAR(50) NOT NULL, " +
@@ -275,24 +308,22 @@ public void addUsers() throws SQLException {
 	}
 }
 
-public void addOneUser(String username, String password, String firstName, String lastName, String gender, String age) throws SQLException {
+public boolean addOneUser(users user) throws SQLException {
 	//adding a singular user, this is to add the user who registers onto the server
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	String addUser = "INSERT INTO users VALUES('" + username + "','"
-			+ password + "','"
-			+ firstName + "','"
-			+ lastName + "','"
-			+ gender + "','"
-			+ age + "');";
-	try {
-		statement.executeUpdate(addUser);
-	}
-	catch (SQLException e) {	
-	}
-	finally {
-		disconnect();
-	}	
+	connect_function();         
+	String sql = "INSERT INTO users(pass, firstName, lastName, email, gender, age) VALUES (?,?,?,?,?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, user.pass);
+	preparedStatement.setString(2, user.firstName);
+	preparedStatement.setString(3, user.lastName);
+	preparedStatement.setString(4, user.email);
+	preparedStatement.setString(5, user.gender);
+	preparedStatement.setInt(6, user.age);
+	
+    boolean rowInserted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowInserted;
 }
 
 public void createReviewTable() throws SQLException {
@@ -355,14 +386,14 @@ public void addReviews() throws SQLException {
 	}
 }
 
-public boolean insertReview(String score, String remark) {
+public boolean insertReview(reviews reviews) throws SQLException{
 	connect_function();         
 	String sql = "INSERT INTO reviews(itemID, userID, score, remark) "
 			+ "VALUES(?,?,?,?)";
 	
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, reviews.itemID);
-	preparedStatement.setString(2, reviews.userID);
+	preparedStatement.setInt(1, reviews.itemID);
+	preparedStatement.setInt(2, reviews.userID);
 	preparedStatement.setString(3, reviews.score);
 	preparedStatement.setString(4, reviews.remark);
 //	preparedStatement.executeUpdate();

@@ -57,6 +57,9 @@ public class ControlServlett extends HttpServlet{
         	//Pertaining to Project Part 2
         	case "/insertItem":
         		insertItem(request,response);
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
         	case "/searchItem":
         		searchItem(request, response);
@@ -66,6 +69,8 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/sortExpensive":
         		sortExpensive(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
         	case "/favoriteItem":
         		break;
@@ -92,7 +97,12 @@ public class ControlServlett extends HttpServlet{
     //for inserting a singular item into the list
     private void insertItem(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    
+    	
+    	//CHECK HOW MANY ITEMS THE USER HAS SUBMITTEED
+    	//IF GOOD THEN PROCEED WITH THE INSERT ITEM FUNCTION
+    	
+    	
+    	
     	//basically you get all the parameters that were added, and create a new item with it
     	//which then goes to insertItem which inserts the item into the SQL
     	String itemName = request.getParameter("itemName");
@@ -107,7 +117,6 @@ public class ControlServlett extends HttpServlet{
     	//indication if the item was successfully added
     	if(InitDatabase.insertItem(insertItem) == true) {
     		System.out.println("Successfully inserted");
-    		response.sendRedirect("initDatabase.jsp");
     	}
     	else {
     		System.out.println("Item unsuccessful in inserting");
@@ -155,13 +164,16 @@ public class ControlServlett extends HttpServlet{
     private void addReview(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	
-    		RequestDispatcher dispatcher;
-    		String itemID = request.getParameter("itemID");
-    		String userID = request.getParameter("userID");
+    		int itemID = request.getParameter("itemID");
+    		int userID = request.getParameter("userID");
     		String score = request.getParameter("score");
     		String remark = request.getParameter("remark");
     		
-    		InitDatabase.addReviews(itemID, userID, score, remark);
+    		reviews addReview = new reviews(itemID, userID, score, remark);
+    		
+    		InitDatabase.addReviews(addReview);
+    		
+    		//InitDatabase.addReviews(itemID, userID, score, remark);
     		
     }
         
@@ -184,7 +196,7 @@ public class ControlServlett extends HttpServlet{
     
     private void register(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    		RequestDispatcher dispatcher;
+    	
     		String username = request.getParameter("username");
     		String password = request.getParameter("password");
     		String firstName = request.getParameter("firstName");
@@ -193,27 +205,19 @@ public class ControlServlett extends HttpServlet{
     		int age = Integer.parseInt(request.getParameter("age"));
     		
     		//add the user to the database
-    		//InitDatabase.addOneUser(username, password, firstName, lastName, gender, age);
+    		users registerUser = new users(username, password, firstName, lastName, gender, age);
+    		InitDatabase.addOneUser(registerUser);
     		
-    		/*try {
-    			//InitDatabase.addOneUser(username,password,firstName,lastName,gender,age);
-    		} catch (SQLException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}*/
-    		//add the name to the users table in the database
     		usersession = request.getSession();
     		usersession.setAttribute("currentUser", username);
-    		response.sendRedirect("Welcome.jsp");
     		
     }
     
     public void sortExpensive(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    	
-    		
-    	
-    	
+  
+    	List<item> sortExpensive = InitDatabase.sortExpensive();
+    	request.setAttribute("listItem", sortExpensive);
     }
     
 }

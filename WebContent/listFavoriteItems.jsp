@@ -15,11 +15,7 @@
 </div>
 </div>
 <div class = "clearboth" style ="height: 80px">
-<h1>Item Search</h1>
-<h2>Enter Item Category:</h2>
-<form action = "searchItem">
-	<input type = "text" name = "category" placeholder = "Enter category(s)..." id = "LRFillin">
-</form>
+<h1>Favorite Items</h1>
 </div>
 <br>
 <br>
