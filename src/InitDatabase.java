@@ -137,7 +137,6 @@ public boolean addFavoriteItem(favoriteItem favoriteItem) throws SQLException{
 public ArrayList<Integer> getUserFavItemID(int userID) throws SQLException {
 	
 	ArrayList<Integer> favItemID = new ArrayList<Integer>();
-	int count = 0;
 	connect_function();
 	String sql = "SELECT * FROM favoriteItem WHERE userID = ?";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -176,7 +175,11 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 				String itemCategory = resultSet.getString("itemCategory");
 				
 				item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-				favItems.add(items);	
+				favItems.add(items);
+				//since itemID's are unique you can go to the next iteration
+				//this will somewhat shorten the realtime execution but this
+				//is still O(n^4)
+				continue;
 			}
 		}
 	}
@@ -290,37 +293,6 @@ public List<item> searchItem(String category) throws SQLException{
 	return listItems;
 }
 
-//for listing favorite Items
-//NOTE: im noticing a lot of these functions are just the same code, so I have more time later on for Part 3
-//i'll probably refactor this code
-public List<item> listFavoriteItem() throws SQLException {
-	
-	List<item> listFavoriteItems = new ArrayList<item>();
-	String sql = "SELECT * FROM item";
-	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
-	
-	while(resultSet.next()){
-		
-		int itemID = resultSet.getInt("itemID");
-		String itemTitle = resultSet.getString("itemTitle");
-		String itemDescription = resultSet.getString("itemDescription");
-		String date = resultSet.getString("itemDate");
-		double itemPrice = resultSet.getDouble("itemPrice");
-		String itemCategory = resultSet.getString("itemCategory");
-		
-		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-		listFavoriteItems.add(items);		
-	}
-	resultSet.close();
-	statement.close();
-	disconnect();
-	
-	
-	return listFavoriteItems;
-}
-
 public List<item> sortExpensive() throws SQLException {
 	
 	List<item> sortExpensive = new ArrayList<item>();
@@ -430,6 +402,41 @@ public boolean addOneUser(users user) throws SQLException {
     preparedStatement.close();
 //    disconnect();
     return rowInserted;
+}
+
+public void createFavoriteUsersTable() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String dropFavoriteUsersTable = "DROP TABLE IF EXISTS favoriteUser";
+	String createFavoriteUsersTable = "CREATE TABLE IF NOT EXISTS favoriteUser" +
+	
+			"currentUserID INTEGER NOT NULL, " +
+			"favoriteUserID INTEGER NOT NULL, " +
+			"PRIMARY KEY (favoriteUserID));";
+	
+	try {
+		statement.executeUpdate(dropFavoriteUsersTable);
+		statement.executeUpdate(createFavoriteUsersTable);
+	}
+	
+	catch(SQLException e) {
+		
+	}
+	finally {
+		connect.close();
+	}
+}
+
+public boolean addFavoriteUser(favoriteUser favUser) throws SQLException {
+	connect_function();
+	/*get the current UserID and the fav UserID and add to favoriteUser table */
+	String sql = "INSERT INTO favoriteUser(userID, favoriteUserID) VALUES (?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, favUser.userID);
+	preparedStatement.setInt(2, favUser.favUserID);
+	boolean rowInserted = preparedStatement.executeUpdate() > 0;
+	preparedStatement.close();
+	return rowInserted;
 }
 
 //Project Part 2 - deleting a user. This will be used when adding and

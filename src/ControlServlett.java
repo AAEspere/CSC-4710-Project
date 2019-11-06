@@ -16,6 +16,8 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+
 
 @WebServlet(name = "/ControlServlett", urlPatterns = { "/"})
 
@@ -72,17 +74,23 @@ public class ControlServlett extends HttpServlet{
         		listUsers(request, response);
         		listReviews(request, response);
         		break;
-        	case "/favoriteItem":
+        	case "addFavoriteItem":
+        		addFavoriteItem(request, response);
         		break;
-        	case "/favoriteUser":
+        	case "addFavoriteUser":
+        		break;
+        	case "/displaytFavoriteItem":
+        		displayFavoriteItem(request, response);
+        		break;
+        	case "/displayFavoriteUser":
         		break;
         	case "/deleteUser":
         		deleteUser(request, response);
         		break;
         	case "/deleteItem":
         		deleteItem(request, response);
-        		break;
-        		
+        		displayFavoriteItem(request,response);
+        		break;		
         }
         }
         catch (SQLException ex) {
@@ -97,6 +105,7 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.createUserTable();
             	InitDatabase.addUsers();	
             	InitDatabase.createReviewTable();
+            	InitDatabase.createFavoriteItemsTable();
             	InitDatabase.addReviews();
             }
     
@@ -129,6 +138,22 @@ public class ControlServlett extends HttpServlet{
     	
     }
     
+    private void addFavoriteItem(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    			
+    		int userID = Integer.parseInt(request.getParameter("userID"));
+    		int itemID = Integer.parseInt(request.getParameter("itemID"));
+    		favoriteItem addFavItem = new favoriteItem(userID, itemID);
+    		
+    		if(InitDatabase.addFavoriteItem(addFavItem) == true) {
+    			System.out.println("Successfully Inserted");
+    		}
+    		else {
+    			System.out.println("Item unsuccessful in inserting");
+    			response.sendRedirect("initDatabase.jsp");
+    		}
+    		}
+    
     //for searching items based on categories
     private void searchItem(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
@@ -158,6 +183,17 @@ public class ControlServlett extends HttpServlet{
             	request.setAttribute("listItem", listItem);
             	
             }
+    
+    private void displayFavoriteItem(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException{
+    	
+    		int userID = Integer.parseInt(request.getParameter("userID"));
+    		ArrayList<Integer> favItemID = InitDatabase.getUserFavItemID(userID);
+    		List<item> favItems = InitDatabase.listFavoriteItems(favItemID);
+    		request.setAttribute("favitems", favItems);
+    		
+    	
+    }
     
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
