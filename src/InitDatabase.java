@@ -93,6 +93,99 @@ public void createItemTable() throws SQLException {
 	}
 }
 
+//Using SQL to handle the creation and deletion of favorite users/items,
+//So I think I need to make a separate table in order to add and delete item ID's
+public void createFavoriteItemsTable() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String dropFavoriteItemsTable = "DROP TABLE IF EXISTS favoriteItem";
+	String createFavoriteItemsTable = "CREATE TABLE IF NOT EXISTS favoriteItem" +
+			
+			//Since I am using a separate table, and am using itemID to DELETE the item
+			//this table will need the userID (the current user) and the itemID(of the item
+			//they selected)
+			"userID INTEGER NOT NULL, " +
+			"itemID INTEGER) NOT NULL, " +
+			"PRIMARY KEY (userID, itemID));";
+	
+	try {
+	statement.executeUpdate(dropFavoriteItemsTable);
+	statement.executeUpdate(createFavoriteItemsTable);
+	}
+	
+	catch(SQLException e) {
+	}
+	finally {
+		connect.close();
+	}
+}
+
+public boolean addFavoriteItem(favoriteItem favoriteItem) throws SQLException{
+	
+	connect_function();
+	//get the current UserID and the itemID they selected and add to the 
+	//favorite item table
+	String sql = "INSERT INTO favoriteItem(userID, itemID) VALUES (?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, favoriteItem.userID);
+	preparedStatement.setInt(2, favoriteItem.itemID);
+	boolean rowInserted = preparedStatement.executeUpdate() > 0;
+	preparedStatement.close();
+	return rowInserted;
+}
+
+public ArrayList<Integer> getUserFavItemID(int userID) throws SQLException {
+	
+	ArrayList<Integer> favItemID = new ArrayList<Integer>();
+	int count = 0;
+	connect_function();
+	String sql = "SELECT * FROM favoriteItem WHERE userID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, userID);
+	ResultSet resultSet = statement.executeQuery(sql);
+	while (resultSet.next()) {
+		//get the Item ID's that are currently associated with the 
+		//current user ID under favorites
+		favItemID.add(resultSet.getInt("itemID"));
+	}
+	
+	return favItemID;
+}
+
+public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLException {
+	
+	List<item> favItems = new ArrayList<item>();
+	String sql = "SELECT * FROM item";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	/*the way I have this implemented is a for loop within a while loop. I think this is bad
+	 * practice and will have to be changed for Part 3...because the result makes this function
+	 * extremely slow (I think O(n^4))*/
+	while(resultSet.next()) {
+		
+		for(int i = 0; i < favitemID.size(); i++) {
+			
+			if(favitemID.get(i) == resultSet.getInt("itemID")) {
+				int itemID = resultSet.getInt("itemID");
+				String itemTitle = resultSet.getString("itemTitle");
+				String itemDescription = resultSet.getString("itemDescription");
+				String date = resultSet.getString("itemDate");
+				double itemPrice = resultSet.getDouble("itemPrice");
+				String itemCategory = resultSet.getString("itemCategory");
+				
+				item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+				favItems.add(items);	
+			}
+		}
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return favItems;
+}
+
 //Project Part 2 Requirement 1 -- inserting an item
 public boolean insertItem(item item) throws SQLException {
 	
@@ -168,16 +261,27 @@ public List<item> searchItem(String category) throws SQLException{
 	while(resultSet.next()){
 	//so scan all of the categories, and if one matches an item then add it onto the items
 	//that will be listed
-	if(category == resultSet.getString("itemCategory")) {
-		int itemID = resultSet.getInt("itemID");
-		String itemTitle = resultSet.getString("itemTitle");
-		String itemDescription = resultSet.getString("itemDescription");
-		String date = resultSet.getString("itemDate");
-		double itemPrice = resultSet.getDouble("itemPrice");
-		String itemCategory = resultSet.getString("itemCategory");
 		
-		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-		listItems.add(items);		
+		//parse the string based on comma separation
+		//I used comma separation because 
+		String[] parsedCategories = resultSet.getString("itemCategory").split("\\s*,\\s*");
+		
+		//so use for loop to scan through parsed categories array
+		for (int i = 0; i < parsedCategories.length; i++) {
+			
+			//if the category matches the parsed ones, then add that to the list
+			//of items to display
+			if(category == parsedCategories[i]) {
+				int itemID = resultSet.getInt("itemID");
+				String itemTitle = resultSet.getString("itemTitle");
+				String itemDescription = resultSet.getString("itemDescription");
+				String date = resultSet.getString("itemDate");
+				double itemPrice = resultSet.getDouble("itemPrice");
+				String itemCategory = resultSet.getString("itemCategory");
+				
+				item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+				listItems.add(items);	
+				}	
 		}
 	}
 	resultSet.close();
@@ -225,6 +329,8 @@ public List<item> sortExpensive() throws SQLException {
 	statement = (Statement) connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	
+	//this will go through the table and since they are sorted already
+	//so just prints the items
 	while(resultSet.next()){
 		
 		int itemID = resultSet.getInt("itemID");
@@ -324,6 +430,36 @@ public boolean addOneUser(users user) throws SQLException {
     preparedStatement.close();
 //    disconnect();
     return rowInserted;
+}
+
+//Project Part 2 - deleting a user. This will be used when adding and
+//deleting users from the favorite user list
+//I probably need to create a separate table to separate user and favorite user
+//or else I will be permanently deleting the users 
+public boolean deleteUser(int userID) throws SQLException {
+    String sql = "DELETE FROM users WHERE userID = ?";        
+    connect_function();
+     
+    preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    preparedStatement.setInt(1, userID);
+     
+    boolean rowDeleted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowDeleted;  
+}
+
+public boolean deleteItem(int itemID) throws SQLException {
+    String sql = "DELETE FROM item WHERE itemID = ?";        
+    connect_function();
+     
+    preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    preparedStatement.setInt(1, itemID);
+     
+    boolean rowDeleted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowDeleted;  
 }
 
 public void createReviewTable() throws SQLException {

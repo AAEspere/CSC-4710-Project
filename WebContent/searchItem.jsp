@@ -50,8 +50,8 @@
                     <td><c:out value="${item.date}" /></td>
                     <td><c:out value="${item.itemPrice}" /></td>
                     <td><c:out value="${item.itemCategory}"/></td>
-                    <td><form action = "addFavorite"><input type = "submit" value = "Add to Favorites"></form></td>
-                    <td><a href = "addReview.jsp">Write a Review</a>
+                    <td><a href = "favoriteItem?id=<c:out value = '${item.itemID}'/>">Add to Favorites</a>
+                    <td><a href = "addReview?id=<c:out value = '${item.itemID}'/>">Write a Review</a>
                     </tr>
             </c:forEach>
 		</table>

@@ -19,6 +19,7 @@
 	<form action = "insertItem">
 		<input type = "text" name = "itemName" placeholder = "Item Name" id = "LRFillin"><br>
 		<input type = "text" name = "description" placeholder = "Description" id = "LRFillin"><br>
+		<p>Please separate categories by comma</p>
 		<input type = "text" name = "category" placeholder = "Category(s)" id = "LRFillin"><br>
 		<input type = "text" name = "price" placeholder = "Price" id = "LRFillin"><br>
 		<input type = "submit" value = "SUBMIT ITEM" id = "LRSubmit">

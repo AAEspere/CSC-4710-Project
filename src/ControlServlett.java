@@ -76,6 +76,12 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/favoriteUser":
         		break;
+        	case "/deleteUser":
+        		deleteUser(request, response);
+        		break;
+        	case "/deleteItem":
+        		deleteItem(request, response);
+        		break;
         		
         }
         }
@@ -137,6 +143,14 @@ public class ControlServlett extends HttpServlet{
     	
     }
     
+    private void deleteItem(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException {
+    		int id = Integer.parseInt(request.getParameter("itemID"));
+    		InitDatabase.deleteUser(id);
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteItems.jsp");
+    		dispatcher.forward(request, response);	
+    }
+    
     //these are for showing the results of the table
     private void listItem(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
@@ -144,6 +158,15 @@ public class ControlServlett extends HttpServlet{
             	request.setAttribute("listItem", listItem);
             	
             }
+    
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException {
+    		int id = Integer.parseInt(request.getParameter("userID"));
+    		InitDatabase.deleteUser(id);
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteUsers.jsp");
+    		dispatcher.forward(request, response);	
+    }
+    
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
             	List<users> listUsers = InitDatabase.listAllUsers();
@@ -171,7 +194,7 @@ public class ControlServlett extends HttpServlet{
     		
     		reviews addReview = new reviews(itemID, userID, score, remark);
     		
-    		InitDatabase.insertReview(writeReview);
+    		InitDatabase.insertReview(addReview);
     }
         
     private void login(HttpServletRequest request, HttpServletResponse response)
