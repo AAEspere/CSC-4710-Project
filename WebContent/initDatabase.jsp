@@ -12,14 +12,16 @@
 <body>
 <div id = "websiteheader">
 <div class = "twocolumnXL floatleft">
-<h1 id = "titletext"><a href = initDatabase.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
+<h1 id = "titletext"><a href = "showQueries" class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
 <div class = "clearboth">
 </div>
 
 <a href = "insertItem.jsp">Insert an Item</a>
-<a href = "favoriteSellers.jsp">Favorite Sellers</a>
-<a href = "favoriteItems.jsp">Favorite Items</a>
+<a href = "showQueries">Show all Queries</a>
+<a href = "displayFavoriteItem">Favorite Items</a>
+<a href = "displayFavoriteUser">Favorite Sellers</a>
+<a href = "searchItem.jsp">Search for Item</a>
 <form action = "sortExpensive">
 <input type = "submit" value = "Sort by Expensive">
 </form> 
@@ -44,8 +46,18 @@
                     <td><c:out value="${item.date}" /></td>
                     <td><c:out value="${item.itemPrice}" /></td>
                     <td><c:out value="${item.itemCategory}"/></td>
-                    <td><a href = "favoriteItem?id=<c:out value = '${item.itemID}'/>">Add to Favorites</a>
-                    <td><a href = "addReview?id=<c:out value = '${item.itemID}'/>">Write a Review</a>
+                    <td>
+                    <form action = "addFavoriteItem">
+                    <input type = "hidden" value = "${item.itemID}" name = "itemID">
+                    <input type = "submit" value = "Add to Favorites">
+                    </form>
+                    </td>
+                    <td>
+                    <form action = "reviewID">
+                    <input type = "hidden" value = "${item.itemID}" name = "itemID">
+                    <input type = "submit" value = "Write Review">
+                    </form>
+                    </td>
                     </tr>
             </c:forEach>
 		</table>
@@ -61,6 +73,7 @@
                 <th>Email</th>
                 <th>Gender</th>
                 <th>Age</th>
+                <th>Favorite?</th>
             </tr>
             <c:forEach var="users" items = "${listUsers}">
             <tr>
@@ -71,6 +84,12 @@
                     <td><c:out value="${users.email}"/></td>
                     <td><c:out value="${users.gender}"/></td>
                     <td><c:out value="${users.age}"/></td>
+                    <td>
+					<form action = "addFavoriteUser">
+                    <input type = "hidden" value = "${users.userID}" name = "userID">
+                    <input type = "submit" value = "Add to Favorites">
+                    </form>
+					</td>
                     </tr>
             </c:forEach>
 		</table>
@@ -84,12 +103,12 @@
                 <th>Score</th>
                 <th>Remark</th>
             </tr>
-            <c:forEach var="users" items = "${listReviews}">
+            <c:forEach var="reviews" items = "${listReviews}">
             <tr>
-                    <td><c:out value="${review.itemID}" /></td>
-                    <td><c:out value="${review.userID}" /></td>
-                    <td><c:out value="${review.score}" /></td>
-                    <td><c:out value="${review.remark}" /></td>
+                    <td><c:out value="${reviews.itemID}" /></td>
+                    <td><c:out value="${reviews.userID}" /></td>
+                    <td><c:out value="${reviews.score}" /></td>
+                    <td><c:out value="${reviews.remark}" /></td>
                     </tr>
             </c:forEach>
 		</table>

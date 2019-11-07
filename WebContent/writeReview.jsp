@@ -10,7 +10,7 @@
 <body>
 <div id = "websiteheader">
 <div class = "twocolumnXL floatleft">
-<h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
+<h1 id = "titletext"><a href = "showQueries" class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
 </div>
 <div class = "clearboth" style ="height: 80px">
@@ -18,7 +18,7 @@
 <p>Fill out the following forms in order to write a review.</p>
 <p>WARNING: you can only write five reviews per day. 
 <div id = "registerBlock">
-	<form action = "writeReview">
+	<form action = "addReview">
 		<select name = "remark">
 		<option>Excellent</option>
 		<option>Good</option>

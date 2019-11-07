@@ -17,7 +17,7 @@
 <p>Sign Up: Please fill all of the following blanks</div>
 <div id = "registerBlock">
 	<form action = "register">
-		<input type = "text" name = "username" placeholder = "username" id = "LRFillin"><br>
+		<input type = "text" name = "email" placeholder = "email" id = "LRFillin"><br>
 		<input type = "password" name = "password" placeholder = "password" id = "LRFillin"><br>
 		<input type = "text" name = "firstName" placeholder = "First Name" id = "LRFillin"><br>
 		<input type = "text" name = "lastName" placeholder = "Last Name" id = "LRFillin"><br>

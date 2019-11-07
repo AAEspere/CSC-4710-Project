@@ -10,10 +10,13 @@
 <body>
 <div id = "websiteheader">
 <div class = "twocolumnXL floatleft">
-<h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
+<h1 id = "titletext"><a href = "showQueries" class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
 </div>
 <div class = "clearboth" style ="height: 80px">
+<a href = "showQueries">SHOW ALL QUERIES</a>
+<a href = "listFavoriteItems.jsp">Favorite Items</a>
+<a href = "displayFavoriteUser.jsp">Favorite Sellers</a>
 <p>Insert an Item: please fill out the following information</div>
 <div id = "registerBlock">
 	<form action = "insertItem">

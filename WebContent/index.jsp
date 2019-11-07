@@ -10,20 +10,14 @@
 <body>
 <div id = "websiteheader">
 <div class = "twocolumnXL floatleft">
-<h1 id = "titletext"><a href = index.jsp class = "tdnone">Espere - CSC 4710 Project</a></h1>
+<h1 id = "titletext"><a href = "index.jsp" class = "tdnone">Espere - CSC 4710 Project</a></h1>
 </div>
-<div class = "twocolumnXS floatright">
-	<form action = "register.jsp" class = "inlineBlock">
-	<input type = "submit" value = "Sign Up" id = "LogRegister">
-	</form>
-	<form action = "login.jsp" class = "inlineBlock">
-	<input type = "submit" value = "Log in" id = "LogRegister">
-	</form>
-</div>
-
 </div>
 <div>
-<p>Please log in to start server actions</p>
+<p>Please Initialize the Database before logging in/registering</p>
+<form action = "initDatabase" method = "post">
+<input type = "submit" value = "Initialize Database">
+</form>
 </div>
 </body>
 </html>

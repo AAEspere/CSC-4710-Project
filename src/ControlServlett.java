@@ -25,6 +25,12 @@ public class ControlServlett extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	public InitDatabase InitDatabase;
 	private HttpSession usersession;
+	//gets the current userID when the user logs in or signs up
+	int userID = 0;
+	int currentReviewID = 0;
+	int favUserID = 0;
+	int userItem = 0;
+	int userReview = 0;
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
@@ -44,18 +50,29 @@ public class ControlServlett extends HttpServlet{
         	switch(action) {
         	case "/initDatabase":
         		initDatabase(request,response);
+            	break;
+        	case "/showTables":
             	listItem(request, response); 
             	listUsers(request, response);
             	listReviews(request, response);
-            	break;
+        		break;
         	case "/login":
         		login(request,response);
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
         	case "/register":
         		register(request,response);
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
-        		
-        		
+        	case "/showQueries":
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
+        		break;
         	//Pertaining to Project Part 2
         	case "/insertItem":
         		insertItem(request,response);
@@ -66,31 +83,49 @@ public class ControlServlett extends HttpServlet{
         	case "/searchItem":
         		searchItem(request, response);
         		break;
+        	case "/reviewID":
+        		reviewID(request, response);
+        		break;
         	case "/addReview":
         		addReview(request, response);
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
         	case "/sortExpensive":
         		sortExpensive(request, response);
         		listUsers(request, response);
         		listReviews(request, response);
         		break;
-        	case "addFavoriteItem":
+        	case "/addFavoriteItem":
         		addFavoriteItem(request, response);
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
-        	case "addFavoriteUser":
+        	case "/addFavoriteUser":
+        		addFavoriteUser(request, response);
+        		listItem(request, response);
+        		listUsers(request, response);
+        		listReviews(request, response);
         		break;
-        	case "/displaytFavoriteItem":
+        	case "/displayFavoriteItem":
         		displayFavoriteItem(request, response);
         		break;
         	case "/displayFavoriteUser":
+        		displayFavoriteUser(request, response);
         		break;
         	case "/deleteUser":
         		deleteUser(request, response);
+        		displayFavoriteUser(request, response);
         		break;
         	case "/deleteItem":
         		deleteItem(request, response);
         		displayFavoriteItem(request,response);
         		break;		
+        	case "/displayUser":
+        		displayUser(request, response);
+        		break;
         }
         }
         catch (SQLException ex) {
@@ -105,8 +140,11 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.createUserTable();
             	InitDatabase.addUsers();	
             	InitDatabase.createReviewTable();
-            	InitDatabase.createFavoriteItemsTable();
             	InitDatabase.addReviews();
+            	InitDatabase.createFavoriteItemsTable();
+            	InitDatabase.createFavoriteUsersTable();
+    			RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");       
+                dispatcher.forward(request, response);
             }
     
     //for inserting a singular item into the list
@@ -115,7 +153,7 @@ public class ControlServlett extends HttpServlet{
     	
     	//CHECK HOW MANY ITEMS THE USER HAS SUBMITTEED
     	//IF GOOD THEN PROCEED WITH THE INSERT ITEM FUNCTION
-    	
+    	if(userItem <= 5) {
     	//basically you get all the parameters that were added, and create a new item with it
     	//which then goes to insertItem which inserts the item into the SQL
     	String itemName = request.getParameter("itemName");
@@ -130,10 +168,15 @@ public class ControlServlett extends HttpServlet{
     	//indication if the item was successfully added
     	if(InitDatabase.insertItem(insertItem) == true) {
     		System.out.println("Successfully inserted");
+    		userItem++;
     	}
     	else {
     		System.out.println("Item unsuccessful in inserting");
     		response.sendRedirect("problemItem.jsp");
+    	}
+    	}
+    	else {
+    		System.out.println("User Post Limit Reached");
     	}
     	
     }
@@ -141,17 +184,18 @@ public class ControlServlett extends HttpServlet{
     private void addFavoriteItem(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     			
-    		int userID = Integer.parseInt(request.getParameter("userID"));
+    		//int userID = Integer.parseInt(request.getParameter("userID"));
     		int itemID = Integer.parseInt(request.getParameter("itemID"));
     		favoriteItem addFavItem = new favoriteItem(userID, itemID);
     		
     		if(InitDatabase.addFavoriteItem(addFavItem) == true) {
     			System.out.println("Successfully Inserted");
     		}
-    		else {
-    			System.out.println("Item unsuccessful in inserting");
-    			response.sendRedirect("initDatabase.jsp");
-    		}
+    		//else {
+    			//System.out.println("Item unsuccessful in inserting");
+    			//RequestDispatcher dispatcher = request.getRequestDispatcher("showQueries");
+    			//dispatcher.forward(request, response);
+    		//}
     		}
     
     //for searching items based on categories
@@ -159,21 +203,16 @@ public class ControlServlett extends HttpServlet{
     		throws SQLException, IOException, ServletException {
     			String category = request.getParameter("category");
     			List<item> searchItem = InitDatabase.searchItem(category);
-    			request.setAttribute("searchItem", searchItem);
-    			
-    			
+    			request.setAttribute("listItem", searchItem);
     			//after attribute is set redirect to the same page, but this time the results will be posted
-    			RequestDispatcher dispatcher = request.getRequestDispatcher("searchItem.jsp");       
+            	RequestDispatcher dispatcher = request.getRequestDispatcher("searchItem.jsp");       
                 dispatcher.forward(request, response);
-    	
     }
     
     private void deleteItem(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     		int id = Integer.parseInt(request.getParameter("itemID"));
-    		InitDatabase.deleteUser(id);
-    		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteItems.jsp");
-    		dispatcher.forward(request, response);	
+    		InitDatabase.deleteItem(id);
     }
     
     //these are for showing the results of the table
@@ -181,26 +220,30 @@ public class ControlServlett extends HttpServlet{
             throws SQLException, IOException, ServletException {
             	List<item> listItem = InitDatabase.listAllItems();
             	request.setAttribute("listItem", listItem);
-            	
             }
     
     private void displayFavoriteItem(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException{
     	
-    		int userID = Integer.parseInt(request.getParameter("userID"));
     		ArrayList<Integer> favItemID = InitDatabase.getUserFavItemID(userID);
     		List<item> favItems = InitDatabase.listFavoriteItems(favItemID);
-    		request.setAttribute("favitems", favItems);
-    		
-    	
+    		request.setAttribute("favItems", favItems);
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteItems.jsp");
+    		dispatcher.forward(request, response);
+    }
+    
+    private void displayFavoriteUser(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException {
+    		List<favoriteUser> favUsers = InitDatabase.listFavoriteUsers();
+    		request.setAttribute("favUsers", favUsers);
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteUsers.jsp");
+    		dispatcher.forward(request, response);
     }
     
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
-    		int id = Integer.parseInt(request.getParameter("userID"));
+    		int id = Integer.parseInt(request.getParameter("favUserID"));
     		InitDatabase.deleteUser(id);
-    		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteUsers.jsp");
-    		dispatcher.forward(request, response);	
     }
     
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
@@ -208,6 +251,26 @@ public class ControlServlett extends HttpServlet{
             	List<users> listUsers = InitDatabase.listAllUsers();
             	request.setAttribute("listUsers", listUsers);
             }
+    
+    private void addFavoriteUser(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException {
+    	
+    		favUserID = Integer.parseInt(request.getParameter("userID"));
+    		favoriteUser addFavUser = new favoriteUser(userID, favUserID);
+    		
+    		if(InitDatabase.addFavoriteUser(addFavUser) == true) {
+    			System.out.println("Successfully Inserted");
+    		}
+    }
+    
+    private void displayUser(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	
+    List<favoriteUser> userProfile;
+    	int favUserID = Integer.parseInt(request.getParameter("favUserID"));
+    	
+    	
+    }
     
     //this is the last function when initializing the database, so it forwards the page to initDatabase.jsp
     private void listReviews(HttpServletRequest request, HttpServletResponse response)
@@ -218,42 +281,48 @@ public class ControlServlett extends HttpServlet{
                 dispatcher.forward(request, response);
             }
     
+    private void reviewID(HttpServletRequest request, HttpServletResponse response) 
+    		throws SQLException, IOException, ServletException {
+    	
+    		currentReviewID = Integer.parseInt(request.getParameter("itemID"));
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("writeReview.jsp");
+    		dispatcher.forward(request, response);
+    	
+    }
+    
     private void addReview(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	
-    		//I need to use parseInt in order to convert the ID's into integers
-    		//needed to look this up
-    		int itemID = Integer.parseInt(request.getParameter("itemID"));
-    		int userID = Integer.parseInt(request.getParameter("userID"));
-    		String score = request.getParameter("score");
-    		String remark = request.getParameter("remark");
+    		if(userReview <= 5) {
+    		String score = request.getParameter("remark");
+    		String remark = request.getParameter("review");
     		
-    		reviews addReview = new reviews(itemID, userID, score, remark);
+    		reviews addReview = new reviews(currentReviewID, userID, score, remark);
     		
     		InitDatabase.insertReview(addReview);
+    		userReview++;
+    		}
+    		else {
+    			System.out.println("User Review Limit Reached");
+    		}
     }
         
     private void login(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    		RequestDispatcher dispatcher;
-			String username = request.getParameter("username");
-			String pass = request.getParameter("pass");
-			if(InitDatabase.loginCheck(username, pass) == true) {
+			String email = request.getParameter("email");
+			String pass = request.getParameter("password");
+			if(InitDatabase.loginCheck(email, pass) == true) {
+				userID = InitDatabase.getCurrentID(email, pass);
 				usersession = request.getSession();
-				usersession.setAttribute("currentUser", username);
-				dispatcher = request.getRequestDispatcher("Welcome.jsp");
-				dispatcher.forward(request,response);
+				usersession.setAttribute("currentUser", email);
 			}
-			else {
-				dispatcher = request.getRequestDispatcher("login.jsp");
-				dispatcher.forward(request,response);
-			}
+
     }
     
     private void register(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     	
-    		String username = request.getParameter("username");
+    		String email = request.getParameter("email");
     		String password = request.getParameter("password");
     		String firstName = request.getParameter("firstName");
     		String lastName = request.getParameter("lastName");
@@ -261,11 +330,11 @@ public class ControlServlett extends HttpServlet{
     		int age = Integer.parseInt(request.getParameter("age"));
     		
     		//add the user to the database
-    		users registerUser = new users(username, password, firstName, lastName, gender, age);
+    		users registerUser = new users(password, firstName, lastName, email, gender, age);
     		InitDatabase.addOneUser(registerUser);
-    		
+    		userID = InitDatabase.getCurrentID(email, password);
     		usersession = request.getSession();
-    		usersession.setAttribute("currentUser", username);
+    		usersession.setAttribute("currentUser", email);
     }
     
     //Project Part 2 - sorting the most expensive items in a category
