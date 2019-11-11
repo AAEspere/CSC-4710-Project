@@ -52,33 +52,26 @@ public class ControlServlett extends HttpServlet{
         		initDatabase(request,response);
             	break;
         	case "/showTables":
-            	listItem(request, response); 
-            	listUsers(request, response);
-            	listReviews(request, response);
+            	showAllInformation(request, response);
         		break;
         	case "/login":
         		login(request,response);
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	case "/register":
+        		//When I register now, I need to check for matching password and duplicate email
+        		matchingPassword(request,response);
+        		duplicateEmail(request, response);
         		register(request,response);
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	case "/showQueries":
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	//Pertaining to Project Part 2
         	case "/insertItem":
         		insertItem(request,response);
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	case "/searchItem":
         		searchItem(request, response);
@@ -88,9 +81,7 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/addReview":
         		addReview(request, response);
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	case "/sortExpensive":
         		sortExpensive(request, response);
@@ -99,15 +90,11 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/addFavoriteItem":
         		addFavoriteItem(request, response);
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	case "/addFavoriteUser":
         		addFavoriteUser(request, response);
-        		listItem(request, response);
-        		listUsers(request, response);
-        		listReviews(request, response);
+        		showAllInformation(request, response);
         		break;
         	case "/displayFavoriteItem":
         		displayFavoriteItem(request, response);
@@ -146,6 +133,14 @@ public class ControlServlett extends HttpServlet{
     			RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");       
                 dispatcher.forward(request, response);
             }
+    
+    //noticing I'm calling the same functions over and over so I just condense them into one function
+    private void showAllInformation(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    		listItem(request, response);
+    		listUsers(request, response);
+    		listReviews(request, response);
+    }
     
     //for inserting a singular item into the list
     private void insertItem(HttpServletRequest request, HttpServletResponse response)
@@ -343,5 +338,35 @@ public class ControlServlett extends HttpServlet{
     	List<item> sortExpensive = InitDatabase.sortExpensive();
     	request.setAttribute("listItem", sortExpensive);
     }
+    
+    //Project Part 3
+    public void matchingPassword(HttpServletRequest request, HttpServletResponse response)
+    	throws SQLException, IOException, ServletException {
+    	
+    	String password1 = request.getParameter("password1");
+    	String password2 = request.getParameter("password2");
+    	if(password1 == password2) {
+    		//do nothing if password1 is equal to password2 because there is no problem
+    	}
+    	else {
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+    		dispatcher.forward(request, response);
+    	}
+    	
+    }
+    
+    public void duplicateEmail(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    	String email = request.getParameter("email");
+    	if(InitDatabase.checkDuplicateEmail(email) == true) {
+    		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+    		dispatcher.forward(request, response);
+    	}
+    	else {
+    		//do nothing if false, this means it is a unique email
+    	}
+    	
+        }
     
 }

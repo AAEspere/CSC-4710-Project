@@ -407,6 +407,25 @@ public boolean addOneUser(users user) throws SQLException {
     return rowInserted;
 }
 
+public boolean checkDuplicateEmail(String email) throws SQLException {
+	
+	String sql = "SELECT * FROM users";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()) {
+		
+		String currentEmail = resultSet.getString("email");
+		if(currentEmail == email) {
+			return true;
+		}
+		
+	}
+	//if you get to this part, then the emails were not duplicates, which means that 
+	return false;
+}
+
 public void createFavoriteUsersTable() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
