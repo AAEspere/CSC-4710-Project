@@ -16,18 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.time.LocalDateTime;
+
+//code for initializing the Database, this includes creating the tables
+//and adding the original 10 tuples into each table
+//this originally had all of the functionality included but was separated to improve
+//readability
 public class InitDatabase {
 	
 	private Connection connect = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
-	private ResultSet resultSet = null;
 
 	public InitDatabase() {
 		
 	}
 	
 //initialize connection to the Server
+	//I probably should separate the connection, the initializing of the Database
+	//the functions on items, users, and reviews into separate files
+	//So the readability of the code improves
 protected void connect_function() throws SQLException {
 	if(connect == null || connect.isClosed()) {
 		try {
@@ -60,6 +67,8 @@ public void createDatabase() {
 }
 
 //create the table for items
+//PROJECT PART 2: need to edit this and add a user section
+//this will show what user posted what item.
 public void createItemTable() throws SQLException {
 	//the two statements required for making table
 	connect_function();
@@ -68,7 +77,8 @@ public void createItemTable() throws SQLException {
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
 			
 			//Project Part 2, editing statement so that AUTO_INCREMENT is added
-			"(itemID INTEGER AUTO_INCREMENT, " +
+			"(userID INTEGER NOT NULL," + 
+			"itemID INTEGER AUTO_INCREMENT, " +
 			"itemTitle VARCHAR(50) NOT NULL," +
 			"itemDescription VARCHAR(100), " +
 			"itemDate VARCHAR(50), " +
@@ -126,6 +136,8 @@ public boolean addFavoriteItem(favoriteItem favoriteItem) throws SQLException{
 	preparedStatement.setInt(2, favoriteItem.itemID);
 	boolean rowInserted = preparedStatement.executeUpdate() > 0;
 	preparedStatement.close();
+	//return true and redirect with sucessful add message, or return false
+	//if fails and redirect with error message
 	return rowInserted;
 }
 
@@ -149,10 +161,30 @@ public ArrayList<Integer> getUserFavItemID(int userID) throws SQLException {
 	return favItemID;
 }
 
-public List<item> listItems(int userID) throws SQLException {
-	List<item> items = new ArrayList<item>();
-	String sql = "SELECT * FROM item WHERE userID = ?";
-	return items;
+//listing items for a userProfile
+public List<item> listUserItems(int favUserID) throws SQLException {
+		List<item> userItems = new ArrayList<item>();
+		String sql = "SELECT * FROM item WHERE userID = ?";
+		connect_function();
+		statement = (Statement) connect.createStatement();
+		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+		preparedStatement.setInt(1, favUserID);
+		ResultSet resultSet = preparedStatement.executeQuery(sql);
+		
+		while(resultSet.next()) {
+			
+			int userID = resultSet.getInt("userID");
+			int itemID = resultSet.getInt("itemID");
+			String itemTitle = resultSet.getString("itemTitle");
+			String itemDescription = resultSet.getString("itemDescription");
+			String date = resultSet.getString("itemDate");
+			double itemPrice = resultSet.getDouble("itemPrice");
+			
+			item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+			userItems.add(items);	
+		}
+		
+		return userItems;
 }
 
 public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLException {
@@ -199,15 +231,17 @@ public boolean insertItem(item item) throws SQLException {
 	//need to insert conditional which will limit the amount of times a person can post a review
 	
 	connect_function();         
-	String sql = "INSERT INTO item(itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?)";
+	String sql = "INSERT INTO item(userID, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, item.itemTitle);
-	preparedStatement.setString(2, item.itemDescription);
+	//Project 2 requirement for favorite users, need to associate each item with a user ID
+	preparedStatement.setInt(1, item.userID);
+	preparedStatement.setString(2, item.itemTitle);
+	preparedStatement.setString(3, item.itemDescription);
 	//gets the local time. When this function is called, that means the user has submitted an item
 	//and will take the date of when that item was created
-	preparedStatement.setString(3,java.time.LocalDate.now().toString());
-	preparedStatement.setDouble(4,item.itemPrice);
-	preparedStatement.setString(5,item.itemCategory);
+	preparedStatement.setString(4,java.time.LocalDate.now().toString());
+	preparedStatement.setDouble(5,item.itemPrice);
+	preparedStatement.setString(6,item.itemCategory);
 //	preparedStatement.executeUpdate();
 	
     boolean rowInserted = preparedStatement.executeUpdate() > 0;
@@ -234,6 +268,8 @@ public void addItems() throws SQLException {
 	String addItem10 = "INSERT INTO item VALUES('235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
 	
 	try {
+		
+		
 		statement.executeUpdate(addItem1);
 		statement.executeUpdate(addItem2);
 		statement.executeUpdate(addItem3);
@@ -278,6 +314,7 @@ public List<item> searchItem(String category) throws SQLException{
 			//if the category matches the parsed ones, then add that to the list
 			//of items to display
 			if(category.equals(parsedCategories[i])) {
+				int userID = resultSet.getInt("userID");
 				int itemID = resultSet.getInt("itemID");
 				String itemTitle = resultSet.getString("itemTitle");
 				String itemDescription = resultSet.getString("itemDescription");
@@ -285,7 +322,7 @@ public List<item> searchItem(String category) throws SQLException{
 				double itemPrice = resultSet.getDouble("itemPrice");
 				String itemCategory = resultSet.getString("itemCategory");
 				
-				item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+				item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
 				listItems.add(items);	
 				}	
 		}
@@ -308,6 +345,7 @@ public List<item> sortExpensive() throws SQLException {
 	//so just prints the items
 	while(resultSet.next()){
 		
+		int userID = resultSet.getInt("userID");
 		int itemID = resultSet.getInt("itemID");
 		String itemTitle = resultSet.getString("itemTitle");
 		String itemDescription = resultSet.getString("itemDescription");
@@ -315,7 +353,7 @@ public List<item> sortExpensive() throws SQLException {
 		double itemPrice = resultSet.getDouble("itemPrice");
 		String itemCategory = resultSet.getString("itemCategory");
 		
-		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+		item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
 		sortExpensive.add(items);		
 	}
 	resultSet.close();
@@ -633,6 +671,7 @@ public List<item> listAllItems() throws SQLException{
 	
 	while(resultSet.next()){
 	
+		int userID = resultSet.getInt("userID");
 		int itemID = resultSet.getInt("itemID");
 		String itemTitle = resultSet.getString("itemTitle");
 		String itemDescription = resultSet.getString("itemDescription");
@@ -640,7 +679,7 @@ public List<item> listAllItems() throws SQLException{
 		double itemPrice = resultSet.getDouble("itemPrice");
 		String itemCategory = resultSet.getString("itemCategory");
 		
-		item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+		item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
 		listItems.add(items);		
 	}
 	resultSet.close();
@@ -707,6 +746,16 @@ protected void disconnect() throws SQLException {
 	if (connect != null && !connect.isClosed()) {
 		connect.close();
 	}
+	
+}
+
+private void checkTwoHighest() throws SQLException {
+	
+	String sql = "SELECT * FROM users";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
 }
 
 }

@@ -24,6 +24,10 @@ import java.util.ArrayList;
 public class ControlServlett extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	public InitDatabase InitDatabase;
+	public itemDAO itemDAO;
+	public userDAO userDAO;
+	public reviewDAO reviewDAO;
+	
 	private HttpSession usersession;
 	//gets the current userID when the user logs in or signs up
 	int userID = 0;
@@ -34,6 +38,9 @@ public class ControlServlett extends HttpServlet{
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
+		itemDAO = new itemDAO();
+		userDAO = new userDAO();
+		reviewDAO = new reviewDAO();
 	}
 	
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
