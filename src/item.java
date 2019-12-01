@@ -1,5 +1,5 @@
 public class item {
-	protected int userID;
+	protected String username;
 	protected int itemID;
 	protected String itemTitle;
 	protected String itemDescription;
@@ -15,10 +15,10 @@ public class item {
 	}
 	
 	//need itemID since it is primary key
-	public item(int userID, int itemID, String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
+	public item(String username, int itemID, String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
 		this(itemTitle, itemDescription, date, itemPrice, itemCategory);
 		this.itemID = itemID;
-		this.userID = userID;
+		this.username = username;
 	}
 	
 	public item(String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
@@ -36,12 +36,12 @@ public class item {
 		this.itemCategory = itemCategory;
 	}
 	
-	public int getuserID() {
-		return userID;
+	public String getusername() {
+		return username;
 	}
 	
-	public void setuserID(int userID) {
-		this.userID = userID;
+	public void setusername(String username) {
+		this.username = username;
 	}
 	
 	public int getitemID() {

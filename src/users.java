@@ -1,6 +1,8 @@
 public class users {
 
 	protected int userID;
+	//for part 3 added username to users class 
+	protected String username;
 	protected String pass;
 	protected String firstName;
 	protected String lastName;
@@ -16,12 +18,13 @@ public class users {
 		this.userID = userID;
 	}
 	
-	public users(int userID, String pass, String firstName, String lastName, String email, String gender, int age) {
-		this(pass, firstName, lastName, email, gender, age);
+	public users(int userID, String username, String pass, String firstName, String lastName, String email, String gender, int age) {
+		this(username, pass, firstName, lastName, email, gender, age);
 		this.userID = userID;
 	}
 	
-	public users(String pass, String firstName, String lastName, String email, String gender, int age) {
+	public users(String username, String pass, String firstName, String lastName, String email, String gender, int age) {
+		this.username = username;
 		this.pass = pass;
 		this.firstName = firstName;
 		this.lastName =lastName;
@@ -35,6 +38,14 @@ public class users {
 	
 	public void setuserID(int userID) {
 		this.userID = userID;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUserName() {
+		return username;
 	}
 	
 	public String getpass() {

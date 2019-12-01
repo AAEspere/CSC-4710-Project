@@ -16,12 +16,12 @@
 </div>
 <div class = "clearboth">
 </div>
-
+<a href = "showQueries">SHOW ALL QUERIES</a>
 <a href = "insertItem.jsp">Insert an Item</a>
-<a href = "showQueries">Show all Queries</a>
 <a href = "displayFavoriteItem">Favorite Items</a>
 <a href = "displayFavoriteUser">Favorite Sellers</a>
 <a href = "searchItem.jsp">Search for Item</a>
+<a href = "project3Queries">View Project 3 Query options</a>
 <form action = "sortExpensive">
 <input type = "submit" value = "Sort by Expensive">
 </form> 

@@ -77,7 +77,8 @@ public void createItemTable() throws SQLException {
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
 			
 			//Project Part 2, editing statement so that AUTO_INCREMENT is added
-			"(userID INTEGER NOT NULL," + 
+			//Project Part 2, editing statement so that username is incorporated for all items
+			"(username VARCHAR(50) NOT NULL," + 
 			"itemID INTEGER AUTO_INCREMENT, " +
 			"itemTitle VARCHAR(50) NOT NULL," +
 			"itemDescription VARCHAR(100), " +
@@ -97,6 +98,43 @@ public void createItemTable() throws SQLException {
 		connect.close();
 	}
 }
+
+//Project Part 1 just says to initialize tables with at least 10 tuples, creating 10 random items
+//this is part of the database initialization
+public void addItems() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String addItem1 = "INSERT INTO item VALUES('123456789','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
+	String addItem2 = "INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
+	String addItem3 = "INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
+	String addItem4 = "INSERT INTO item VALUES('123123123','Couch','Furniture','02/01/2019','300.00','Furniture');";
+	String addItem5 = "INSERT INTO item VALUES('231455153','Couch','Furniture','02/01/2019','300.00','Furniture');";
+	String addItem6 = "INSERT INTO item VALUES('555555555','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
+	String addItem7 = "INSERT INTO item VALUES('423465674','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
+	String addItem8 = "INSERT INTO item VALUES('343242351','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
+	String addItem9 = "INSERT INTO item VALUES('654764567','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
+	String addItem10 = "INSERT INTO item VALUES('235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
+	
+	try {
+		statement.executeUpdate(addItem1);
+		statement.executeUpdate(addItem2);
+		statement.executeUpdate(addItem3);
+		statement.executeUpdate(addItem4);
+		statement.executeUpdate(addItem5);
+		statement.executeUpdate(addItem6);
+		statement.executeUpdate(addItem7);
+		statement.executeUpdate(addItem8);
+		statement.executeUpdate(addItem9);
+		statement.executeUpdate(addItem10);
+	}
+	catch (SQLException e) {
+		
+	}
+	finally {
+		disconnect();
+	}	
+}
+
 
 //Using SQL to handle the creation and deletion of favorite users/items,
 //So I think I need to make a separate table in order to add and delete item ID's
@@ -172,16 +210,7 @@ public List<item> listUserItems(int favUserID) throws SQLException {
 		ResultSet resultSet = preparedStatement.executeQuery(sql);
 		
 		while(resultSet.next()) {
-			
-			int userID = resultSet.getInt("userID");
-			int itemID = resultSet.getInt("itemID");
-			String itemTitle = resultSet.getString("itemTitle");
-			String itemDescription = resultSet.getString("itemDescription");
-			String date = resultSet.getString("itemDate");
-			double itemPrice = resultSet.getDouble("itemPrice");
-			
-			item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-			userItems.add(items);	
+			userItems.add(resultSetItem(resultSet));
 		}
 		
 		return userItems;
@@ -203,15 +232,10 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 		for(int i = 0; i < favitemID.size(); i++) {
 			
 			if(favitemID.get(i) == resultSet.getInt("itemID")) {
-				int itemID = resultSet.getInt("itemID");
-				String itemTitle = resultSet.getString("itemTitle");
-				String itemDescription = resultSet.getString("itemDescription");
-				String date = resultSet.getString("itemDate");
-				double itemPrice = resultSet.getDouble("itemPrice");
-				String itemCategory = resultSet.getString("itemCategory");
+				//need to edit this to include the username that posted this item
 				
-				item items = new item(itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-				favItems.add(items);
+				favItems.add(resultSetItem(resultSet));
+				
 				//since itemID's are unique you can go to the next iteration
 				//this will somewhat shorten the realtime execution but this
 				//is still O(n^4)
@@ -234,7 +258,7 @@ public boolean insertItem(item item) throws SQLException {
 	String sql = "INSERT INTO item(userID, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 	//Project 2 requirement for favorite users, need to associate each item with a user ID
-	preparedStatement.setInt(1, item.userID);
+	preparedStatement.setString(1, item.username);
 	preparedStatement.setString(2, item.itemTitle);
 	preparedStatement.setString(3, item.itemDescription);
 	//gets the local time. When this function is called, that means the user has submitted an item
@@ -250,43 +274,6 @@ public boolean insertItem(item item) throws SQLException {
     return rowInserted;
 	
 	
-}
-
-//Project Part 1 just says to initialize tables with at least 10 tuples, so I'm just adding 10 random items
-public void addItems() throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	String addItem1 = "INSERT INTO item VALUES('123456789','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
-	String addItem2 = "INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
-	String addItem3 = "INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem4 = "INSERT INTO item VALUES('123123123','Couch','Furniture','02/01/2019','300.00','Furniture');";
-	String addItem5 = "INSERT INTO item VALUES('231455153','Couch','Furniture','02/01/2019','300.00','Furniture');";
-	String addItem6 = "INSERT INTO item VALUES('555555555','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem7 = "INSERT INTO item VALUES('423465674','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
-	String addItem8 = "INSERT INTO item VALUES('343242351','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
-	String addItem9 = "INSERT INTO item VALUES('654764567','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem10 = "INSERT INTO item VALUES('235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
-	
-	try {
-		
-		
-		statement.executeUpdate(addItem1);
-		statement.executeUpdate(addItem2);
-		statement.executeUpdate(addItem3);
-		statement.executeUpdate(addItem4);
-		statement.executeUpdate(addItem5);
-		statement.executeUpdate(addItem6);
-		statement.executeUpdate(addItem7);
-		statement.executeUpdate(addItem8);
-		statement.executeUpdate(addItem9);
-		statement.executeUpdate(addItem10);
-	}
-	catch (SQLException e) {
-		
-	}
-	finally {
-		disconnect();
-	}	
 }
 
 //Project Part 2 --> Search function which displays all items under a certain category
@@ -314,16 +301,7 @@ public List<item> searchItem(String category) throws SQLException{
 			//if the category matches the parsed ones, then add that to the list
 			//of items to display
 			if(category.equals(parsedCategories[i])) {
-				int userID = resultSet.getInt("userID");
-				int itemID = resultSet.getInt("itemID");
-				String itemTitle = resultSet.getString("itemTitle");
-				String itemDescription = resultSet.getString("itemDescription");
-				String date = resultSet.getString("itemDate");
-				double itemPrice = resultSet.getDouble("itemPrice");
-				String itemCategory = resultSet.getString("itemCategory");
-				
-				item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-				listItems.add(items);	
+				listItems.add(resultSetItem(resultSet));
 				}	
 		}
 	}
@@ -343,19 +321,11 @@ public List<item> sortExpensive() throws SQLException {
 	
 	//this will go through the table and since they are sorted already
 	//so just prints the items
-	while(resultSet.next()){
-		
-		int userID = resultSet.getInt("userID");
-		int itemID = resultSet.getInt("itemID");
-		String itemTitle = resultSet.getString("itemTitle");
-		String itemDescription = resultSet.getString("itemDescription");
-		String date = resultSet.getString("itemDate");
-		double itemPrice = resultSet.getDouble("itemPrice");
-		String itemCategory = resultSet.getString("itemCategory");
-		
-		item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-		sortExpensive.add(items);		
+
+	while(resultSet.next()) {
+		sortExpensive.add(resultSetItem(resultSet));
 	}
+	
 	resultSet.close();
 	statement.close();
 	disconnect();
@@ -370,14 +340,16 @@ public void createUserTable() throws SQLException {
 	//the two statements required for making table
 	String dropUserTable = "DROP TABLE IF EXISTS users";
 	String createUserTable = "CREATE TABLE IF NOT EXISTS users" +
-			"(userID INTEGER AUTO_INCREMENT, " +
+			//Project 3 -- edited users so username is added
+			"(username VARCHAR(50) NOT NULL," + 
+			"userID INTEGER AUTO_INCREMENT, " +
 			"pass VARCHAR(20) NOT NULL, " +
 			"firstName VARCHAR(50) NOT NULL, " +
 			"lastName VARCHAR(50) NOT NULL, " +
 			"email VARCHAR(50) NOT NULL, " +
 			"gender VARCHAR(10) NOT NULL," +
 			"age INTEGER NOT NULL, " +
-			"PRIMARY KEY (userID));";
+			"PRIMARY KEY (username, userID);";
 	
 	try {
 	statement = (Statement)connect.createStatement();
@@ -669,27 +641,34 @@ public List<item> listAllItems() throws SQLException{
 	statement = (Statement) connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	
-	while(resultSet.next()){
-	
-		int userID = resultSet.getInt("userID");
-		int itemID = resultSet.getInt("itemID");
-		String itemTitle = resultSet.getString("itemTitle");
-		String itemDescription = resultSet.getString("itemDescription");
-		String date = resultSet.getString("itemDate");
-		double itemPrice = resultSet.getDouble("itemPrice");
-		String itemCategory = resultSet.getString("itemCategory");
-		
-		item items = new item(userID, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-		listItems.add(items);		
+	//listItems = resultListItem(resultSet);
+	while(resultSet.next()) {
+		listItems.add(resultSetItem(resultSet));
 	}
+	
 	resultSet.close();
 	statement.close();
 	disconnect();
 	return listItems;
 }
 
-//this is for listing the most expensive items in each category
-
+//correct refactoring of getting all of the resultSet items into the new list
+//I noticed this code was being used in multiple places throughout the project,
+//So I refactored it into one spot
+public item resultSetItem(ResultSet resultSet) throws SQLException {
+	
+	String username = resultSet.getString("username");
+	int itemID = resultSet.getInt("itemID");
+	String itemTitle = resultSet.getString("itemTitle");
+	String itemDescription = resultSet.getString("itemDescription");
+	String date = resultSet.getString("itemDate");
+	double itemPrice = resultSet.getDouble("itemPrice");
+	String itemCategory = resultSet.getString("itemCategory");
+	
+	item items = new item(username, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+	
+	return items;
+}
 
 //this is for listing the users
 public List<users> listAllUsers() throws SQLException{
@@ -700,22 +679,28 @@ public List<users> listAllUsers() throws SQLException{
 	ResultSet resultSet = statement.executeQuery(sql);
 	
 	while(resultSet.next()){
-	
-		int userID = resultSet.getInt("userID");
-		String pass = resultSet.getString("pass");
-		String firstName = resultSet.getString("firstName");
-		String lastName = resultSet.getString("lastName");
-		String email = resultSet.getString("email");
-		String gender = resultSet.getString("gender");
-		int age = resultSet.getInt("age");
-		
-		users users = new users(userID, pass, firstName, lastName, email, gender,age);
-		listUsers.add(users);		
+		listUsers.add(resultSetUser(resultSet));		
 	}
 	resultSet.close();
 	statement.close();
 	disconnect();
 	return listUsers;
+}
+
+public users resultSetUser(ResultSet resultSet) throws SQLException {
+	
+	int userID = resultSet.getInt("userID");
+	String username = resultSet.getString("username");
+	String pass = resultSet.getString("pass");
+	String firstName = resultSet.getString("firstName");
+	String lastName = resultSet.getString("lastName");
+	String email = resultSet.getString("email");
+	String gender = resultSet.getString("gender");
+	int age = resultSet.getInt("age");
+	
+	users users = new users(userID, username, pass, firstName, lastName, email, gender,age);
+	return users;
+	
 }
 
 //this is for listing the reviews
@@ -749,13 +734,29 @@ protected void disconnect() throws SQLException {
 	
 }
 
-private void checkTwoHighest() throws SQLException {
-	
-	String sql = "SELECT * FROM users";
+
+//Project 3 Code Starts Here
+public List<item> excellentGoodComments() throws SQLException {
+	List<item> excellentGood = new ArrayList<item>();
+	//SQL to select the items that have only received a good or excellent review
+	//Select the item where the username is selected
+	String sql = "SELECT * FROM item where username = ? AND itemID IN"
+			//select the itemID from review table 
+			+ "(SELECT DISTINCT itemID FROM review WHERE itemID NOT IN"
+			+ "SELECT DISTINCT itemID from review"
+			+ "WHERE remark = Excellent OR remark = Good";
 	connect_function();
 	statement = (Statement) connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	
+	while(resultSet.next()){
+		excellentGood.add(resultSetItem(resultSet));
+	}
+	
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return excellentGood;
 }
 
 }

@@ -120,7 +120,36 @@ public class ControlServlett extends HttpServlet{
         	case "/displayUser":
         		displayUser(request, response);
         		break;
-        }
+        		
+        		//Project 3 cases
+        	case "/sameDay":
+        		sameDay(request,response);
+        		break;
+        	case "/excellentGood":
+        		excellentGood(request,response);
+        		break;
+        	case "postMostItems":
+        		postMostItems(request,response);
+        		break;
+        	case "usersFavorited":
+        		usersFavorited(request,response);
+        		break;
+        	case "noExcellentItems":
+        		noExcellentItems(request,response);
+        		break;
+        	case "pNoPoorReview":
+        		pNoPoorReview(request,response);
+        		break;
+        	case "pAllPoorReview":
+        		pAllPoorReview(request,response);
+        		break;
+        	case "rNoPoorReview":
+        		rNoPoorReview(request,response);
+        		break;
+        	case "userPairExcellent":
+        		userPairExcellent(request,response);
+        		break;
+        	}
         }
         catch (SQLException ex) {
             throw new ServletException(ex);
@@ -324,6 +353,7 @@ public class ControlServlett extends HttpServlet{
     private void register(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     	
+    		String username = request.getParameter("username");
     		String email = request.getParameter("email");
     		String password = request.getParameter("password");
     		String firstName = request.getParameter("firstName");
@@ -332,7 +362,7 @@ public class ControlServlett extends HttpServlet{
     		int age = Integer.parseInt(request.getParameter("age"));
     		
     		//add the user to the database
-    		users registerUser = new users(password, firstName, lastName, email, gender, age);
+    		users registerUser = new users(username, password, firstName, lastName, email, gender, age);
     		InitDatabase.addOneUser(registerUser);
     		userID = InitDatabase.getCurrentID(email, password);
     		usersession = request.getSession();
@@ -367,6 +397,7 @@ public class ControlServlett extends HttpServlet{
     	
     	String email = request.getParameter("email");
     	if(InitDatabase.checkDuplicateEmail(email) == true) {
+    		//if returns true then return to register because emails do not match
     		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
     		dispatcher.forward(request, response);
     	}
@@ -376,4 +407,48 @@ public class ControlServlett extends HttpServlet{
     	
         }
     
+    public void sameDay(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void excellentGood(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void postMostItems(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void usersFavorited(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void noExcellentItems(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void pNoPoorReview(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void pAllPoorReview(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void rNoPoorReview(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
+    
+    public void userPairExcellent(HttpServletRequest request, HttpServletResponse response)
+        	throws SQLException, IOException, ServletException {
+    	
+    }
 }
