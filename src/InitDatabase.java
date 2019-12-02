@@ -75,10 +75,9 @@ public void createItemTable() throws SQLException {
 	statement = (Statement)connect.createStatement();
 	String dropItemTable = "DROP TABLE IF EXISTS item";
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
-			
 			//Project Part 2, editing statement so that AUTO_INCREMENT is added
 			//Project Part 2, editing statement so that username is incorporated for all items
-			"(username VARCHAR(50) NOT NULL," + 
+			"(username VARCHAR(50) NOT NULL, " + 
 			"itemID INTEGER AUTO_INCREMENT, " +
 			"itemTitle VARCHAR(50) NOT NULL," +
 			"itemDescription VARCHAR(100), " +
@@ -104,16 +103,16 @@ public void createItemTable() throws SQLException {
 public void addItems() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String addItem1 = "INSERT INTO item VALUES('123456789','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
-	String addItem2 = "INSERT INTO item VALUES('987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
-	String addItem3 = "INSERT INTO item VALUES('121212121','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem4 = "INSERT INTO item VALUES('123123123','Couch','Furniture','02/01/2019','300.00','Furniture');";
-	String addItem5 = "INSERT INTO item VALUES('231455153','Couch','Furniture','02/01/2019','300.00','Furniture');";
-	String addItem6 = "INSERT INTO item VALUES('555555555','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem7 = "INSERT INTO item VALUES('423465674','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
-	String addItem8 = "INSERT INTO item VALUES('343242351','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
-	String addItem9 = "INSERT INTO item VALUES('654764567','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem10 = "INSERT INTO item VALUES('235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
+	String addItem1 = "INSERT INTO item VALUES('AA1','123456789','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
+	String addItem2 = "INSERT INTO item VALUES('AA2','987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
+	String addItem3 = "INSERT INTO item VALUES('AA3','121212121','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
+	String addItem4 = "INSERT INTO item VALUES('AA4','123123123','Couch','Furniture','02/01/2019','300.00','Furniture');";
+	String addItem5 = "INSERT INTO item VALUES('AA5','231455153','Couch','Furniture','02/01/2019','300.00','Furniture');";
+	String addItem6 = "INSERT INTO item VALUES('AA6','555555555','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
+	String addItem7 = "INSERT INTO item VALUES('AA7','423465674','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
+	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
+	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
+	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -255,7 +254,7 @@ public boolean insertItem(item item) throws SQLException {
 	//need to insert conditional which will limit the amount of times a person can post a review
 	
 	connect_function();         
-	String sql = "INSERT INTO item(userID, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
+	String sql = "INSERT INTO item(username, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 	//Project 2 requirement for favorite users, need to associate each item with a user ID
 	preparedStatement.setString(1, item.username);
@@ -368,16 +367,16 @@ public void addUsers() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	//adding the items
-	String addUsers1 = "INSERT INTO users VALUES('12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21');";
-	String addUsers2 = "INSERT INTO users VALUES('54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21');";
-	String addUsers3 = "INSERT INTO users VALUES('12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21');";
-	String addUsers4 = "INSERT INTO users VALUES('16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21');";
-	String addUsers5 = "INSERT INTO users VALUES('89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21');";
-	String addUsers6 = "INSERT INTO users VALUES('00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21');";
-	String addUsers7 = "INSERT INTO users VALUES('12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21');";
-	String addUsers8 = "INSERT INTO users VALUES('55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
-	String addUsers9 = "INSERT INTO users VALUES('19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
-	String addUsers10 = "INSERT INTO users VALUES('11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
+	String addUsers1 = "INSERT INTO users VALUES('AA1','12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21');";
+	String addUsers2 = "INSERT INTO users VALUES('AA2','54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21');";
+	String addUsers3 = "INSERT INTO users VALUES('AA3','12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21');";
+	String addUsers4 = "INSERT INTO users VALUES('AA4','16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21');";
+	String addUsers5 = "INSERT INTO users VALUES('AA5','89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21');";
+	String addUsers6 = "INSERT INTO users VALUES('AA6','00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21');";
+	String addUsers7 = "INSERT INTO users VALUES('AA7','12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21');";
+	String addUsers8 = "INSERT INTO users VALUES('AA8','55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
+	String addUsers9 = "INSERT INTO users VALUES('AA9','19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
+	String addUsers10 = "INSERT INTO users VALUES('AA10','11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
 			
 	try {
 		statement.executeUpdate(addUsers1);
@@ -665,7 +664,7 @@ public item resultSetItem(ResultSet resultSet) throws SQLException {
 	double itemPrice = resultSet.getDouble("itemPrice");
 	String itemCategory = resultSet.getString("itemCategory");
 	
-	item items = new item(username, itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+	item items = new item(username,itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
 	
 	return items;
 }

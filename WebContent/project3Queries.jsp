@@ -22,15 +22,17 @@
 <a href = "displayFavoriteUser">Favorite Sellers</a>
 <a href = "searchItem.jsp">Search for Item</a>
 <h2>Show Queries Menu: click on any of the links to be redirected</h2>
-<a href = "sameDay.jsp">List users who posted two items that are posted on the same day</a><br>
-<a href = "excellentGood.jsp">List all items posted by a user which only have "Excellent" or "Good" comments</a><br>
-<a href = "postMostItems.jsp">List the user who posted the most items since 5/01/18</a><br>
-<a href = "usersFavorited.jsp">List other users who are both favorited by user X and Y</a><br>
-<a href = "noExcellentItems.jsp">List users who have no Excellent items</a><br>
-<a href = "pNoPoorReview.jsp">List users who have never posted a Poor review</a><br>
-<a href = "pAllPoorReview.jsp">List users who have only posted poor reviews</a><br>
-<a href = "rNoPoorReview.jsp">List users who have never received any poor reviews</a><br>
-<a href = "userPairExcellent.jsp">List a user pair such that they always gave each other excellent
-									Reviews for every item they posted.</a><br>
+<table border = "1">
+<tr><td><a href = "part3_2.jsp">List users who posted two items that are posted on the same day</a></td></tr>
+<tr><td><a href = "part3_3.jsp">List all items posted by a user which only have "Excellent" or "Good" comments</a></td></tr>
+<tr><td><a href = "part3_4.jsp">List the user who posted the most items since 5/01/18</a></td></tr>
+<tr><td><a href = "part3_5.jsp">List other users who are both favorited by user X and Y</a></td></tr>
+<tr><td><a href = "part3_6.jsp">List users who have no Excellent items</a></td></tr>
+<tr><td><a href = "part3_7.jsp">List users who have never posted a Poor review</a></td></tr>
+<tr><td><a href = "part3_8.jsp">List users who have only posted poor reviews</a></td></tr>
+<tr><td><a href = "part3_9.jsp">List users who have never received any poor reviews</a></td></tr>
+<tr><td><a href = "part3_10.jsp">List a user pair such that they always gave each other excellent
+									Reviews for every item they posted.</a></td></tr>
+</table>
 </body>
 </html>

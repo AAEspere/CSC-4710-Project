@@ -29,6 +29,7 @@
 <table border="1" cellpadding="5">
             <caption>List of Items</caption>
             <tr>
+            	<th>Username</th>
                 <th>ID</th>
                 <th>Title</th>
                 <th>Description</th>
@@ -40,6 +41,7 @@
             </tr>
             <c:forEach var="item" items = "${listItem}">
             <tr>
+            		<td><c:out value="${item.username}" /></td>
                     <td><c:out value="${item.itemID}" /></td>
                     <td><c:out value="${item.itemTitle}" /></td>
                     <td><c:out value="${item.itemDescription}" /></td>
