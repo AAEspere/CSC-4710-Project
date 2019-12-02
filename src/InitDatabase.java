@@ -103,16 +103,16 @@ public void createItemTable() throws SQLException {
 public void addItems() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String addItem1 = "INSERT INTO item VALUES('AA1','123456789','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
-	String addItem2 = "INSERT INTO item VALUES('AA2','987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
-	String addItem3 = "INSERT INTO item VALUES('AA3','121212121','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem4 = "INSERT INTO item VALUES('AA4','123123123','Couch','Furniture','02/01/2019','300.00','Furniture');";
-	String addItem5 = "INSERT INTO item VALUES('AA5','231455153','Couch','Furniture','02/01/2019','300.00','Furniture');";
-	String addItem6 = "INSERT INTO item VALUES('AA6','555555555','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem7 = "INSERT INTO item VALUES('AA7','423465674','Cactus','Pointy Plant','06/21/1998','20.00','Plants');";
-	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Soccer Ball', 'A ball to kick','06/09/1997','3.00','Outdoors');";
-	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";
-	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Video Game','New Video Game', '01/01/2019','60.00','Electronics');";		
+	String addItem1 = "INSERT INTO item VALUES('AA1','123456789','Cactus','Pointy Plant','06/21/1998','20.00','plants');";
+	String addItem2 = "INSERT INTO item VALUES('AA2','987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','outdoors');";
+	String addItem3 = "INSERT INTO item VALUES('AA3','121212121','Video Game','New Video Game', '01/01/2019','60.00','electronics');";
+	String addItem4 = "INSERT INTO item VALUES('AA4','123123123','Coffee Table','Coffee Table','02/01/2019','100.00','furniture');";
+	String addItem5 = "INSERT INTO item VALUES('AA5','231455153','Couch','Furniture','02/01/2019','300.00','furniture');";
+	String addItem6 = "INSERT INTO item VALUES('AA6','555555555','Nintendo Switch','Newest Nintendo System', '01/01/2019','300.00','electronics,video games');";
+	String addItem7 = "INSERT INTO item VALUES('AA7','423465674','Milk','2% Milk','06/21/1998','2.00','food,produce');";
+	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Roomba', 'Self Operating Vaccuum Cleaner','06/09/1997','3.00','electronics,home');";
+	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Macbook Air','2017 Macbook Air', '01/01/2019','649.00','electronics,computers');";
+	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Book','Book', '01/01/2019','10.00','reading');";		
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -173,7 +173,7 @@ public boolean addFavoriteItem(favoriteItem favoriteItem) throws SQLException{
 	preparedStatement.setInt(2, favoriteItem.itemID);
 	boolean rowInserted = preparedStatement.executeUpdate() > 0;
 	preparedStatement.close();
-	//return true and redirect with sucessful add message, or return false
+	//return true and redirect with successful add message, or return false
 	//if fails and redirect with error message
 	return rowInserted;
 }
@@ -348,7 +348,8 @@ public void createUserTable() throws SQLException {
 			"email VARCHAR(50) NOT NULL, " +
 			"gender VARCHAR(10) NOT NULL," +
 			"age INTEGER NOT NULL, " +
-			"PRIMARY KEY (username, userID);";
+			"UNIQUE (username), " +
+			"PRIMARY KEY (userID));";
 	
 	try {
 	statement = (Statement)connect.createStatement();
@@ -401,14 +402,15 @@ public void addUsers() throws SQLException {
 public boolean addOneUser(users user) throws SQLException {
 	//adding a singular user, this is to add the user who registers onto the server
 	connect_function();         
-	String sql = "INSERT INTO users(pass, firstName, lastName, email, gender, age) VALUES (?,?,?,?,?,?)";
+	String sql = "INSERT INTO users(username, pass, firstName, lastName, email, gender, age) VALUES (?,?,?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, user.pass);
-	preparedStatement.setString(2, user.firstName);
-	preparedStatement.setString(3, user.lastName);
-	preparedStatement.setString(4, user.email);
-	preparedStatement.setString(5, user.gender);
-	preparedStatement.setInt(6, user.age);
+	preparedStatement.setString(1, user.username);
+	preparedStatement.setString(2, user.pass);
+	preparedStatement.setString(3, user.firstName);
+	preparedStatement.setString(4, user.lastName);
+	preparedStatement.setString(5, user.email);
+	preparedStatement.setString(6, user.gender);
+	preparedStatement.setInt(7, user.age);
 	
     boolean rowInserted = preparedStatement.executeUpdate() > 0;
     preparedStatement.close();
@@ -416,7 +418,7 @@ public boolean addOneUser(users user) throws SQLException {
     return rowInserted;
 }
 
-public boolean checkDuplicateEmail(String email) throws SQLException {
+public boolean checkDuplicateUsername(String username) throws SQLException {
 	
 	String sql = "SELECT * FROM users";
 	connect_function();
@@ -425,8 +427,8 @@ public boolean checkDuplicateEmail(String email) throws SQLException {
 	
 	while(resultSet.next()) {
 		
-		String currentEmail = resultSet.getString("email");
-		if(currentEmail == email) {
+		String currentUsername = resultSet.getString("username");
+		if(currentUsername == username) {
 			return true;
 		}
 		
@@ -529,13 +531,13 @@ public void createReviewTable() throws SQLException {
 	//the two statements required for making table
 	String dropReviewTable = "DROP TABLE IF EXISTS reviews";
 	String createReviewTable = "CREATE TABLE IF NOT EXISTS reviews" +
-			"(itemID INTEGER, " +
-			"userID INTEGER, " +
+			"(username VARCHAR(50) NOT NULL, " +
+			"itemID INTEGER NOT NULL, " +
+			"itemTitle VARCHAR(50) NOT NULL, " +
 			"score VARCHAR(10) NOT NULL, " +
-			"remark VARCHAR(100));";
-			//"CONSTRAINT IID FOREIGN KEY (itemID) REFERENCES item(itemID);";
-			//"CONSTRAINT UID FOREIGN KEY (userID) REFERENCES user(userID), " +
-			//"PRIMARY KEY (itemID, userID));";
+			"remark VARCHAR(100) NOT NULL," +
+			"CONSTRAINT f_key_itemID FOREIGN KEY (itemID) REFERENCES item(itemID)," +
+			"CONSTRAINT f_key_username FOREIGN KEY (username) REFERENCES users(username));";
 	
 	try {
 	statement.executeUpdate(dropReviewTable);
@@ -552,16 +554,16 @@ public void createReviewTable() throws SQLException {
 public void addReviews() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String addReviews1 = "INSERT INTO reviews VALUES('123456789','12345','Poor','Example Review');";
-	String addReviews2 = "INSERT INTO reviews VALUES('444444444','12345','Excellent','Example Review');";
-	String addReviews3 = "INSERT INTO reviews VALUES('6666666665','12345','Fair','Example Review');";
-	String addReviews4 = "INSERT INTO reviews VALUES('101010101','12345','Excellent','Example Review');";
-	String addReviews5 = "INSERT INTO reviews VALUES('123456789','89231','Excellent','Example Review');";
-	String addReviews6 = "INSERT INTO reviews VALUES('444444444','89231','Excellent','Example Review');";
-	String addReviews7 = "INSERT INTO reviews VALUES('123456789','00000','Excellent','Example Review');";
-	String addReviews8 = "INSERT INTO reviews VALUES('444444444','00000','Fair','Example Review');";
-	String addReviews9 = "INSERT INTO reviews VALUES('123456789','11111','Fair','Example Review');";
-	String addReviews10 = "INSERT INTO reviews VALUES('444444444','55555','Fair','Example Review');";
+	String addReviews1 = "INSERT INTO reviews VALUES('AA4','121212121','Video Game','Poor','Example Review');";
+	String addReviews2 = "INSERT INTO reviews VALUES('AA4','555555555','Nintendo Switch','Excellent','Example Review');";
+	String addReviews3 = "INSERT INTO reviews VALUES('AA2','654764567','Macbook Air','Excellent','Example Review');";
+	String addReviews4 = "INSERT INTO reviews VALUES('AA2','123123123','Coffee Table','Excellent','Example Review');";
+	String addReviews5 = "INSERT INTO reviews VALUES('AA9','987654321','Soccer Ball','Excellent','Example Review');";
+	String addReviews6 = "INSERT INTO reviews VALUES('AA1','555555555','Nintendo Switch','Excellent','Example Review');";
+	String addReviews7 = "INSERT INTO reviews VALUES('AA1','121212121','Video Game','Poor','Example Review');";
+	String addReviews8 = "INSERT INTO reviews VALUES('AA6','231455153','Couch','Fair','Example Review');";
+	String addReviews9 = "INSERT INTO reviews VALUES('AA3','423465674','Milk','Poor','SPOILED');";
+	String addReviews10 = "INSERT INTO reviews VALUES('AA1','987654321','Soccer Ball','Excellent','Example Review');";
 	
 	try {
 		statement.executeUpdate(addReviews1);
@@ -585,14 +587,15 @@ public void addReviews() throws SQLException {
 
 public boolean insertReview(reviews reviews) throws SQLException{
 	connect_function();         
-	String sql = "INSERT INTO reviews(itemID, userID, score, remark) "
-			+ "VALUES(?,?,?,?)";
+	String sql = "INSERT INTO reviews(username, itemID, itemTitle, score, remark) "
+			+ "VALUES(?,?,?,?,?)";
 	
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setInt(1, reviews.itemID);
-	preparedStatement.setInt(2, reviews.userID);
-	preparedStatement.setString(3, reviews.score);
-	preparedStatement.setString(4, reviews.remark);
+	preparedStatement.setString(1, reviews.username);
+	preparedStatement.setInt(2, reviews.itemID);
+	preparedStatement.setString(3, reviews.itemTitle);
+	preparedStatement.setString(4, reviews.score);
+	preparedStatement.setString(5, reviews.remark);
 //	preparedStatement.executeUpdate();
 	
     boolean rowInserted = preparedStatement.executeUpdate() > 0;
@@ -619,17 +622,40 @@ public boolean loginCheck(String email, String pass) throws SQLException {
 public int getCurrentID(String email, String pass) throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String listUsers = "SELECT * FROM users";
-	ResultSet resultSet = statement.executeQuery(listUsers);
+	String sql = "SELECT * FROM users WHERE email = '?' AND pass = '?'";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, email);
+	preparedStatement.setString(2,pass);
+	ResultSet resultSet = preparedStatement.executeQuery(sql);
 	//if email and password equal the one entered, get the userID also. 
-	while(resultSet.next()) {
-		if(resultSet.getString("email").equals(email)
-		&& resultSet.getString("pass").equals(pass)) {
+	//while(resultSet.next()) {
+		//if(resultSet.getString("email").equals(email)
+		//&& resultSet.getString("pass").equals(pass)) {
 			int userID = resultSet.getInt("userID");
 			return userID;
-		}
-	}
-	return 0;
+	//	}
+	//}
+	//return 0;
+}
+
+//getting username
+public String getCurrentUsername(String email, String pass) throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String sql = "SELECT * FROM users WHERE email = '?' AND pass = '?'";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, email);
+	preparedStatement.setString(2,pass);
+	ResultSet resultSet = preparedStatement.executeQuery(sql);
+	//if email and password equal the one entered, get the userID also. 
+	//while(resultSet.next()) {
+		//if(resultSet.getString("email").equals(email)
+		//&& resultSet.getString("pass").equals(pass)) {
+			String username = resultSet.getString("username");
+			return username;
+		//}
+//	}
+	//return null;
 }
 
 //this is for listing the items table
@@ -711,13 +737,14 @@ public List<reviews> listAllReviews() throws SQLException{
 	ResultSet resultSet = statement.executeQuery(sql);
 	
 	while(resultSet.next()){
-	
+		
+		String username = resultSet.getString("username");
 		int itemID = resultSet.getInt("itemID");
-		int userID = resultSet.getInt("userID");
+		String itemTitle = resultSet.getString("itemTitle");
 		String score = resultSet.getString("score");
 		String remark = resultSet.getString("remark");
 		
-		reviews review = new reviews(itemID, userID, score, remark);
+		reviews review = new reviews(username, itemID, itemTitle, score, remark);
 		listReviews.add(review);		
 	}
 	resultSet.close();

@@ -31,10 +31,10 @@ public class ControlServlett extends HttpServlet{
 	private HttpSession usersession;
 	//gets the current userID when the user logs in or signs up
 	int userID = 0;
-	int currentReviewID = 0;
 	int favUserID = 0;
 	int userItem = 0;
 	int userReview = 0;
+	String currentUser;
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
@@ -68,7 +68,7 @@ public class ControlServlett extends HttpServlet{
         	case "/register":
         		//When I register now, I need to check for matching password and duplicate email
         		matchingPassword(request,response);
-        		duplicateEmail(request, response);
+        		duplicateUsername(request, response);
         		register(request,response);
         		showAllInformation(request, response);
         		break;
@@ -315,7 +315,7 @@ public class ControlServlett extends HttpServlet{
     private void reviewID(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	
-    		currentReviewID = Integer.parseInt(request.getParameter("itemID"));
+    		//currentReviewID = Integer.parseInt(request.getParameter("itemID"));
     		RequestDispatcher dispatcher = request.getRequestDispatcher("writeReview.jsp");
     		dispatcher.forward(request, response);
     	
@@ -328,9 +328,9 @@ public class ControlServlett extends HttpServlet{
     		String score = request.getParameter("remark");
     		String remark = request.getParameter("review");
     		
-    		reviews addReview = new reviews(currentReviewID, userID, score, remark);
+    		//reviews addReview = new reviews(currentReviewID, userID, score, remark);
     		
-    		InitDatabase.insertReview(addReview);
+    		//InitDatabase.insertReview(addReview);
     		userReview++;
     		}
     		else {
@@ -340,12 +340,15 @@ public class ControlServlett extends HttpServlet{
         
     private void login(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-			String email = request.getParameter("email");
+    		//Most websites have email to log in so I use email only
+    		String email = request.getParameter("email");
 			String pass = request.getParameter("password");
 			if(InitDatabase.loginCheck(email, pass) == true) {
 				userID = InitDatabase.getCurrentID(email, pass);
+				currentUser = InitDatabase.getCurrentUsername(email, pass);
 				usersession = request.getSession();
-				usersession.setAttribute("currentUser", email);
+				System.out.print(currentUser);
+				System.out.print(userID);
 			}
 
     }
@@ -353,6 +356,7 @@ public class ControlServlett extends HttpServlet{
     private void register(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     	
+    		//for registering the user
     		String username = request.getParameter("username");
     		String email = request.getParameter("email");
     		String password = request.getParameter("password");
@@ -364,9 +368,14 @@ public class ControlServlett extends HttpServlet{
     		//add the user to the database
     		users registerUser = new users(username, password, firstName, lastName, email, gender, age);
     		InitDatabase.addOneUser(registerUser);
+    		
+    		//get the userID and the username of the user
     		userID = InitDatabase.getCurrentID(email, password);
     		usersession = request.getSession();
-    		usersession.setAttribute("currentUser", email);
+    		usersession.setAttribute("currentUser", username);
+    		currentUser = (String)usersession.getAttribute("currentUser");
+			System.out.print(currentUser);
+			System.out.print(userID);
     }
     
     //Project Part 2 - sorting the most expensive items in a category
@@ -392,11 +401,11 @@ public class ControlServlett extends HttpServlet{
     	
     }
     
-    public void duplicateEmail(HttpServletRequest request, HttpServletResponse response)
+    public void duplicateUsername(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
     	
-    	String email = request.getParameter("email");
-    	if(InitDatabase.checkDuplicateEmail(email) == true) {
+    	String username = request.getParameter("username");
+    	if(InitDatabase.checkDuplicateUsername(username) == true) {
     		//if returns true then return to register because emails do not match
     		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
     		dispatcher.forward(request, response);

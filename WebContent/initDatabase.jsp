@@ -68,6 +68,7 @@
 <table border="1" cellpadding="5">
             <caption>List of Users</caption>
             <tr>
+            	<th>Username</th>
                 <th>ID</th>
                 <th>Password</th>
                 <th>First Name</th>
@@ -79,6 +80,7 @@
             </tr>
             <c:forEach var="users" items = "${listUsers}">
             <tr>
+            		<td><c:out value="${users.username}" /></td>
                     <td><c:out value="${users.userID}" /></td>
                     <td><c:out value="${users.pass}" /></td>
                     <td><c:out value="${users.firstName}" /></td>
@@ -100,15 +102,17 @@
 <table border="1" cellpadding="5">
             <caption>List of Reviews</caption>
             <tr>
-                <th>Item ID</th>
-                <th>User ID</th>
+            	<th>Username</th>
+            	<th>Item ID</th>
+            	<th>Item Title</th>
                 <th>Score</th>
                 <th>Remark</th>
             </tr>
             <c:forEach var="reviews" items = "${listReviews}">
             <tr>
+            		<td><c:out value="${reviews.username}" /></td>
                     <td><c:out value="${reviews.itemID}" /></td>
-                    <td><c:out value="${reviews.userID}" /></td>
+                    <td><c:out value="${reviews.itemTitle}" /></td>
                     <td><c:out value="${reviews.score}" /></td>
                     <td><c:out value="${reviews.remark}" /></td>
                     </tr>

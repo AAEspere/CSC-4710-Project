@@ -1,13 +1,15 @@
 
 public class reviews {
+	protected String username;
 	protected int itemID;
-	protected int userID;
+	protected String itemTitle;
 	protected String score;
 	protected String remark;
 	
-	reviews(int itemID, int userID, String score, String remark) {
+	reviews(String username, int itemID, String itemTitle, String score, String remark) {
+		this.username = username;
 		this.itemID = itemID;
-		this.userID = userID;
+		this.itemTitle = itemTitle;
 		this.score = score;
 		this.remark = remark;
 		
@@ -17,19 +19,43 @@ public class reviews {
 		this.remark = remark;
 	}
 	
-	public String getScore() {
+	public String getusername() {
+		return username;
+	}
+	
+	public void setusername(String username) {
+		this.username = username;
+	}
+	
+	public int getitemID() {
+		return itemID;
+	}
+	
+	public void setitemID(int itemID) {
+		this.itemID = itemID;
+	}
+	
+	public String getitemTitle() {
+		return itemTitle;
+	}
+	
+	public void setitemTitle(String itemTitle) {
+		this.itemTitle = itemTitle;
+	}
+	
+	public String getscore() {
 		return score;
 	}
 	
-	public void setScore(String score) {
+	public void setscore(String score) {
 		this.score = score;
 	}
 	
-	public String getRemark() {
+	public String getremark() {
 		return remark;
 	}
 	
-	public void setRemark(String remark) {
+	public void setremark(String remark) {
 		this.remark = remark;
 	}
 	
