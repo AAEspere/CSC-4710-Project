@@ -252,7 +252,6 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 public boolean insertItem(item item) throws SQLException {
 	
 	//need to insert conditional which will limit the amount of times a person can post a review
-	
 	connect_function();         
 	String sql = "INSERT INTO item(username, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -265,11 +264,9 @@ public boolean insertItem(item item) throws SQLException {
 	preparedStatement.setString(4,java.time.LocalDate.now().toString());
 	preparedStatement.setDouble(5,item.itemPrice);
 	preparedStatement.setString(6,item.itemCategory);
-//	preparedStatement.executeUpdate();
 	
     boolean rowInserted = preparedStatement.executeUpdate() > 0;
     preparedStatement.close();
-//    disconnect();
     return rowInserted;
 	
 	

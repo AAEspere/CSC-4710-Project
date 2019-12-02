@@ -34,7 +34,7 @@ public class ControlServlett extends HttpServlet{
 	int favUserID = 0;
 	int userItem = 0;
 	int userReview = 0;
-	String currentUser;
+	String currentUser = "";
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
@@ -194,7 +194,7 @@ public class ControlServlett extends HttpServlet{
     	
     	//had to create a new constructor in this case because the itemID will be autoincremented
     	//and the date will be added within the insert function
-    	item insertItem = new item(itemName, description, price, category);
+    	item insertItem = new item(currentUser, itemName, description, price, category);
     	
     	//indication if the item was successfully added
     	if(InitDatabase.insertItem(insertItem) == true) {
@@ -347,8 +347,6 @@ public class ControlServlett extends HttpServlet{
 				userID = InitDatabase.getCurrentID(email, pass);
 				currentUser = InitDatabase.getCurrentUsername(email, pass);
 				usersession = request.getSession();
-				System.out.print(currentUser);
-				System.out.print(userID);
 			}
 
     }

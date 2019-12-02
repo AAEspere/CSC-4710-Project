@@ -21,12 +21,13 @@ public class item {
 		this.username = username;
 	}
 	
-	public item(String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
+	public item(String username, String itemTitle, String itemDescription, double itemPrice, String itemCategory) {
+		this.username = username;
 		this.itemTitle = itemTitle;
 		this.itemDescription = itemDescription;
-		this.date = date;
 		this.itemPrice = itemPrice;
 		this.itemCategory = itemCategory;
+
 	}
 	
 	public item(String itemTitle, String itemDescription, double itemPrice, String itemCategory) {
