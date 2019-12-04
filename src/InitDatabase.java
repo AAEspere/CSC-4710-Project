@@ -275,6 +275,7 @@ public boolean insertItem(item item) throws SQLException {
 //Project Part 2 --> Search function which displays all items under a certain category
 //This should be similar to the listItems function because instead of listing all items
 //you are listing all items that match a specific category
+//STILL WORKS CORRECTLY -- NO NEED TO CHANGE
 public List<item> searchItem(String category) throws SQLException{
 	
 	List<item> listItems = new ArrayList<item>();
@@ -307,6 +308,7 @@ public List<item> searchItem(String category) throws SQLException{
 	return listItems;
 }
 
+//still works correctly but need to sort by category
 public List<item> sortExpensive() throws SQLException {
 	
 	List<item> sortExpensive = new ArrayList<item>();
@@ -607,41 +609,35 @@ public boolean loginCheck(String email, String pass) throws SQLException {
 	statement = (Statement)connect.createStatement();
 	String listUsers = "SELECT * FROM users";
 	ResultSet resultSet = statement.executeQuery(listUsers);
-	while(resultSet.next()) {
+	return false;
+	/*while(resultSet.next()) {
 		if(resultSet.getString("email").equals(email) 
 		&& resultSet.getString("pass").equals(pass)) {
 			return true;
 		}
-	}
-	return false;
+	}*/
 }
 
 public int getCurrentID(String email, String pass) throws SQLException {
+	
 	connect_function();
-	statement = (Statement)connect.createStatement();
 	String sql = "SELECT * FROM users WHERE email = '?' AND pass = '?'";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, email);
+	preparedStatement.setString(1,email);
 	preparedStatement.setString(2,pass);
 	ResultSet resultSet = preparedStatement.executeQuery(sql);
-	//if email and password equal the one entered, get the userID also. 
-	//while(resultSet.next()) {
-		//if(resultSet.getString("email").equals(email)
-		//&& resultSet.getString("pass").equals(pass)) {
-			int userID = resultSet.getInt("userID");
-			return userID;
-	//	}
-	//}
-	//return 0;
+	//Should return one result, which is the one you need to grab the userID from
+	int userID = resultSet.getInt("userID");
+	return userID;
 }
 
 //getting username
 public String getCurrentUsername(String email, String pass) throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String sql = "SELECT * FROM users WHERE email = '?' AND pass = '?'";
+	String sql = "SELECT * FROM users WHERE email = ? AND pass = ?";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, email);
+	preparedStatement.setString(1,email);
 	preparedStatement.setString(2,pass);
 	ResultSet resultSet = preparedStatement.executeQuery(sql);
 	//if email and password equal the one entered, get the userID also. 

@@ -15,8 +15,9 @@
 </div>
 <div class = "clearboth" style ="height: 150px"></div>
 <div id = "loginBlock">
-	<form action = "login" method = "post">
-		<input type = "text" name = "username" placeholder = "email" id = "LRFillin"><br>
+	<form action = "login">
+	<!--The name for this input used to be email, but I realized it makes more sense for user to use their email -->
+		<input type = "text" name = "email" placeholder = "email" id = "LRFillin"><br>
 		<input type = "password" name = "password" placeholder = "password" id = "LRFillin"><br>
 		<input type = "submit" value = "LOGIN" id = "LRSubmit">
 	</form>

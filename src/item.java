@@ -21,6 +21,8 @@ public class item {
 		this.username = username;
 	}
 	
+	//constructor required when inserting an item: them itemID is generateed, and the date is taken from the time of posting
+	//so they are not required just yet.
 	public item(String username, String itemTitle, String itemDescription, double itemPrice, String itemCategory) {
 		this.username = username;
 		this.itemTitle = itemTitle;

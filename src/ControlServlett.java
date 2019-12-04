@@ -63,7 +63,6 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/login":
         		login(request,response);
-        		showAllInformation(request, response);
         		break;
         	case "/register":
         		//When I register now, I need to check for matching password and duplicate email
@@ -155,17 +154,20 @@ public class ControlServlett extends HttpServlet{
             throw new ServletException(ex);
         }
     }
+    //I feel like this is working correctly
     private void initDatabase(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
             	InitDatabase.createDatabase();
-            	InitDatabase.createItemTable();
-            	InitDatabase.addItems();
+            	//users should go before items if you want to reference users as a foreign key in items
             	InitDatabase.createUserTable();
             	InitDatabase.addUsers();	
+            	InitDatabase.createItemTable();
+            	InitDatabase.addItems();
             	InitDatabase.createReviewTable();
             	InitDatabase.addReviews();
             	InitDatabase.createFavoriteItemsTable();
             	InitDatabase.createFavoriteUsersTable();
+            	//go to the welcome page -- which is where you have to login/signup
     			RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");       
                 dispatcher.forward(request, response);
             }
@@ -173,6 +175,7 @@ public class ControlServlett extends HttpServlet{
     //noticing I'm calling the same functions over and over so I just condense them into one function
     private void showAllInformation(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
+    		//show all of the information
     		listItem(request, response);
     		listUsers(request, response);
     		listReviews(request, response);
@@ -206,6 +209,7 @@ public class ControlServlett extends HttpServlet{
     		response.sendRedirect("problemItem.jsp");
     	}
     	}
+    	//User post limit reached -- print to the user that they have reached the post limit
     	else {
     		System.out.println("User Post Limit Reached");
     	}
@@ -230,6 +234,7 @@ public class ControlServlett extends HttpServlet{
     		}
     
     //for searching items based on categories
+    //SEARCH ITEM STILL WORKS CORRECTLY -- NO NEED TO CHANGE
     private void searchItem(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     			String category = request.getParameter("category");
@@ -327,10 +332,12 @@ public class ControlServlett extends HttpServlet{
     		if(userReview <= 5) {
     		String score = request.getParameter("remark");
     		String remark = request.getParameter("review");
+    		int itemID = Integer.valueOf(request.getParameter("itemID"));
+    		String itemTitle = request.getParameter("itemTitle");
     		
-    		//reviews addReview = new reviews(currentReviewID, userID, score, remark);
+    		reviews addReview = new reviews(currentUser, itemID, itemTitle, score, remark);
     		
-    		//InitDatabase.insertReview(addReview);
+    		InitDatabase.insertReview(addReview);
     		userReview++;
     		}
     		else {
@@ -341,12 +348,30 @@ public class ControlServlett extends HttpServlet{
     private void login(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     		//Most websites have email to log in so I use email only
+    		
+    		/* Steps when logging into a website
+    		 * Grab the information required for from the login information given
+    		 * Check if the password and the email given match anything in the server
+    		 * Grab the current username and userID of the user that is logging in
+    		 * Actually log in
+    		 */
+    	
+    		// Grab the information from the login in page
     		String email = request.getParameter("email");
 			String pass = request.getParameter("password");
+			//This checks if the login and the password is sending correctly.
 			if(InitDatabase.loginCheck(email, pass) == true) {
 				userID = InitDatabase.getCurrentID(email, pass);
 				currentUser = InitDatabase.getCurrentUsername(email, pass);
 				usersession = request.getSession();
+				//if successfully logged in, then you should be redirected to showing all information
+				//if not then it fails and should be redirected back into login page.
+				showAllInformation(request, response);
+			}
+			//login check fails -- so redirect back to the index page AS A TEST
+			else  {
+				RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+				dispatcher.forward(request, response);
 			}
 
     }
@@ -363,7 +388,7 @@ public class ControlServlett extends HttpServlet{
     		String gender = request.getParameter("gender");
     		int age = Integer.parseInt(request.getParameter("age"));
     		
-    		//add the user to the database
+    		//add the user to the database -- this is successfully working
     		users registerUser = new users(username, password, firstName, lastName, email, gender, age);
     		InitDatabase.addOneUser(registerUser);
     		
@@ -371,7 +396,7 @@ public class ControlServlett extends HttpServlet{
     		userID = InitDatabase.getCurrentID(email, password);
     		usersession = request.getSession();
     		usersession.setAttribute("currentUser", username);
-    		currentUser = (String)usersession.getAttribute("currentUser");
+    		currentUser = username;
 			System.out.print(currentUser);
 			System.out.print(userID);
     }
