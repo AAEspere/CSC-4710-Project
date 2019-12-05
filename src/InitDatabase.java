@@ -31,10 +31,13 @@ public class InitDatabase {
 		
 	}
 	
-//initialize connection to the Server
-	//I probably should separate the connection, the initializing of the Database
-	//the functions on items, users, and reviews into separate files
-	//So the readability of the code improves
+	/*---------------------------------------------------------------
+	 * 
+	 * PROJECT 1 CODE
+	 * 
+	 * --------------------------------------------------------------
+	 */
+	
 protected void connect_function() throws SQLException {
 	if(connect == null || connect.isClosed()) {
 		try {
@@ -48,6 +51,12 @@ protected void connect_function() throws SQLException {
 				.getConnection("jdbc:mysql://127.0.0.1:3306/projectdb?"
 	  			          + "user=root&password=Superiormelee98");
 		System.out.println(connect);
+	}
+}
+
+protected void disconnect() throws SQLException {
+	if (connect != null && !connect.isClosed()) {
+		connect.close();
 	}
 }
 
@@ -66,14 +75,35 @@ public void createDatabase() {
 	}	
 }
 
-//create the table for items
-//PROJECT PART 2: need to edit this and add a user section
-//this will show what user posted what item.
+//tables are not successfully dropping because there are foreign key constraints
+//I just made separate tables for dropping
+public void dropAllTables() throws SQLException {
+	
+	String dropReviewTable = "DROP TABLE IF EXISTS reviews;";
+	String dropUsersTable = "DROP TABLE IF EXISTS users;";
+	String dropItemTable = "DROP TABLE IF EXISTS item;";
+	String dropFavoriteItemsTable = "DROP TABLE IF EXISTS favoriteItem;";
+	String dropFavoriteUsersTable = "DROP TABLE IF EXISTS favoriteUser";
+	
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	
+	statement.executeUpdate(dropFavoriteItemsTable);
+	statement.executeUpdate(dropFavoriteUsersTable);
+	statement.executeUpdate(dropReviewTable);
+	statement.executeUpdate(dropUsersTable);
+	statement.executeUpdate(dropItemTable);
+
+	connect.close();
+}
+
+/*-------------------------------------------------------------------
+ * CREATING AND ADDING TUPLES
+ * ------------------------------------------------------------------*/
 public void createItemTable() throws SQLException {
 	//the two statements required for making table
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String dropItemTable = "DROP TABLE IF EXISTS item";
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
 			//Project Part 2, editing statement so that AUTO_INCREMENT is added
 			//Project Part 2, editing statement so that username is incorporated for all items
@@ -85,21 +115,15 @@ public void createItemTable() throws SQLException {
 			"itemPrice DOUBLE NOT NULL, " +
 			"itemCategory VARCHAR(50), " +
 			"PRIMARY KEY (itemID));";
-	
 	try {
-	statement.executeUpdate(dropItemTable);
 	statement.executeUpdate(createItemTable);
 	}
-	
 	catch(SQLException e) {
 	}
 	finally {
 		connect.close();
 	}
 }
-
-//Project Part 1 just says to initialize tables with at least 10 tuples, creating 10 random items
-//this is part of the database initialization
 public void addItems() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
@@ -127,13 +151,310 @@ public void addItems() throws SQLException {
 		statement.executeUpdate(addItem10);
 	}
 	catch (SQLException e) {
-		
 	}
 	finally {
 		disconnect();
 	}	
 }
 
+//create the table for users
+public void createUserTable() throws SQLException {
+	
+	connect_function();
+	String createUserTable = "CREATE TABLE IF NOT EXISTS users" +
+			//Project 3 -- edited users so username is added
+			"(username VARCHAR(50) NOT NULL," + 
+			"userID INTEGER AUTO_INCREMENT, " +
+			"pass VARCHAR(20) NOT NULL, " +
+			"firstName VARCHAR(50) NOT NULL, " +
+			"lastName VARCHAR(50) NOT NULL, " +
+			"email VARCHAR(50) NOT NULL, " +
+			"gender VARCHAR(10) NOT NULL," +
+			"age INTEGER NOT NULL, " +
+			"UNIQUE (username), " +
+			"PRIMARY KEY (userID));";
+	
+	try {
+	statement = (Statement)connect.createStatement();
+	statement.executeUpdate(createUserTable);
+	}
+	catch (SQLException e) {
+	}
+	finally {
+		disconnect();
+	}
+}
+//Part 1 Requires About 10 tuples, so I just input 10 user stuff to show on the table
+public void addUsers() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	//adding the items
+	String addUsers1 = "INSERT INTO users VALUES('AA1','12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21');";
+	String addUsers2 = "INSERT INTO users VALUES('AA2','54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21');";
+	String addUsers3 = "INSERT INTO users VALUES('AA3','12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21');";
+	String addUsers4 = "INSERT INTO users VALUES('AA4','16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21');";
+	String addUsers5 = "INSERT INTO users VALUES('AA5','89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21');";
+	String addUsers6 = "INSERT INTO users VALUES('AA6','00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21');";
+	String addUsers7 = "INSERT INTO users VALUES('AA7','12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21');";
+	String addUsers8 = "INSERT INTO users VALUES('AA8','55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
+	String addUsers9 = "INSERT INTO users VALUES('AA9','19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
+	String addUsers10 = "INSERT INTO users VALUES('AA10','11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
+			
+	try {
+		statement.executeUpdate(addUsers1);
+		statement.executeUpdate(addUsers2);
+		statement.executeUpdate(addUsers3);
+		statement.executeUpdate(addUsers4);
+		statement.executeUpdate(addUsers5);
+		statement.executeUpdate(addUsers6);
+		statement.executeUpdate(addUsers7);
+		statement.executeUpdate(addUsers8);
+		statement.executeUpdate(addUsers9);
+		statement.executeUpdate(addUsers10);
+	}
+	catch (SQLException e) {
+		
+	}
+	finally {
+		disconnect();
+	}
+}
+
+public void createReviewTable() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	//the two statements required for making table
+	String createReviewTable = "CREATE TABLE IF NOT EXISTS reviews" +
+			"(username VARCHAR(50) NOT NULL, " +
+			"itemID INTEGER NOT NULL, " +
+			"itemTitle VARCHAR(50) NOT NULL, " +
+			"score VARCHAR(10) NOT NULL, " +
+			"remark VARCHAR(100) NOT NULL," +
+			"CONSTRAINT f_key_itemID FOREIGN KEY (itemID) REFERENCES item(itemID)," +
+			"CONSTRAINT f_key_username FOREIGN KEY (username) REFERENCES users(username));";
+	try {
+	statement.executeUpdate(createReviewTable);
+	}
+	catch (SQLException e) {
+	}
+	finally {
+		disconnect();
+	}
+}
+
+//this is for adding 10 tuples into the reviews table 
+public void addReviews() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String addReviews1 = "INSERT INTO reviews VALUES('AA4','121212121','Video Game','Poor','Example Review');";
+	String addReviews2 = "INSERT INTO reviews VALUES('AA4','555555555','Nintendo Switch','Excellent','Example Review');";
+	String addReviews3 = "INSERT INTO reviews VALUES('AA2','654764567','Macbook Air','Excellent','Example Review');";
+	String addReviews4 = "INSERT INTO reviews VALUES('AA2','123123123','Coffee Table','Excellent','Example Review');";
+	String addReviews5 = "INSERT INTO reviews VALUES('AA9','987654321','Soccer Ball','Excellent','Example Review');";
+	String addReviews6 = "INSERT INTO reviews VALUES('AA1','555555555','Nintendo Switch','Excellent','Example Review');";
+	String addReviews7 = "INSERT INTO reviews VALUES('AA1','121212121','Video Game','Poor','Example Review');";
+	String addReviews8 = "INSERT INTO reviews VALUES('AA6','231455153','Couch','Fair','Example Review');";
+	String addReviews9 = "INSERT INTO reviews VALUES('AA3','423465674','Milk','Poor','SPOILED');";
+	String addReviews10 = "INSERT INTO reviews VALUES('AA1','987654321','Soccer Ball','Excellent','Example Review');";
+	
+	try {
+		statement.executeUpdate(addReviews1);
+		statement.executeUpdate(addReviews2);
+		statement.executeUpdate(addReviews3);
+		statement.executeUpdate(addReviews4);
+		statement.executeUpdate(addReviews5);
+		statement.executeUpdate(addReviews6);
+		statement.executeUpdate(addReviews7);
+		statement.executeUpdate(addReviews8);
+		statement.executeUpdate(addReviews9);
+		statement.executeUpdate(addReviews10);
+	}
+	catch (SQLException e) {
+		
+	}
+	finally {
+		disconnect();
+	}
+}
+
+/*-------------------------------------------------------------------------------
+ * LISTING THE RESULTS OF THE TABLES
+ --------------------------------------------------------------------------------*/
+//I noticed this code was being used in multiple places throughout the project,
+//So I refactored it into one spot
+public item resultSetItem(ResultSet resultSet) throws SQLException {
+	
+	String username = resultSet.getString("username");
+	int itemID = resultSet.getInt("itemID");
+	String itemTitle = resultSet.getString("itemTitle");
+	String itemDescription = resultSet.getString("itemDescription");
+	String date = resultSet.getString("itemDate");
+	double itemPrice = resultSet.getDouble("itemPrice");
+	String itemCategory = resultSet.getString("itemCategory");
+	
+	item items = new item(username,itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+	
+	return items;
+}
+
+//this is for listing the items table
+public List<item> listAllItems() throws SQLException{
+	List<item> listItems = new ArrayList<item>();
+	String sql = "SELECT * FROM item";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	//listItems = resultListItem(resultSet);
+	while(resultSet.next()) {
+		listItems.add(resultSetItem(resultSet));
+	}
+	
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listItems;
+}
+
+public users resultSetUser(ResultSet resultSet) throws SQLException {
+	
+	int userID = resultSet.getInt("userID");
+	String username = resultSet.getString("username");
+	String pass = resultSet.getString("pass");
+	String firstName = resultSet.getString("firstName");
+	String lastName = resultSet.getString("lastName");
+	String email = resultSet.getString("email");
+	String gender = resultSet.getString("gender");
+	int age = resultSet.getInt("age");
+	
+	users users = new users(userID, username, pass, firstName, lastName, email, gender,age);
+	return users;
+	
+}
+
+//this is for listing the users
+public List<users> listAllUsers() throws SQLException{
+	List<users> listUsers = new ArrayList<users>();
+	String sql = "SELECT * FROM users";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUser(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+
+//this is for listing the reviews
+public List<reviews> listAllReviews() throws SQLException{
+	List<reviews> listReviews = new ArrayList<reviews>();
+	String sql = "SELECT * FROM reviews";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		
+		String username = resultSet.getString("username");
+		int itemID = resultSet.getInt("itemID");
+		String itemTitle = resultSet.getString("itemTitle");
+		String score = resultSet.getString("score");
+		String remark = resultSet.getString("remark");
+		
+		reviews review = new reviews(username, itemID, itemTitle, score, remark);
+		listReviews.add(review);		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listReviews;
+}
+/*-------------------------------------------------------------------------------
+ * LOGIN OR REGISTER FUNCTIONS
+ --------------------------------------------------------------------------------*/
+
+//this function is for checking if the correct username and password was used for login
+public boolean loginCheck(String email, String pass) throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String listUsers = "SELECT * FROM users";
+	ResultSet resultSet = statement.executeQuery(listUsers);
+	//if matches both given email and password, then return true, because successful log in
+	while(resultSet.next()) {
+		if(resultSet.getString("email").equals(email) 
+		&& resultSet.getString("pass").equals(pass)) {
+			return true;
+		}
+	}
+	//if there isn't anything to return, then just return false
+	return false;
+}
+
+//When you register, 
+public boolean addOneUser(users user) throws SQLException {
+	//adding a singular user, this is to add the user who registers onto the server
+	connect_function();         
+	String sql = "INSERT INTO users(username, pass, firstName, lastName, email, gender, age) VALUES (?,?,?,?,?,?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, user.username);
+	preparedStatement.setString(2, user.pass);
+	preparedStatement.setString(3, user.firstName);
+	preparedStatement.setString(4, user.lastName);
+	preparedStatement.setString(5, user.email);
+	preparedStatement.setString(6, user.gender);
+	preparedStatement.setInt(7, user.age);
+	
+    boolean rowInserted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowInserted;
+}
+
+//getting the user's ID and username
+public int getCurrentID(String email, String pass) throws SQLException {
+	
+	connect_function();
+	String sql = "SELECT * FROM users WHERE email = ? AND pass = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1,email);
+	preparedStatement.setString(2,pass);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	//Should return one result, which is the one you need to grab the userID from
+	resultSet.next();
+	int userID = resultSet.getInt("userID");
+	return userID;
+}
+
+//getting username
+public String getCurrentUsername(String email, String pass) throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	String sql = "SELECT * FROM users WHERE email = ? AND pass = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1,email);
+	preparedStatement.setString(2,pass);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	//if email and password equal the one entered, get the userID also. 
+	//while(resultSet.next()) {
+		//if(resultSet.getString("email").equals(email)
+		//&& resultSet.getString("pass").equals(pass)) {
+			resultSet.next();
+			String username = resultSet.getString("username");
+			return username;
+		//}
+//	}
+	//return null;
+}
+
+/*-------------------------------------------------------------------------------
+ * 
+ * PROJECT PART 2 CODE
+ * 
+ --------------------------------------------------------------------------------*/
 
 //Using SQL to handle the creation and deletion of favorite users/items,
 //So I think I need to make a separate table in order to add and delete item ID's
@@ -141,7 +462,6 @@ public void createFavoriteItemsTable() throws SQLException {
 	
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String dropFavoriteItemsTable = "DROP TABLE IF EXISTS favoriteItem";
 	String createFavoriteItemsTable = "CREATE TABLE IF NOT EXISTS favoriteItem" +
 			
 			//Since I am using a separate table, and am using itemID to DELETE the item
@@ -152,7 +472,6 @@ public void createFavoriteItemsTable() throws SQLException {
 			"PRIMARY KEY (userID, itemID));";
 	
 	try {
-	statement.executeUpdate(dropFavoriteItemsTable);
 	statement.executeUpdate(createFavoriteItemsTable);
 	}
 	
@@ -332,90 +651,9 @@ public List<item> sortExpensive() throws SQLException {
 	return sortExpensive;
 }
 
-//create the table for users
-public void createUserTable() throws SQLException {
-	connect_function();
-	//the two statements required for making table
-	String dropUserTable = "DROP TABLE IF EXISTS users";
-	String createUserTable = "CREATE TABLE IF NOT EXISTS users" +
-			//Project 3 -- edited users so username is added
-			"(username VARCHAR(50) NOT NULL," + 
-			"userID INTEGER AUTO_INCREMENT, " +
-			"pass VARCHAR(20) NOT NULL, " +
-			"firstName VARCHAR(50) NOT NULL, " +
-			"lastName VARCHAR(50) NOT NULL, " +
-			"email VARCHAR(50) NOT NULL, " +
-			"gender VARCHAR(10) NOT NULL," +
-			"age INTEGER NOT NULL, " +
-			"UNIQUE (username), " +
-			"PRIMARY KEY (userID));";
-	
-	try {
-	statement = (Statement)connect.createStatement();
-	statement.executeUpdate(dropUserTable);
-	statement.executeUpdate(createUserTable);
 
-	}
-	catch (SQLException e) {
-	}
-	finally {
-		disconnect();
-	}
-}
-//Part 1 Requires About 10 tuples, so I just input 10 user stuff to show on the table
-public void addUsers() throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	//adding the items
-	String addUsers1 = "INSERT INTO users VALUES('AA1','12345','hello123','Aaron1','Espere1','example1@gmail.com', 'Male','21');";
-	String addUsers2 = "INSERT INTO users VALUES('AA2','54321','goodbye123','Aaron2','Espere2','example2@gmail.com', 'Male','21');";
-	String addUsers3 = "INSERT INTO users VALUES('AA3','12121','hewwo123','Aaron3','Espere3','example3@gmail.com', 'Male','21');";
-	String addUsers4 = "INSERT INTO users VALUES('AA4','16436','trials123','Aaron4','Espere4','example4@gmail.com', 'Male','21');";
-	String addUsers5 = "INSERT INTO users VALUES('AA5','89231','laptop123','Aaron5','Espere5','example5@gmail.com', 'Male','21');";
-	String addUsers6 = "INSERT INTO users VALUES('AA6','00000','qwerty123','Aaron6','Espere6','example6@gmail.com', 'Male','21');";
-	String addUsers7 = "INSERT INTO users VALUES('AA7','12456','1234553123','Aaron7','Espere7','example7@gmail.com', 'Male','21');";
-	String addUsers8 = "INSERT INTO users VALUES('AA8','55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
-	String addUsers9 = "INSERT INTO users VALUES('AA9','19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
-	String addUsers10 = "INSERT INTO users VALUES('AA10','11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
-			
-	try {
-		statement.executeUpdate(addUsers1);
-		statement.executeUpdate(addUsers2);
-		statement.executeUpdate(addUsers3);
-		statement.executeUpdate(addUsers4);
-		statement.executeUpdate(addUsers5);
-		statement.executeUpdate(addUsers6);
-		statement.executeUpdate(addUsers7);
-		statement.executeUpdate(addUsers8);
-		statement.executeUpdate(addUsers9);
-		statement.executeUpdate(addUsers10);
-	}
-	catch (SQLException e) {
-		
-	}
-	finally {
-		disconnect();
-	}
-}
 
-public boolean addOneUser(users user) throws SQLException {
-	//adding a singular user, this is to add the user who registers onto the server
-	connect_function();         
-	String sql = "INSERT INTO users(username, pass, firstName, lastName, email, gender, age) VALUES (?,?,?,?,?,?,?)";
-	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, user.username);
-	preparedStatement.setString(2, user.pass);
-	preparedStatement.setString(3, user.firstName);
-	preparedStatement.setString(4, user.lastName);
-	preparedStatement.setString(5, user.email);
-	preparedStatement.setString(6, user.gender);
-	preparedStatement.setInt(7, user.age);
-	
-    boolean rowInserted = preparedStatement.executeUpdate() > 0;
-    preparedStatement.close();
-//    disconnect();
-    return rowInserted;
-}
+
 
 public boolean checkDuplicateUsername(String username) throws SQLException {
 	
@@ -425,12 +663,10 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 	ResultSet resultSet = statement.executeQuery(sql);
 	
 	while(resultSet.next()) {
-		
 		String currentUsername = resultSet.getString("username");
 		if(currentUsername == username) {
 			return true;
-		}
-		
+		}	
 	}
 	//if you get to this part, then the emails were not duplicates, which means that 
 	return false;
@@ -439,15 +675,13 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 public void createFavoriteUsersTable() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String dropFavoriteUsersTable = "DROP TABLE IF EXISTS favoriteUser";
+
 	String createFavoriteUsersTable = "CREATE TABLE IF NOT EXISTS favoriteUser" +
-	
 			"(currentUserID INTEGER NOT NULL, " +
 			"favoriteUserID INTEGER NOT NULL, " +
 			"PRIMARY KEY (favoriteUserID));";
 	
 	try {
-		statement.executeUpdate(dropFavoriteUsersTable);
 		statement.executeUpdate(createFavoriteUsersTable);
 	}
 	
@@ -524,65 +758,7 @@ public boolean deleteItem(int itemID) throws SQLException {
     return rowDeleted;  
 }
 
-public void createReviewTable() throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	//the two statements required for making table
-	String dropReviewTable = "DROP TABLE IF EXISTS reviews";
-	String createReviewTable = "CREATE TABLE IF NOT EXISTS reviews" +
-			"(username VARCHAR(50) NOT NULL, " +
-			"itemID INTEGER NOT NULL, " +
-			"itemTitle VARCHAR(50) NOT NULL, " +
-			"score VARCHAR(10) NOT NULL, " +
-			"remark VARCHAR(100) NOT NULL," +
-			"CONSTRAINT f_key_itemID FOREIGN KEY (itemID) REFERENCES item(itemID)," +
-			"CONSTRAINT f_key_username FOREIGN KEY (username) REFERENCES users(username));";
-	
-	try {
-	statement.executeUpdate(dropReviewTable);
-	statement.executeUpdate(createReviewTable);
-	}
-	catch (SQLException e) {
-	}
-	finally {
-		disconnect();
-	}
-}
 
-//this is for adding 10 tuples into the reviews table 
-public void addReviews() throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	String addReviews1 = "INSERT INTO reviews VALUES('AA4','121212121','Video Game','Poor','Example Review');";
-	String addReviews2 = "INSERT INTO reviews VALUES('AA4','555555555','Nintendo Switch','Excellent','Example Review');";
-	String addReviews3 = "INSERT INTO reviews VALUES('AA2','654764567','Macbook Air','Excellent','Example Review');";
-	String addReviews4 = "INSERT INTO reviews VALUES('AA2','123123123','Coffee Table','Excellent','Example Review');";
-	String addReviews5 = "INSERT INTO reviews VALUES('AA9','987654321','Soccer Ball','Excellent','Example Review');";
-	String addReviews6 = "INSERT INTO reviews VALUES('AA1','555555555','Nintendo Switch','Excellent','Example Review');";
-	String addReviews7 = "INSERT INTO reviews VALUES('AA1','121212121','Video Game','Poor','Example Review');";
-	String addReviews8 = "INSERT INTO reviews VALUES('AA6','231455153','Couch','Fair','Example Review');";
-	String addReviews9 = "INSERT INTO reviews VALUES('AA3','423465674','Milk','Poor','SPOILED');";
-	String addReviews10 = "INSERT INTO reviews VALUES('AA1','987654321','Soccer Ball','Excellent','Example Review');";
-	
-	try {
-		statement.executeUpdate(addReviews1);
-		statement.executeUpdate(addReviews2);
-		statement.executeUpdate(addReviews3);
-		statement.executeUpdate(addReviews4);
-		statement.executeUpdate(addReviews5);
-		statement.executeUpdate(addReviews6);
-		statement.executeUpdate(addReviews7);
-		statement.executeUpdate(addReviews8);
-		statement.executeUpdate(addReviews9);
-		statement.executeUpdate(addReviews10);
-	}
-	catch (SQLException e) {
-		
-	}
-	finally {
-		disconnect();
-	}
-}
 
 public boolean insertReview(reviews reviews) throws SQLException{
 	connect_function();         
@@ -603,158 +779,12 @@ public boolean insertReview(reviews reviews) throws SQLException{
     return rowInserted;
 }
 
-//this function is for checking if the correct username and password was used for login
-public boolean loginCheck(String email, String pass) throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	String listUsers = "SELECT * FROM users";
-	ResultSet resultSet = statement.executeQuery(listUsers);
-	return false;
-	/*while(resultSet.next()) {
-		if(resultSet.getString("email").equals(email) 
-		&& resultSet.getString("pass").equals(pass)) {
-			return true;
-		}
-	}*/
-}
+/*---------------------------------------------------------------------------------
+ * 
+ * Project Part 3 Code
+ * 
+ ----------------------------------------------------------------------------------*/
 
-public int getCurrentID(String email, String pass) throws SQLException {
-	
-	connect_function();
-	String sql = "SELECT * FROM users WHERE email = '?' AND pass = '?'";
-	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1,email);
-	preparedStatement.setString(2,pass);
-	ResultSet resultSet = preparedStatement.executeQuery(sql);
-	//Should return one result, which is the one you need to grab the userID from
-	int userID = resultSet.getInt("userID");
-	return userID;
-}
-
-//getting username
-public String getCurrentUsername(String email, String pass) throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-	String sql = "SELECT * FROM users WHERE email = ? AND pass = ?";
-	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1,email);
-	preparedStatement.setString(2,pass);
-	ResultSet resultSet = preparedStatement.executeQuery(sql);
-	//if email and password equal the one entered, get the userID also. 
-	//while(resultSet.next()) {
-		//if(resultSet.getString("email").equals(email)
-		//&& resultSet.getString("pass").equals(pass)) {
-			String username = resultSet.getString("username");
-			return username;
-		//}
-//	}
-	//return null;
-}
-
-//this is for listing the items table
-public List<item> listAllItems() throws SQLException{
-	List<item> listItems = new ArrayList<item>();
-	String sql = "SELECT * FROM item";
-	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
-	
-	//listItems = resultListItem(resultSet);
-	while(resultSet.next()) {
-		listItems.add(resultSetItem(resultSet));
-	}
-	
-	resultSet.close();
-	statement.close();
-	disconnect();
-	return listItems;
-}
-
-//correct refactoring of getting all of the resultSet items into the new list
-//I noticed this code was being used in multiple places throughout the project,
-//So I refactored it into one spot
-public item resultSetItem(ResultSet resultSet) throws SQLException {
-	
-	String username = resultSet.getString("username");
-	int itemID = resultSet.getInt("itemID");
-	String itemTitle = resultSet.getString("itemTitle");
-	String itemDescription = resultSet.getString("itemDescription");
-	String date = resultSet.getString("itemDate");
-	double itemPrice = resultSet.getDouble("itemPrice");
-	String itemCategory = resultSet.getString("itemCategory");
-	
-	item items = new item(username,itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
-	
-	return items;
-}
-
-//this is for listing the users
-public List<users> listAllUsers() throws SQLException{
-	List<users> listUsers = new ArrayList<users>();
-	String sql = "SELECT * FROM users";
-	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
-	
-	while(resultSet.next()){
-		listUsers.add(resultSetUser(resultSet));		
-	}
-	resultSet.close();
-	statement.close();
-	disconnect();
-	return listUsers;
-}
-
-public users resultSetUser(ResultSet resultSet) throws SQLException {
-	
-	int userID = resultSet.getInt("userID");
-	String username = resultSet.getString("username");
-	String pass = resultSet.getString("pass");
-	String firstName = resultSet.getString("firstName");
-	String lastName = resultSet.getString("lastName");
-	String email = resultSet.getString("email");
-	String gender = resultSet.getString("gender");
-	int age = resultSet.getInt("age");
-	
-	users users = new users(userID, username, pass, firstName, lastName, email, gender,age);
-	return users;
-	
-}
-
-//this is for listing the reviews
-public List<reviews> listAllReviews() throws SQLException{
-	List<reviews> listReviews = new ArrayList<reviews>();
-	String sql = "SELECT * FROM reviews";
-	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
-	
-	while(resultSet.next()){
-		
-		String username = resultSet.getString("username");
-		int itemID = resultSet.getInt("itemID");
-		String itemTitle = resultSet.getString("itemTitle");
-		String score = resultSet.getString("score");
-		String remark = resultSet.getString("remark");
-		
-		reviews review = new reviews(username, itemID, itemTitle, score, remark);
-		listReviews.add(review);		
-	}
-	resultSet.close();
-	statement.close();
-	disconnect();
-	return listReviews;
-}
-
-protected void disconnect() throws SQLException {
-	if (connect != null && !connect.isClosed()) {
-		connect.close();
-	}
-	
-}
-
-
-//Project 3 Code Starts Here
 public List<item> excellentGoodComments() throws SQLException {
 	List<item> excellentGood = new ArrayList<item>();
 	//SQL to select the items that have only received a good or excellent review
@@ -776,6 +806,58 @@ public List<item> excellentGoodComments() throws SQLException {
 	statement.close();
 	disconnect();
 	return excellentGood;
+}
+
+public List<users> pNoPoorReview() throws SQLException {
+	List<users>listUsers = new ArrayList<users>();
+	//When displaying users (and you're not admin so you don't need to see password) you probably
+	//only need to show the username and the userID
+	
+	//so select the userID and the username users where they are not 
+	//in the search where users have posted poor reviews
+	String sql = "SELECT DISTINCT username, userID "
+			+ "FROM users "
+			+ "WHERE username NOT IN"
+			+ "(SELECT U.username FROM users U, reviews R"
+			+ "WHERE R.score = 'Poor' and U.username = R.username);";
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUser(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+
+public List<users> pAllPoorReview() throws SQLException {
+	List<users>listUsers = new ArrayList<users>();
+	//When displaying users (and you're not admin so you don't need to see password) you probably
+	//only need to show the username and the userID
+	
+	//so select the userID and the username users where they are not 
+	//in the search where users have posted poor reviews
+	String sql = "SELECT U.username, U.userID "
+			+ "FROM users U "
+			+ "LEFT JOIN reviews R ON R.username = U.username "
+			+ "WHERE U.username NOT IN "
+			+ "(SELECT R.username FROM users U, reviews R WHERE "
+			+ "(R.score = 'Excellent' OR R.score = 'Good' OR R.score = 'Fair') "
+			+ "AND U.username = R.username) AND R.username IS NOT NULL;";
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUser(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
 }
 
 }

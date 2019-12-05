@@ -26,7 +26,7 @@
 <a href = "insertItem.jsp">Insert an Item</a>
 <a href = "listFavoriteItems.jsp">Favorite Items</a>
 <a href = "displayFavoriteUser">Favorite Sellers</a>
-<a href = "project3Queries">View Project 3 Query options</a>
+<a href = "project3Queries.jsp">View Project 3 Query options</a>
 <form action = "sortExpensive">
 <input type = "submit" value = "Sort by Expensive">
 </form> 

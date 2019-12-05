@@ -66,10 +66,7 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/register":
         		//When I register now, I need to check for matching password and duplicate email
-        		matchingPassword(request,response);
-        		duplicateUsername(request, response);
         		register(request,response);
-        		showAllInformation(request, response);
         		break;
         	case "/showQueries":
         		showAllInformation(request, response);
@@ -154,10 +151,18 @@ public class ControlServlett extends HttpServlet{
             throw new ServletException(ex);
         }
     }
+    
+    /*---------------------------------------------------------------------------
+     * 
+     * PROJECT 1 FUNCTIONS
+     * 
+     --------------------------------------------------------------------------*/
+    
     //I feel like this is working correctly
     private void initDatabase(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
             	InitDatabase.createDatabase();
+            	InitDatabase.dropAllTables();
             	//users should go before items if you want to reference users as a foreign key in items
             	InitDatabase.createUserTable();
             	InitDatabase.addUsers();	
@@ -188,6 +193,7 @@ public class ControlServlett extends HttpServlet{
     	//CHECK HOW MANY ITEMS THE USER HAS SUBMITTEED
     	//IF GOOD THEN PROCEED WITH THE INSERT ITEM FUNCTION
     	if(userItem <= 5) {
+    		
     	//basically you get all the parameters that were added, and create a new item with it
     	//which then goes to insertItem which inserts the item into the SQL
     	String itemName = request.getParameter("itemName");
@@ -347,15 +353,7 @@ public class ControlServlett extends HttpServlet{
         
     private void login(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    		//Most websites have email to log in so I use email only
-    		
-    		/* Steps when logging into a website
-    		 * Grab the information required for from the login information given
-    		 * Check if the password and the email given match anything in the server
-    		 * Grab the current username and userID of the user that is logging in
-    		 * Actually log in
-    		 */
-    	
+    		//Most websites have email to log in so I use email only   	
     		// Grab the information from the login in page
     		String email = request.getParameter("email");
 			String pass = request.getParameter("password");
@@ -363,14 +361,13 @@ public class ControlServlett extends HttpServlet{
 			if(InitDatabase.loginCheck(email, pass) == true) {
 				userID = InitDatabase.getCurrentID(email, pass);
 				currentUser = InitDatabase.getCurrentUsername(email, pass);
-				usersession = request.getSession();
 				//if successfully logged in, then you should be redirected to showing all information
 				//if not then it fails and should be redirected back into login page.
 				showAllInformation(request, response);
 			}
 			//login check fails -- so redirect back to the index page AS A TEST
 			else  {
-				RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
 				dispatcher.forward(request, response);
 			}
 
@@ -383,23 +380,58 @@ public class ControlServlett extends HttpServlet{
     		String username = request.getParameter("username");
     		String email = request.getParameter("email");
     		String password = request.getParameter("password");
+    		String password2 = request.getParameter("password2");
     		String firstName = request.getParameter("firstName");
     		String lastName = request.getParameter("lastName");
     		String gender = request.getParameter("gender");
     		int age = Integer.parseInt(request.getParameter("age"));
     		
+    		if(matchingPassword(password, password2) == true) {
+        		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+        		dispatcher.forward(request, response);
+    		}
+
+    		if(duplicateUsername(username) == true) {
+        		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+        		dispatcher.forward(request, response);
+    		}
     		//add the user to the database -- this is successfully working
     		users registerUser = new users(username, password, firstName, lastName, email, gender, age);
     		InitDatabase.addOneUser(registerUser);
     		
     		//get the userID and the username of the user
-    		userID = InitDatabase.getCurrentID(email, password);
-    		usersession = request.getSession();
-    		usersession.setAttribute("currentUser", username);
+			userID = InitDatabase.getCurrentID(email, password);
     		currentUser = username;
+    		
 			System.out.print(currentUser);
 			System.out.print(userID);
+			showAllInformation(request, response);
     }
+    
+    /*-----------------------------------------------------------------------------------------------------------
+     * 
+     * PROJECT PART 3 CODE
+     * 
+     -----------------------------------------------------------------------------------------------------------*/
+    public boolean matchingPassword(String password, String password2) {
+    		
+    	if(password == password2) {
+    		//do nothing if password1 is equal to password2 because there is no problem
+    		return true;
+    	}
+    		return false;
+    	
+    }
+    
+    public boolean duplicateUsername(String username) throws SQLException{
+    	
+    	if(InitDatabase.checkDuplicateUsername(username) == true) {
+    		//if returns true then return to register because emails do not match
+    		return true;
+    	}
+    		//do nothing if false, this means it is a unique email
+    		return false;
+        }
     
     //Project Part 2 - sorting the most expensive items in a category
     public void sortExpensive(HttpServletRequest request, HttpServletResponse response)
@@ -408,36 +440,7 @@ public class ControlServlett extends HttpServlet{
     	request.setAttribute("listItem", sortExpensive);
     }
     
-    //Project Part 3
-    public void matchingPassword(HttpServletRequest request, HttpServletResponse response)
-    	throws SQLException, IOException, ServletException {
-    	
-    	String password1 = request.getParameter("password1");
-    	String password2 = request.getParameter("password2");
-    	if(password1 == password2) {
-    		//do nothing if password1 is equal to password2 because there is no problem
-    	}
-    	else {
-    		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
-    		dispatcher.forward(request, response);
-    	}
-    	
-    }
-    
-    public void duplicateUsername(HttpServletRequest request, HttpServletResponse response)
-        	throws SQLException, IOException, ServletException {
-    	
-    	String username = request.getParameter("username");
-    	if(InitDatabase.checkDuplicateUsername(username) == true) {
-    		//if returns true then return to register because emails do not match
-    		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
-    		dispatcher.forward(request, response);
-    	}
-    	else {
-    		//do nothing if false, this means it is a unique email
-    	}
-    	
-        }
+
     
     public void sameDay(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
