@@ -27,6 +27,7 @@
 <a href = "listFavoriteItems.jsp">Favorite Items</a>
 <a href = "displayFavoriteUser">Favorite Sellers</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
+<a href = "logout">log out</a>
 <form action = "sortExpensive">
 <input type = "submit" value = "Sort by Expensive">
 </form> 

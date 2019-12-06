@@ -70,6 +70,9 @@ public class ControlServlett extends HttpServlet{
         		//When I register now, I need to check for matching password and duplicate email
         		register(request,response);
         		break;
+        	case "/logout":
+        		logout(request, response);
+        		break;
         	case "/showQueries":
         		showAllInformation(request, response);
         		break;
@@ -256,7 +259,7 @@ public class ControlServlett extends HttpServlet{
     private void deleteItem(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     		int id = Integer.parseInt(request.getParameter("itemID"));
-    		InitDatabase.deleteItem(id);
+    		InitDatabase.deleteItem(id, userID);
     }
     
     //these are for showing the results of the table
@@ -278,7 +281,7 @@ public class ControlServlett extends HttpServlet{
     
     private void displayFavoriteUser(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
-    		List<favoriteUser> favUsers = InitDatabase.listFavoriteUsers();
+    		List<favoriteUser> favUsers = InitDatabase.listFavoriteUsers(userID);
     		request.setAttribute("favUsers", favUsers);
     		RequestDispatcher dispatcher = request.getRequestDispatcher("listFavoriteUsers.jsp");
     		dispatcher.forward(request, response);
@@ -287,7 +290,7 @@ public class ControlServlett extends HttpServlet{
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     		int id = Integer.parseInt(request.getParameter("favUserID"));
-    		InitDatabase.deleteUser(id);
+    		InitDatabase.deleteUser(id, userID);
     }
     
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
@@ -310,11 +313,13 @@ public class ControlServlett extends HttpServlet{
     
     private void displayUser(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    	
-    List<favoriteUser> userProfile;
     	int favUserID = Integer.parseInt(request.getParameter("favUserID"));
-    	
-    	
+    	users userprofile = InitDatabase.getUserProfile(favUserID);
+    	request.setAttribute("listUsers", userprofile);    	
+    	List<item> userItems = InitDatabase.listUserItems(favUserID);
+    	request.setAttribute("listItem", userItems);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("userProfile.jsp");
+    	dispatcher.forward(request, response);
     }
     
     //this is the last function when initializing the database, so it forwards the page to initDatabase.jsp
@@ -409,6 +414,12 @@ public class ControlServlett extends HttpServlet{
 			System.out.print(currentUser);
 			System.out.print(userID);
 			showAllInformation(request, response);
+    }
+    
+    private void logout(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");
+    	dispatcher.forward(request, response);
     }
     
     /*-----------------------------------------------------------------------------------------------------------

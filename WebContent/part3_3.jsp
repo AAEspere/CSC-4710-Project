@@ -22,6 +22,7 @@
 <a href = "displayFavoriteUser">Favorite Sellers</a>
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
+<a href = "logout">log out</a>
 <h2>List all items posted by user X, such that all comments are "Excellent" or "Good"</h2>
 <form action = "excellentGood" method = "post">
 <input type = "text" name = "username" placeholder = "Enter username..." id = "LRFillin">

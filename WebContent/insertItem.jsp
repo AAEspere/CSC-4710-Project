@@ -19,6 +19,7 @@
 <a href = "displayFavoriteUser.jsp">Favorite Sellers</a>
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
+<a href = "logout">log out</a>
 <p>Insert an Item: please fill out the following information</div>
 <div id = "registerBlock">
 	<form action = "insertItem">

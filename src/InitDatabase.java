@@ -572,7 +572,6 @@ public void createFavoriteUsersTable() throws SQLException {
 			"(currentUserID INTEGER NOT NULL, " +
 			"favoriteUserID INTEGER NOT NULL, " +
 			"favoriteUserUsername VARCHAR(50) NOT NULL," +
-			"PRIMARY KEY (favoriteUserID)," + 
 			"CONSTRAINT f_key_currentUserID FOREIGN KEY (currentUserID) REFERENCES users(userID)," +
 			"CONSTRAINT f_key_favoriteUserID FOREIGN KEY (favoriteUserID) REFERENCES users(userID)," +
 			"CONSTRAINT f_key_favoriteUserUsername FOREIGN KEY (favoriteUserUsername) REFERENCES users(username)" +
@@ -616,13 +615,14 @@ public boolean addFavoriteUser(favoriteUser favUser) throws SQLException {
 	return rowInserted;
 }
 
-public List<favoriteUser> listFavoriteUsers() throws SQLException {
+public List<favoriteUser> listFavoriteUsers(int currentUserID) throws SQLException {
 	
-	List<favoriteUser> favUsers = new ArrayList<favoriteUser>();
-	String sql = "SELECT * FROM favoriteUser";
 	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
+	List<favoriteUser> favUsers = new ArrayList<favoriteUser>();
+	String sql = "SELECT * FROM favoriteUser WHERE currentUserID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, currentUserID);
+	ResultSet resultSet = preparedStatement.executeQuery();
 	
 	while(resultSet.next()) {
 		
@@ -653,7 +653,6 @@ public void createFavoriteItemsTable() throws SQLException {
 			//they selected)
 			"(userID INTEGER NOT NULL, " +
 			"itemID INTEGER NOT NULL, " +
-			"PRIMARY KEY (userID, itemID)," + 
 			"CONSTRAINT f_key_favuserID FOREIGN KEY (userID) REFERENCES users(userID)," +
 			"CONSTRAINT f_key_favitemID FOREIGN KEY (itemID) REFERENCES item(itemID)" +
 			");";
@@ -702,6 +701,19 @@ public ArrayList<Integer> getUserFavItemID(int userID) throws SQLException {
 	disconnect();
 	
 	return favItemID;
+}
+
+public users getUserProfile(int userID) throws SQLException {
+	
+	connect_function();
+	String sql = "SELECT * FROM users WHERE userID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, userID);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	users userprofile = resultSetUser(resultSet);
+	
+	return userprofile;
 }
 
 //listing items for a userProfile
@@ -778,6 +790,42 @@ public List<item> sortExpensive() throws SQLException {
 	return sortExpensive;
 }
 
+/*----------------------------------------------------------------------------------
+ * REQUIREMENT 5 -  Implement the functionality of add/delete the favorite items list.   
+ * One can browse each item in the list easily.
+ ----------------------------------------------------------------------------------*/
+public boolean deleteUser(int favoriteUserID, int currentUserID) throws SQLException {
+    String sql = "DELETE FROM favoriteUser WHERE favoriteUserID = ? AND currentUserID = ?";        
+    connect_function();
+     
+    preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    preparedStatement.setInt(1, favoriteUserID);
+    preparedStatement.setInt(2, currentUserID);
+     
+    boolean rowDeleted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowDeleted;  
+}
+
+public boolean deleteItem(int itemID, int userID) throws SQLException {
+    String sql = "DELETE FROM favoriteItem WHERE itemID = ? AND userID = ?";        
+    connect_function();
+     
+    preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    preparedStatement.setInt(1, itemID);
+    preparedStatement.setInt(2, userID);
+     
+    boolean rowDeleted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowDeleted;  
+}
+/*---------------------------------------------------------------------------------
+ * 
+ * Project Part 3 Code
+ * 
+ ----------------------------------------------------------------------------------*/
 public boolean checkDuplicateUsername(String username) throws SQLException {
 	
 	String sql = "SELECT * FROM users";
@@ -794,41 +842,6 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 	//if you get to this part, then the emails were not duplicates, which means that 
 	return false;
 }
-//Project Part 2 - deleting a user. This will be used when adding and
-//deleting users from the favorite user list
-//I probably need to create a separate table to separate user and favorite user
-//or else I will be permanently deleting the users 
-public boolean deleteUser(int userID) throws SQLException {
-    String sql = "DELETE FROM favoriteUser WHERE favoriteUserID = ?";        
-    connect_function();
-     
-    preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-    preparedStatement.setInt(1, userID);
-     
-    boolean rowDeleted = preparedStatement.executeUpdate() > 0;
-    preparedStatement.close();
-//    disconnect();
-    return rowDeleted;  
-}
-
-public boolean deleteItem(int itemID) throws SQLException {
-    String sql = "DELETE FROM favoriteItem WHERE itemID = ?";        
-    connect_function();
-     
-    preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-    preparedStatement.setInt(1, itemID);
-     
-    boolean rowDeleted = preparedStatement.executeUpdate() > 0;
-    preparedStatement.close();
-//    disconnect();
-    return rowDeleted;  
-}
-/*---------------------------------------------------------------------------------
- * 
- * Project Part 3 Code
- * 
- ----------------------------------------------------------------------------------*/
-
 /*---------------------------------------------------------------
  * REQUIREMENT 2 -  List the users who posted at least two items that are posted on the same day, 
  * one has a category of X and another has a category of Y. In terms of user interface, 

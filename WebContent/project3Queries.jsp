@@ -21,6 +21,7 @@
 <a href = "displayFavoriteItem">Favorite Items</a>
 <a href = "displayFavoriteUser">Favorite Sellers</a>
 <a href = "searchItem.jsp">Search for Item</a>
+<a href = "logout">log out</a>
 <h2>Show Queries Menu: click on any of the links to be redirected</h2>
 <table border = "1">
 <tr><td><a href = "part3_2.jsp">List users who posted two items that are posted on the same day</a></td></tr>

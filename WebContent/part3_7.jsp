@@ -22,6 +22,7 @@
 <a href = "displayFavoriteUser">Favorite Sellers</a>
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
+<a href = "logout">log out</a>
 <form action = "pNoPoorReview">
 <input type = "submit" value = "List users who never posted a bad review">
 </form>
