@@ -191,6 +191,7 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.addReviews();
             	InitDatabase.createFavoriteItemsTable();
             	InitDatabase.createFavoriteUsersTable();
+            	InitDatabase.addFavoriteUsers();
             	//go to the welcome page -- which is where you have to login/signup
     			RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");       
                 dispatcher.forward(request, response);

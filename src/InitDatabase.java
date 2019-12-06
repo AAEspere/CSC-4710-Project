@@ -206,7 +206,7 @@ public void addUsers() throws SQLException {
 	String addUsers8 = "INSERT INTO users VALUES('AA8','55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
 	String addUsers9 = "INSERT INTO users VALUES('AA9','19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
 	String addUsers10 = "INSERT INTO users VALUES('AA10','11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
-	String addUsers11 = "INSERT INTO users VALUES('root','00000','pass1234','Admin1','Admin1','admin@gmail.com','Male','30');";
+	String addUsers11 = "INSERT INTO users VALUES('root','00001','pass1234','Admin1','Admin1','admin@gmail.com','Male','30');";
 			
 	try {
 		statement.executeUpdate(addUsers1);
@@ -268,6 +268,7 @@ public void addReviews() throws SQLException {
 	String addReviews11 = "INSERT INTO reviews VALUES('AA10','555555555','Nintendo Switch','Excellent','Great System! My kids loved it.');";
 	String addReviews12 = "INSERT INTO reviews VALUES('AA1','434253123','Box','Poor','Cannot live inside it');";
 	String addReviews13 = "INSERT INTO reviews VALUES('AA3','555555555','Nintendo Switch','Excellent','Great System I get to play old games!');";
+	String addReviews14 = "INSERT INTO reviews VALUES('AA7','123123123','Coffee Table','Poor','This table came with a broken leg, I am very unsatisfied');";
 	
 	try {
 		statement.executeUpdate(addReviews1);
@@ -283,6 +284,7 @@ public void addReviews() throws SQLException {
 		statement.executeUpdate(addReviews11);
 		statement.executeUpdate(addReviews12);
 		statement.executeUpdate(addReviews13);
+		statement.executeUpdate(addReviews14);
 	}
 	catch (SQLException e) {
 		
@@ -614,6 +616,33 @@ public void createFavoriteUsersTable() throws SQLException {
 	}
 }
 
+public void addFavoriteUsers() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	
+	String addUser = "INSERT INTO favoriteUser VALUES('12345','54321','AA2');";
+	String addUser2 = "INSERT INTO favoriteUser VALUES('12345','00000','AA6');";
+	String addUser3 = "INSERT INTO favoriteUser VALUES('12121','00000','AA6');";
+	String addUser4 = "INSERT INTO favoriteUser VALUES('89231','5555','AA8');";
+	String addUser5 = "INSERT INTO favoriteUser VALUES('00000','54321','AA2');";
+	String addUser6 = "INSERT INTO favoriteUser VALUES('00000','11111','AA10');";
+	String addUser7 = "INSERT INTO favoriteUser VALUES('16436','19284','AA9');";
+	String addUser8 = "INSERT INTO favoriteUser VALUES('12456','54321','AA2');";
+	String addUser9 = "INSERT INTO favoriteUser VALUES('55555','54321','AA2');";
+	String addUser10 = "INSERT INTO favoriteUser VALUES('12345','12456','AA7');";
+	
+	statement.executeUpdate(addUser);
+	statement.executeUpdate(addUser2);
+	statement.executeUpdate(addUser3);
+	statement.executeUpdate(addUser4);
+	statement.executeUpdate(addUser5);
+	statement.executeUpdate(addUser6);
+	statement.executeUpdate(addUser7);
+	statement.executeUpdate(addUser8);
+	statement.executeUpdate(addUser9);
+	statement.executeUpdate(addUser10);
+}
+
 public String getfavUsername(int userID) throws SQLException {
 	
 	connect_function();
@@ -932,8 +961,8 @@ public List<users> sameDay(String category1, String category2) throws SQLExcepti
 
 
 /*----------------------------------------------------------------------------------
- * REQUIREMENT 3 - List all the items posted by user X, such that all the comments are “Excellent” or “good” for these items 
- * (in other words, these items must have comments but these items don’t have any other kinds of comments such as “bad” or “fair” comments).
+ * REQUIREMENT 3 - List all the items posted by user X, such that all the comments are ï¿½Excellentï¿½ or ï¿½goodï¿½ for these items 
+ * (in other words, these items must have comments but these items donï¿½t have any other kinds of comments such as ï¿½badï¿½ or ï¿½fairï¿½ comments).
  *  User X is arbitrary and will be determined by the instructor.
  ----------------------------------------------------------------------------------*/
 public List<item> excellentGoodComments(String username) throws SQLException {
@@ -1009,7 +1038,7 @@ public List<favoriteUser> usersFavorited(int userID1, int userID2) throws SQLExc
 
 
 /*-------------------------------------------------------------------------------
- * REQUIREMENT 6 - Display all the users who never posted any “excellent” items: 
+ * REQUIREMENT 6 - Display all the users who never posted any ï¿½excellentï¿½ items: 
  * an item is excellent if at least three reviews are excellent. 
  --------------------------------------------------------------------------------*/
 public List<users> noExcellentItems() throws SQLException {
@@ -1032,7 +1061,7 @@ public List<users> noExcellentItems() throws SQLException {
 	return listUsers;
 }
 /*-------------------------------------------------------------------------------
- * REQUIREMENT 7 - Display all the users who never posted a “poor” review.
+ * REQUIREMENT 7 - Display all the users who never posted a ï¿½poorï¿½ review.
  --------------------------------------------------------------------------------*/
 public List<users> pNoPoorReview() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
@@ -1059,7 +1088,7 @@ public List<users> pNoPoorReview() throws SQLException {
 	return listUsers;
 }
 /*-------------------------------------------------------------------------------
- * REQUIREMENT 8 - Display all the users who posted some reviews but each of them is “poor”.
+ * REQUIREMENT 8 - Display all the users who posted some reviews but each of them is ï¿½poorï¿½.
  --------------------------------------------------------------------------------*/
 public List<users> pAllPoorReview() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
@@ -1090,7 +1119,7 @@ public List<users> pAllPoorReview() throws SQLException {
 }
 
 /*-------------------------------------------------------------------------------
- * REQUIREMENT 9 - Display those users such that each item they posted so far never received any “poor” reviews. 
+ * REQUIREMENT 9 - Display those users such that each item they posted so far never received any ï¿½poorï¿½ reviews. 
  * In other words, these users must have posted some items, however, 
  * these items have never received any poor review or have not received any review at all.
  --------------------------------------------------------------------------------*/
@@ -1117,7 +1146,7 @@ public List<users> rNoPoorReview() throws SQLException {
 
 /*-----------------------------------------------------------------------------
  * REQUIREMENT 10 - List a user pair (A, B) such that they always gave each other 
- * "excellent” review for every single item they posted. 
+ * "excellentï¿½ review for every single item they posted. 
  ------------------------------------------------------------------------------*/
 public List<users> userPairExcellent() throws SQLException {
 	List<users>userPair = new ArrayList<users>();
