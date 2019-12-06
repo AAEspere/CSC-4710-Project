@@ -455,10 +455,6 @@ public String getCurrentUsername(String email, String pass) throws SQLException 
 	preparedStatement.setString(1,email);
 	preparedStatement.setString(2,pass);
 	ResultSet resultSet = preparedStatement.executeQuery();
-	//if email and password equal the one entered, get the userID also. 
-	//while(resultSet.next()) {
-		//if(resultSet.getString("email").equals(email)
-		//&& resultSet.getString("pass").equals(pass)) {
 			resultSet.next();
 			String username = resultSet.getString("username");
 			return username;
@@ -910,6 +906,14 @@ public boolean deleteItem(int itemID, int userID) throws SQLException {
  * Project Part 3 Code
  * 
  ----------------------------------------------------------------------------------*/
+
+/*THINGS I NEEDED TO FIX IN THE DEMONSTRATION
+ * REQUIREMENT 1 
+ * REQUIREMENT 3
+ * REQUIREMENT 4
+ * REQUIREMENT 10
+ */
+
 public boolean checkDuplicateUsername(String username) throws SQLException {
 	
 	String sql = "SELECT * FROM users";
@@ -924,6 +928,22 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 		}	
 	}
 	//if you get to this part, then the emails were not duplicates, which means that 
+	return false;
+}
+
+public boolean checkDuplicateEmail(String email) throws SQLException {
+	
+	String sql = "SELECT * FROM users";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()) {
+		String currentEmail = resultSet.getString("email");
+		if(currentEmail == email) {
+			return true;
+		}
+	}
 	return false;
 }
 /*---------------------------------------------------------------
@@ -996,13 +1016,20 @@ public List<item> excellentGoodComments(String username) throws SQLException {
 public List<users> postMostItems() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
 	String sql = "SELECT U.*, COUNT(*) as NUM FROM users U, item I WHERE I.itemDate >= '2018-05-01' AND U.username = I.username\r\n" + 
-			"GROUP BY I.username ORDER BY NUM DESC LIMIT 1";
+			"GROUP BY I.username ORDER BY NUM DESC";
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	
+	int highestValue = 0; //get the highest value from going through the resultSet. 
+	
+	//in the case of a tie, if there is a value greater than or equal to the highest, it will get printed
+	//on the first iteration, it will collect the highest value
 	while(resultSet.next()){
-		listUsers.add(resultSetUser(resultSet));		
+		if(resultSet.getInt("NUM") >= highestValue) {
+		listUsers.add(resultSetUser(resultSet));
+		highestValue = resultSet.getInt("NUM");
+		}
 	}
 	resultSet.close();
 	statement.close();

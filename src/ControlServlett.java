@@ -191,7 +191,7 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.addReviews();
             	InitDatabase.createFavoriteItemsTable();
             	InitDatabase.createFavoriteUsersTable();
-            	InitDatabase.addFavoriteUsers();
+            	//InitDatabase.addFavoriteUsers();
             	//go to the welcome page -- which is where you have to login/signup
     			RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");       
                 dispatcher.forward(request, response);
@@ -416,6 +416,7 @@ public class ControlServlett extends HttpServlet{
     private void register(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     	
+			RequestDispatcher dispatcher; 
     		//for registering the user
     		String username = request.getParameter("username");
     		String email = request.getParameter("email");
@@ -426,15 +427,22 @@ public class ControlServlett extends HttpServlet{
     		String gender = request.getParameter("gender");
     		int age = Integer.parseInt(request.getParameter("age"));
     		
-    		if(matchingPassword(password, password2) == true) {
-        		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+    		if(password != password2) {
+    			dispatcher = request.getRequestDispatcher("register.jsp");
         		dispatcher.forward(request, response);
     		}
 
-    		if(duplicateUsername(username) == true) {
-        		RequestDispatcher dispatcher = request.getRequestDispatcher("register.jsp");
+    		else if(duplicateUsername(username) == true) {
+    			dispatcher = request.getRequestDispatcher("register.jsp");
         		dispatcher.forward(request, response);
     		}
+    		
+    		//else if(duplicateEmail(email) == true) {
+    		//	dispatcher = request.getRequestDispatcher("register.jsp");
+    		//	dispatcher.forward(request, response);
+    		//}
+    		
+    		else {
     		//add the user to the database -- this is successfully working
     		users registerUser = new users(username, password, firstName, lastName, email, gender, age);
     		InitDatabase.addOneUser(registerUser);
@@ -446,6 +454,7 @@ public class ControlServlett extends HttpServlet{
 			System.out.print(currentUser);
 			System.out.print(userID);
 			showAllInformation(request, response);
+    }
     }
     
     private void logout(HttpServletRequest request, HttpServletResponse response)
@@ -459,16 +468,6 @@ public class ControlServlett extends HttpServlet{
      * PROJECT PART 3 CODE
      * 
      -----------------------------------------------------------------------------------------------------------*/
-    public boolean matchingPassword(String password, String password2) {
-    		
-    	if(password == password2) {
-    		//do nothing if password1 is equal to password2 because there is no problem
-    		return true;
-    	}
-    		return false;
-    	
-    }
-    
     public boolean duplicateUsername(String username) throws SQLException{
     	
     	if(InitDatabase.checkDuplicateUsername(username) == true) {
@@ -478,6 +477,14 @@ public class ControlServlett extends HttpServlet{
     		//do nothing if false, this means it is a unique email
     		return false;
         }
+    
+    public boolean duplicateEmail(String email) throws SQLException {
+    	
+    	if(InitDatabase.checkDuplicateEmail(email) == true) {
+    		return true;
+    	}
+    	else return false;
+    }
     
     //Project Part 2 - sorting the most expensive items in a category
     public void sortExpensive(HttpServletRequest request, HttpServletResponse response)
