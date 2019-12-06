@@ -18,6 +18,11 @@ public class users {
 		this.userID = userID;
 	}
 	
+	public users(String username, int userID) {
+		this.username = username;
+		this.userID = userID;
+	}
+	
 	public users(int userID, String username, String pass, String firstName, String lastName, String email, String gender, int age) {
 		this(username, pass, firstName, lastName, email, gender, age);
 		this.userID = userID;

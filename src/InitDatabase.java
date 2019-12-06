@@ -111,7 +111,7 @@ public void createItemTable() throws SQLException {
 			"itemID INTEGER AUTO_INCREMENT, " +
 			"itemTitle VARCHAR(50) NOT NULL," +
 			"itemDescription VARCHAR(100), " +
-			"itemDate VARCHAR(50), " +
+			"itemDate DATE, " +
 			"itemPrice DOUBLE NOT NULL, " +
 			"itemCategory VARCHAR(50), " +
 			"PRIMARY KEY (itemID));";
@@ -127,16 +127,16 @@ public void createItemTable() throws SQLException {
 public void addItems() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
-	String addItem1 = "INSERT INTO item VALUES('AA1','123456789','Cactus','Pointy Plant','06/21/1998','20.00','plants');";
-	String addItem2 = "INSERT INTO item VALUES('AA2','987654321','Soccer Ball', 'A ball to kick','06/09/1997','3.00','outdoors');";
-	String addItem3 = "INSERT INTO item VALUES('AA3','121212121','Video Game','New Video Game', '01/01/2019','60.00','electronics');";
-	String addItem4 = "INSERT INTO item VALUES('AA4','123123123','Coffee Table','Coffee Table','02/01/2019','100.00','furniture');";
-	String addItem5 = "INSERT INTO item VALUES('AA5','231455153','Couch','Furniture','02/01/2019','300.00','furniture');";
-	String addItem6 = "INSERT INTO item VALUES('AA6','555555555','Nintendo Switch','Newest Nintendo System', '01/01/2019','300.00','electronics,video games');";
-	String addItem7 = "INSERT INTO item VALUES('AA7','423465674','Milk','2% Milk','06/21/1998','2.00','food,produce');";
-	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Roomba', 'Self Operating Vaccuum Cleaner','06/09/1997','3.00','electronics,home');";
-	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Macbook Air','2017 Macbook Air', '01/01/2019','649.00','electronics,computers');";
-	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Book','Book', '01/01/2019','10.00','reading');";		
+	String addItem1 = "INSERT INTO item VALUES('AA1','123456789','Cactus','Pointy Plant','1998-6-21','20.00','plants');";
+	String addItem2 = "INSERT INTO item VALUES('AA2','987654321','Soccer Ball', 'A ball to kick','1997-06-09','3.00','outdoors');";
+	String addItem3 = "INSERT INTO item VALUES('AA3','121212121','Video Game','New Video Game', '2019-01-01','60.00','electronics');";
+	String addItem4 = "INSERT INTO item VALUES('AA4','123123123','Coffee Table','Coffee Table','2019-02-01','100.00','furniture');";
+	String addItem5 = "INSERT INTO item VALUES('AA5','231455153','Couch','Furniture','2019-02-01','300.00','furniture');";
+	String addItem6 = "INSERT INTO item VALUES('AA6','555555555','Nintendo Switch','Newest Nintendo System', '2019-04-20','300.00','electronics,video games');";
+	String addItem7 = "INSERT INTO item VALUES('AA7','423465674','Milk','2% Milk','2005-05-23','2.00','food,produce');";
+	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Roomba', 'Self Operating Vaccuum Cleaner','2019-12-2','3.00','electronics,home');";
+	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Macbook Air','2017 Macbook Air', '2019-12-3','649.00','electronics,computers');";
+	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Book','Book', 2019-01-01','10.00','reading');";		
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -256,6 +256,7 @@ public void addReviews() throws SQLException {
 	String addReviews8 = "INSERT INTO reviews VALUES('AA6','231455153','Couch','Fair','Example Review');";
 	String addReviews9 = "INSERT INTO reviews VALUES('AA3','423465674','Milk','Poor','SPOILED');";
 	String addReviews10 = "INSERT INTO reviews VALUES('AA1','987654321','Soccer Ball','Excellent','Example Review');";
+	String addReviews11 = "INSERT INTO reviews VALUES('AA10','555555555','Nintendo Switch','Excellent','Great System! My kids loved it.');";
 	
 	try {
 		statement.executeUpdate(addReviews1);
@@ -268,6 +269,7 @@ public void addReviews() throws SQLException {
 		statement.executeUpdate(addReviews8);
 		statement.executeUpdate(addReviews9);
 		statement.executeUpdate(addReviews10);
+		statement.executeUpdate(addReviews11);
 	}
 	catch (SQLException e) {
 		
@@ -456,6 +458,188 @@ public String getCurrentUsername(String email, String pass) throws SQLException 
  * 
  --------------------------------------------------------------------------------*/
 
+/*-------------------------------------------------------------------------------
+ * REQUIREMENT 1 - INSERTION OF ITEM
+ ------------------------------------------------------------------------------*/
+
+//Project Part 2 Requirement 1 -- inserting an item
+public boolean insertItem(item item) throws SQLException {
+	
+	//need to insert conditional which will limit the amount of times a person can post a review
+	connect_function();         
+	String sql = "INSERT INTO item(username, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	//Project 2 requirement for favorite users, need to associate each item with a user ID
+	preparedStatement.setString(1, item.username);
+	preparedStatement.setString(2, item.itemTitle);
+	preparedStatement.setString(3, item.itemDescription);
+	//gets the local time. When this function is called, that means the user has submitted an item
+	//and will take the date of when that item was created
+	preparedStatement.setDate(4,java.sql.Date.valueOf(java.time.LocalDate.now()));
+	preparedStatement.setDouble(5,item.itemPrice);
+	preparedStatement.setString(6,item.itemCategory);
+	
+  boolean rowInserted = preparedStatement.executeUpdate() > 0;
+  preparedStatement.close();
+  return rowInserted;
+}
+
+/*---------------------------------------------------------------------------------
+ * REQUIREMENT 2 - SEARCH INTERFACE
+ ----------------------------------------------------------------------------------*/
+//Project Part 2 --> Search function which displays all items under a certain category
+//This should be similar to the listItems function because instead of listing all items
+//you are listing all items that match a specific category
+//STILL WORKS CORRECTLY -- NO NEED TO CHANGE
+public List<item> searchItem(String category) throws SQLException{
+	
+	List<item> listItems = new ArrayList<item>();
+	String sql = "SELECT * FROM item";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+	//so scan all of the categories, and if one matches an item then add it onto the items
+	//that will be listed
+		
+		//parse the string based on comma separation
+		//I used comma separation because 
+		String[] parsedCategories = resultSet.getString("itemCategory").split("\\s*,\\s*");
+		
+		//so use for loop to scan through parsed categories array
+		for (int i = 0; i < parsedCategories.length; i++) {
+			
+			//if the category matches the parsed ones, then add that to the list
+			//of items to display
+			if(category.equals(parsedCategories[i])) {
+				listItems.add(resultSetItem(resultSet));
+				}	
+		}
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listItems;
+}
+
+/*-----------------------------------------------------------------------------------
+ * REQUIREMENT 3 - WRITING A REVIEW
+ ------------------------------------------------------------------------------------*/
+public boolean insertReview(reviews reviews) throws SQLException{
+	connect_function();         
+	String sql = "INSERT INTO reviews(username, itemID, itemTitle, score, remark) "
+			+ "VALUES(?,?,?,?,?)";
+	
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, reviews.username);
+	preparedStatement.setInt(2, reviews.itemID);
+	preparedStatement.setString(3, reviews.itemTitle);
+	preparedStatement.setString(4, reviews.score);
+	preparedStatement.setString(5, reviews.remark);
+//	preparedStatement.executeUpdate();
+	
+    boolean rowInserted = preparedStatement.executeUpdate() > 0;
+    preparedStatement.close();
+//    disconnect();
+    return rowInserted;
+}
+
+//getting the item title because I can only pass the itemID;
+public String getItemName(int itemID) throws SQLException {
+	
+	connect_function();
+	String itemTitle;
+	String sql = "SELECT * FROM item WHERE itemID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, itemID);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	itemTitle = resultSet.getString("itemTitle");
+	return itemTitle;
+}
+
+/*-------------------------------------------------------------------------------------
+ * REQUIREMENT 4 - 
+ * Implement the functionality of add/delete the favorite sellers list. 
+ * One can also click on a seller in the list and browse his/her profile: name, items posted by the seller, etc.
+ --------------------------------------------------------------------------------------*/
+public void createFavoriteUsersTable() throws SQLException {
+	connect_function();
+	statement = (Statement)connect.createStatement();
+
+	String createFavoriteUsersTable = "CREATE TABLE IF NOT EXISTS favoriteUser" +
+			"(currentUserID INTEGER NOT NULL, " +
+			"favoriteUserID INTEGER NOT NULL, " +
+			"favoriteUserUsername VARCHAR(50) NOT NULL," +
+			"PRIMARY KEY (favoriteUserID)," + 
+			"CONSTRAINT f_key_currentUserID FOREIGN KEY (currentUserID) REFERENCES users(userID)," +
+			"CONSTRAINT f_key_favoriteUserID FOREIGN KEY (favoriteUserID) REFERENCES users(userID)," +
+			"CONSTRAINT f_key_favoriteUserUsername FOREIGN KEY (favoriteUserUsername) REFERENCES users(username)" +
+			");";
+	
+	try {
+		statement.executeUpdate(createFavoriteUsersTable);
+	}
+	
+	catch(SQLException e) {
+		
+	}
+	finally {
+		connect.close();
+	}
+}
+
+public String getfavUsername(int userID) throws SQLException {
+	
+	connect_function();
+	String username;
+	String sql = "SELECT * FROM users WHERE userID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, userID);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	username = resultSet.getString("username");
+	return username;
+}
+
+public boolean addFavoriteUser(favoriteUser favUser) throws SQLException {
+	connect_function();
+	/*get the current UserID and the fav UserID and add to favoriteUser table */
+	String sql = "INSERT INTO favoriteUser(currentUserID, favoriteUserID, favoriteUserUsername) VALUES (?,?,?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, favUser.userID);
+	preparedStatement.setInt(2, favUser.favUserID);
+	preparedStatement.setString(3, favUser.favUserUsername);
+	boolean rowInserted = preparedStatement.executeUpdate() > 0;
+	preparedStatement.close();
+	return rowInserted;
+}
+
+public List<favoriteUser> listFavoriteUsers() throws SQLException {
+	
+	List<favoriteUser> favUsers = new ArrayList<favoriteUser>();
+	String sql = "SELECT * FROM favoriteUser";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()) {
+		
+		int userID = resultSet.getInt("currentUserID");
+		int favUserID = resultSet.getInt("favoriteUserID");
+		String favUserUsername = resultSet.getString("favoriteUserUsername");
+		favoriteUser fav = new favoriteUser(userID, favUserID, favUserUsername);
+		favUsers.add(fav);
+	}
+	
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return favUsers;
+	
+}
+
 //Using SQL to handle the creation and deletion of favorite users/items,
 //So I think I need to make a separate table in order to add and delete item ID's
 public void createFavoriteItemsTable() throws SQLException {
@@ -469,7 +653,10 @@ public void createFavoriteItemsTable() throws SQLException {
 			//they selected)
 			"(userID INTEGER NOT NULL, " +
 			"itemID INTEGER NOT NULL, " +
-			"PRIMARY KEY (userID, itemID));";
+			"PRIMARY KEY (userID, itemID)," + 
+			"CONSTRAINT f_key_favuserID FOREIGN KEY (userID) REFERENCES users(userID)," +
+			"CONSTRAINT f_key_favitemID FOREIGN KEY (itemID) REFERENCES item(itemID)" +
+			");";
 	
 	try {
 	statement.executeUpdate(createFavoriteItemsTable);
@@ -567,66 +754,6 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 	return favItems;
 }
 
-//Project Part 2 Requirement 1 -- inserting an item
-public boolean insertItem(item item) throws SQLException {
-	
-	//need to insert conditional which will limit the amount of times a person can post a review
-	connect_function();         
-	String sql = "INSERT INTO item(username, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
-	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	//Project 2 requirement for favorite users, need to associate each item with a user ID
-	preparedStatement.setString(1, item.username);
-	preparedStatement.setString(2, item.itemTitle);
-	preparedStatement.setString(3, item.itemDescription);
-	//gets the local time. When this function is called, that means the user has submitted an item
-	//and will take the date of when that item was created
-	preparedStatement.setString(4,java.time.LocalDate.now().toString());
-	preparedStatement.setDouble(5,item.itemPrice);
-	preparedStatement.setString(6,item.itemCategory);
-	
-    boolean rowInserted = preparedStatement.executeUpdate() > 0;
-    preparedStatement.close();
-    return rowInserted;
-	
-	
-}
-
-//Project Part 2 --> Search function which displays all items under a certain category
-//This should be similar to the listItems function because instead of listing all items
-//you are listing all items that match a specific category
-//STILL WORKS CORRECTLY -- NO NEED TO CHANGE
-public List<item> searchItem(String category) throws SQLException{
-	
-	List<item> listItems = new ArrayList<item>();
-	String sql = "SELECT * FROM item";
-	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
-	
-	while(resultSet.next()){
-	//so scan all of the categories, and if one matches an item then add it onto the items
-	//that will be listed
-		
-		//parse the string based on comma separation
-		//I used comma separation because 
-		String[] parsedCategories = resultSet.getString("itemCategory").split("\\s*,\\s*");
-		
-		//so use for loop to scan through parsed categories array
-		for (int i = 0; i < parsedCategories.length; i++) {
-			
-			//if the category matches the parsed ones, then add that to the list
-			//of items to display
-			if(category.equals(parsedCategories[i])) {
-				listItems.add(resultSetItem(resultSet));
-				}	
-		}
-	}
-	resultSet.close();
-	statement.close();
-	disconnect();
-	return listItems;
-}
-
 //still works correctly but need to sort by category
 public List<item> sortExpensive() throws SQLException {
 	
@@ -651,10 +778,6 @@ public List<item> sortExpensive() throws SQLException {
 	return sortExpensive;
 }
 
-
-
-
-
 public boolean checkDuplicateUsername(String username) throws SQLException {
 	
 	String sql = "SELECT * FROM users";
@@ -671,63 +794,6 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 	//if you get to this part, then the emails were not duplicates, which means that 
 	return false;
 }
-
-public void createFavoriteUsersTable() throws SQLException {
-	connect_function();
-	statement = (Statement)connect.createStatement();
-
-	String createFavoriteUsersTable = "CREATE TABLE IF NOT EXISTS favoriteUser" +
-			"(currentUserID INTEGER NOT NULL, " +
-			"favoriteUserID INTEGER NOT NULL, " +
-			"PRIMARY KEY (favoriteUserID));";
-	
-	try {
-		statement.executeUpdate(createFavoriteUsersTable);
-	}
-	
-	catch(SQLException e) {
-		
-	}
-	finally {
-		connect.close();
-	}
-}
-
-public boolean addFavoriteUser(favoriteUser favUser) throws SQLException {
-	connect_function();
-	/*get the current UserID and the fav UserID and add to favoriteUser table */
-	String sql = "INSERT INTO favoriteUser(currentUserID, favoriteUserID) VALUES (?,?)";
-	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setInt(1, favUser.userID);
-	preparedStatement.setInt(2, favUser.favUserID);
-	boolean rowInserted = preparedStatement.executeUpdate() > 0;
-	preparedStatement.close();
-	return rowInserted;
-}
-
-public List<favoriteUser> listFavoriteUsers() throws SQLException {
-	
-	List<favoriteUser> favUsers = new ArrayList<favoriteUser>();
-	String sql = "SELECT * FROM favoriteUser";
-	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
-	
-	while(resultSet.next()) {
-		
-		int userID = resultSet.getInt("currentUserID");
-		int favUserID = resultSet.getInt("favoriteUserID");
-		favoriteUser fav = new favoriteUser(userID, favUserID);
-		favUsers.add(fav);
-	}
-	
-	resultSet.close();
-	statement.close();
-	disconnect();
-	return favUsers;
-	
-}
-
 //Project Part 2 - deleting a user. This will be used when adding and
 //deleting users from the favorite user list
 //I probably need to create a separate table to separate user and favorite user
@@ -757,38 +823,48 @@ public boolean deleteItem(int itemID) throws SQLException {
 //    disconnect();
     return rowDeleted;  
 }
-
-
-
-public boolean insertReview(reviews reviews) throws SQLException{
-	connect_function();         
-	String sql = "INSERT INTO reviews(username, itemID, itemTitle, score, remark) "
-			+ "VALUES(?,?,?,?,?)";
-	
-	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-	preparedStatement.setString(1, reviews.username);
-	preparedStatement.setInt(2, reviews.itemID);
-	preparedStatement.setString(3, reviews.itemTitle);
-	preparedStatement.setString(4, reviews.score);
-	preparedStatement.setString(5, reviews.remark);
-//	preparedStatement.executeUpdate();
-	
-    boolean rowInserted = preparedStatement.executeUpdate() > 0;
-    preparedStatement.close();
-//    disconnect();
-    return rowInserted;
-}
-
 /*---------------------------------------------------------------------------------
  * 
  * Project Part 3 Code
  * 
  ----------------------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------
+ * REQUIREMENT 2 -  List the users who posted at least two items that are posted on the same day, 
+ * one has a category of X and another has a category of Y. In terms of user interface, 
+ * you will implement two text fields, so that you can input one category into each text field 
+ * and the search will return the user (or users) who (the same user) posted two different items
+ *  on the same day, such that one item has a category in the first text field and the other 
+ *  has a category in the second text field.
+ ---------------------------------------------------------------*/
+
+public List<users> sameDay() throws SQLException {
+	List<users>listUsers = new ArrayList<users>();
+	String sql;
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUser(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+
+
+/*----------------------------------------------------------------------------------
+ * REQUIREMENT 3 - List all the items posted by user X, such that all the comments are “Excellent” or “good” for these items 
+ * (in other words, these items must have comments but these items don’t have any other kinds of comments such as “bad” or “fair” comments).
+ *  User X is arbitrary and will be determined by the instructor.
+ ----------------------------------------------------------------------------------*/
 public List<item> excellentGoodComments() throws SQLException {
 	List<item> excellentGood = new ArrayList<item>();
 	//SQL to select the items that have only received a good or excellent review
 	//Select the item where the username is selected
+	//and the itemID is selected from the ones that are not in the ones where there are excellent and good remarks
 	String sql = "SELECT * FROM item where username = ? AND itemID IN"
 			//select the itemID from review table 
 			+ "(SELECT DISTINCT itemID FROM review WHERE itemID NOT IN"
@@ -808,18 +884,13 @@ public List<item> excellentGoodComments() throws SQLException {
 	return excellentGood;
 }
 
-public List<users> pNoPoorReview() throws SQLException {
+/*-------------------------------------------------------------------------------
+ * REQUIREMENT 4 - List the users who posted the most number of items since 5/1/2018 (inclusive); 
+ * if there is a tie, list all the users who have a tie.
+ --------------------------------------------------------------------------------*/
+public List<users> postMostItems() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
-	//When displaying users (and you're not admin so you don't need to see password) you probably
-	//only need to show the username and the userID
-	
-	//so select the userID and the username users where they are not 
-	//in the search where users have posted poor reviews
-	String sql = "SELECT DISTINCT username, userID "
-			+ "FROM users "
-			+ "WHERE username NOT IN"
-			+ "(SELECT U.username FROM users U, reviews R"
-			+ "WHERE R.score = 'Poor' and U.username = R.username);";
+	String sql;
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
@@ -833,6 +904,83 @@ public List<users> pNoPoorReview() throws SQLException {
 	return listUsers;
 }
 
+/*---------------------------------------------------------------------------------
+ * REQUIREMENT 5 - List the other users who are favorited by both users X and Y. 
+ * Usernames X and Y will be selected from dropdown menus by the instructor. 
+ * In other words, the user (or users) C are the favorite for both X and Y.
+ ----------------------------------------------------------------------------------*/
+public List<favoriteUser> usersFavorited() throws SQLException {
+	List<favoriteUser>listUsers = new ArrayList<favoriteUser>();
+	String sql = "SELECT X.favoriteUserID, X.favoriteUserUsername FROM favoriteuser X, favoriteuser Y "
+			+ "WHERE X.currentUserID = ? AND Y.currentUserID = ? AND X.favoriteUserID = Y.favoriteUserID;";
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		
+		String favoriteUserUserName = resultSet.getString("favoriteUserUsername");
+		int favoriteUserID = resultSet.getInt("favoriteUserID");
+		
+		favoriteUser favoriteUser = new favoriteUser(favoriteUserID,favoriteUserUserName);
+		listUsers.add(favoriteUser);
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+
+
+/*-------------------------------------------------------------------------------
+ * REQUIREMENT 6 - Display all the users who never posted any “excellent” items: 
+ * an item is excellent if at least three reviews are excellent. 
+ --------------------------------------------------------------------------------*/
+public List<users> noExcellentItems() throws SQLException {
+	List<users>listUsers = new ArrayList<users>();
+	String sql;
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUser(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+/*-------------------------------------------------------------------------------
+ * REQUIREMENT 7 - Display all the users who never posted a “poor” review.
+ --------------------------------------------------------------------------------*/
+public List<users> pNoPoorReview() throws SQLException {
+	List<users>listUsers = new ArrayList<users>();
+	//When displaying users (and you're not admin so you don't need to see password) you probably
+	//only need to show the username and the userID
+	
+	//so select the userID and the username users where they are not 
+	//in the search where users have posted poor reviews
+	String sql = "SELECT DISTINCT username, userID "
+			+ "FROM users "
+			+ "WHERE username NOT IN "
+			+ "(SELECT U.username FROM users U, reviews R "
+			+ "WHERE R.score = 'Poor' AND U.username = R.username);";
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUserPart3(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+/*-------------------------------------------------------------------------------
+ * REQUIREMENT 8 - Display all the users who posted some reviews but each of them is “poor”.
+ --------------------------------------------------------------------------------*/
 public List<users> pAllPoorReview() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
 	//When displaying users (and you're not admin so you don't need to see password) you probably
@@ -840,6 +988,7 @@ public List<users> pAllPoorReview() throws SQLException {
 	
 	//so select the userID and the username users where they are not 
 	//in the search where users have posted poor reviews
+	//and then eliminate users that haven't posted a review
 	String sql = "SELECT U.username, U.userID "
 			+ "FROM users U "
 			+ "LEFT JOIN reviews R ON R.username = U.username "
@@ -852,12 +1001,48 @@ public List<users> pAllPoorReview() throws SQLException {
 	ResultSet resultSet = statement.executeQuery(sql);
 	
 	while(resultSet.next()){
-		listUsers.add(resultSetUser(resultSet));		
+		listUsers.add(resultSetUserPart3(resultSet));		
 	}
 	resultSet.close();
 	statement.close();
 	disconnect();
 	return listUsers;
+}
+
+/*-------------------------------------------------------------------------------
+ * REQUIREMENT 9 - Display those users such that each item they posted so far never received any “poor” reviews. 
+ * In other words, these users must have posted some items, however, 
+ * these items have never received any poor review or have not received any review at all.
+ --------------------------------------------------------------------------------*/
+public List<users> rNoPoorReview() throws SQLException {
+	List<users>listUsers = new ArrayList<users>();
+	String sql = "SELECT DISTINCT U.username, U.userID "
+			+ "FROM users U "
+			+ "LEFT JOIN reviews R ON R.username = U.username "
+			+ "LEFT JOIN item I ON I.username = U.username "
+			+ "WHERE U.username NOT IN (SELECT I.username FROM item I, reviews R WHERE "
+			+ "(R.score = 'Poor') AND I.itemID = R.itemID) AND I.username IS NOT NULL;";
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()){
+		listUsers.add(resultSetUserPart3(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
+	return listUsers;
+}
+
+public users resultSetUserPart3(ResultSet resultSet) throws SQLException {
+	
+	int userID = resultSet.getInt("userID");
+	String username = resultSet.getString("username");
+	
+	users users = new users(username, userID);
+	return users;
+	
 }
 
 }

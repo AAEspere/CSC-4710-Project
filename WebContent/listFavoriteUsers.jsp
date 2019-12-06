@@ -32,12 +32,14 @@
             <caption>List of Favorite Sellers</caption>
             <tr>
             	<th>Favorite Seller ID</th>
+            	<th>Favorite Seller Username</th>
                 <th>Delete Favorite</th>
                 <th>See Profile</th>
             </tr>
             <c:forEach var="favoriteUser" items ="${favUsers}">
             <tr>
                     <td><c:out value="${favoriteUser.favUserID}" /></td>
+                    <td><c:out value="${favoriteUser.favUserUsername}" /></td>
                     <td>
 					<form action = "deleteUser">
                     <input type = "hidden" value = "${favoriteUser.favUserID}" name = "favUserID">

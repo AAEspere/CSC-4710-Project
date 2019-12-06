@@ -31,10 +31,12 @@ public class ControlServlett extends HttpServlet{
 	private HttpSession usersession;
 	//gets the current userID when the user logs in or signs up
 	int userID = 0;
-	int favUserID = 0;
+	//int favUserID = 0;
 	int userItem = 0;
 	int userReview = 0;
 	String currentUser = "";
+	int currentReviewID = 0;
+	int currentFavoriteUserID = 0;
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
@@ -124,25 +126,25 @@ public class ControlServlett extends HttpServlet{
         	case "/excellentGood":
         		excellentGood(request,response);
         		break;
-        	case "postMostItems":
+        	case "/postMostItems":
         		postMostItems(request,response);
         		break;
-        	case "usersFavorited":
+        	case "/usersFavorited":
         		usersFavorited(request,response);
         		break;
-        	case "noExcellentItems":
+        	case "/noExcellentItems":
         		noExcellentItems(request,response);
         		break;
-        	case "pNoPoorReview":
+        	case "/pNoPoorReview":
         		pNoPoorReview(request,response);
         		break;
-        	case "pAllPoorReview":
+        	case "/pAllPoorReview":
         		pAllPoorReview(request,response);
         		break;
-        	case "rNoPoorReview":
+        	case "/rNoPoorReview":
         		rNoPoorReview(request,response);
         		break;
-        	case "userPairExcellent":
+        	case "/userPairExcellent":
         		userPairExcellent(request,response);
         		break;
         	}
@@ -297,8 +299,9 @@ public class ControlServlett extends HttpServlet{
     private void addFavoriteUser(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	
-    		favUserID = Integer.parseInt(request.getParameter("userID"));
-    		favoriteUser addFavUser = new favoriteUser(userID, favUserID);
+    		int favUserID = Integer.parseInt(request.getParameter("userID"));
+    		String favUserUserName = InitDatabase.getfavUsername(favUserID);
+    		favoriteUser addFavUser = new favoriteUser(userID, favUserID, favUserUserName);
     		
     		if(InitDatabase.addFavoriteUser(addFavUser) == true) {
     			System.out.println("Successfully Inserted");
@@ -326,7 +329,7 @@ public class ControlServlett extends HttpServlet{
     private void reviewID(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	
-    		//currentReviewID = Integer.parseInt(request.getParameter("itemID"));
+    		currentReviewID = Integer.parseInt(request.getParameter("itemID"));
     		RequestDispatcher dispatcher = request.getRequestDispatcher("writeReview.jsp");
     		dispatcher.forward(request, response);
     	
@@ -338,8 +341,8 @@ public class ControlServlett extends HttpServlet{
     		if(userReview <= 5) {
     		String score = request.getParameter("remark");
     		String remark = request.getParameter("review");
-    		int itemID = Integer.valueOf(request.getParameter("itemID"));
-    		String itemTitle = request.getParameter("itemTitle");
+    		int itemID = currentReviewID;
+    		String itemTitle = InitDatabase.getItemName(itemID);
     		
     		reviews addReview = new reviews(currentUser, itemID, itemTitle, score, remark);
     		
@@ -469,17 +472,26 @@ public class ControlServlett extends HttpServlet{
     
     public void pNoPoorReview(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+    	List<users> listUsers = InitDatabase.pNoPoorReview();
+    	request.setAttribute("listUsers", listUsers);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_7.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void pAllPoorReview(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+    	List<users> listUsers = InitDatabase.pAllPoorReview();
+    	request.setAttribute("listUsers", listUsers);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_8.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void rNoPoorReview(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+    	List<users> listUsers = InitDatabase.rNoPoorReview();
+    	request.setAttribute("listUsers", listUsers);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_9.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void userPairExcellent(HttpServletRequest request, HttpServletResponse response)
