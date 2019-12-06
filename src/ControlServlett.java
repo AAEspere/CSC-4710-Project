@@ -314,10 +314,13 @@ public class ControlServlett extends HttpServlet{
     private void displayUser(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
     	int favUserID = Integer.parseInt(request.getParameter("favUserID"));
+    	String username = InitDatabase.getUserName(favUserID);
     	users userprofile = InitDatabase.getUserProfile(favUserID);
     	request.setAttribute("listUsers", userprofile);    	
-    	List<item> userItems = InitDatabase.listUserItems(favUserID);
+    	List<item> userItems = InitDatabase.listUserItems(username);
     	request.setAttribute("listItem", userItems);
+    	List<reviews> userReviews = InitDatabase.listUserReviews(username);
+    	request.setAttribute("listReviews", userReviews);
     	RequestDispatcher dispatcher = request.getRequestDispatcher("userProfile.jsp");
     	dispatcher.forward(request, response);
     }
@@ -335,14 +338,19 @@ public class ControlServlett extends HttpServlet{
     		throws SQLException, IOException, ServletException {
     	
     		currentReviewID = Integer.parseInt(request.getParameter("itemID"));
+    		if(InitDatabase.checkSameUsername(currentReviewID) == currentUser) {
+    			RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");
+    			dispatcher.forward(request, response);
+    		}
+    		else {
     		RequestDispatcher dispatcher = request.getRequestDispatcher("writeReview.jsp");
     		dispatcher.forward(request, response);
-    	
+    		}
     }
     
     private void addReview(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
-    	
+    	    	
     		if(userReview <= 5) {
     		String score = request.getParameter("remark");
     		String remark = request.getParameter("review");

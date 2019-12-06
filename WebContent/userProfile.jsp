@@ -28,8 +28,9 @@
 </form> 
 </div>
 <h1><c:out value = "${listUsers.username}"/></h1>
-Name: <c:out value = "${listUsers.firstName }"/> <c:out value = "${listUsers.lastName }"/>
-Age: <c:out value = "${listUsers.age }"/>
+Name: <c:out value = "${listUsers.firstName }"/> <c:out value = "${listUsers.lastName }"/><br>
+Age: <c:out value = "${listUsers.age }"/><br>
+Email: <c:out value = "${listUsers.email }"/>
 <br>
 <br>
 <br>
@@ -65,6 +66,24 @@ Age: <c:out value = "${listUsers.age }"/>
                     <input type = "submit" value = "Write Review">
                     </form>
                     </td>
+                    </tr>
+            </c:forEach>
+		</table>
+		<br>
+		<table border="1" cellpadding="5">
+            <caption>List of Reviews</caption>
+            <tr>
+            	<th>Item ID</th>
+            	<th>Item Title</th>
+                <th>Score</th>
+                <th>Remark</th>
+            </tr>
+            <c:forEach var="reviews" items = "${listReviews}">
+            <tr>
+                    <td><c:out value="${reviews.itemID}" /></td>
+                    <td><c:out value="${reviews.itemTitle}" /></td>
+                    <td><c:out value="${reviews.score}" /></td>
+                    <td><c:out value="${reviews.remark}" /></td>
                     </tr>
             </c:forEach>
 		</table>

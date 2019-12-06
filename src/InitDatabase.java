@@ -559,6 +559,18 @@ public String getItemName(int itemID) throws SQLException {
 	return itemTitle;
 }
 
+public String checkSameUsername(int itemID) throws SQLException {
+	
+	connect_function();
+	String sql = "SELECT username FROM item WHERE itemID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, itemID);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	String username = resultSet.getString("username");
+	return username;
+}
+
 /*-------------------------------------------------------------------------------------
  * REQUIREMENT 4 - 
  * Implement the functionality of add/delete the favorite sellers list. 
@@ -703,6 +715,18 @@ public ArrayList<Integer> getUserFavItemID(int userID) throws SQLException {
 	return favItemID;
 }
 
+public String getUserName(int userID) throws SQLException {
+	
+	connect_function();
+	String sql = "SELECT username FROM users WHERE userID = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1, userID);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	String username = resultSet.getString("username");
+	return username;
+}
+
 public users getUserProfile(int userID) throws SQLException {
 	
 	connect_function();
@@ -717,20 +741,41 @@ public users getUserProfile(int userID) throws SQLException {
 }
 
 //listing items for a userProfile
-public List<item> listUserItems(int favUserID) throws SQLException {
+public List<item> listUserItems(String username) throws SQLException {
 		List<item> userItems = new ArrayList<item>();
-		String sql = "SELECT * FROM item WHERE userID = ?";
+		String sql = "SELECT * FROM item WHERE username = ?";
 		connect_function();
 		statement = (Statement) connect.createStatement();
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-		preparedStatement.setInt(1, favUserID);
-		ResultSet resultSet = preparedStatement.executeQuery(sql);
+		preparedStatement.setString(1, username);
+		ResultSet resultSet = preparedStatement.executeQuery();
 		
 		while(resultSet.next()) {
 			userItems.add(resultSetItem(resultSet));
 		}
 		
 		return userItems;
+}
+
+public List<reviews> listUserReviews(String userprofile) throws SQLException {
+	List<reviews> userReviews = new ArrayList<reviews>();
+	String sql = "SELECT * FROM reviews WHERE username = ?";
+	connect_function();
+	statement = (Statement) connect.createStatement();
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, userprofile);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	while(resultSet.next()) {
+		String username = resultSet.getString("username");
+		int itemID = resultSet.getInt("itemID");
+		String itemTitle = resultSet.getString("itemTitle");
+		String score = resultSet.getString("score");
+		String remark = resultSet.getString("remark");
+		reviews review = new reviews(username, itemID, itemTitle, score, remark);
+		userReviews.add(review);	
+	}
+	
+	return userReviews;
 }
 
 public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLException {
@@ -741,9 +786,6 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 	statement = (Statement) connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	
-	/*the way I have this implemented is a for loop within a while loop. I think this is bad
-	 * practice and will have to be changed for Part 3...because the result makes this function
-	 * extremely slow (I think O(n^4))*/
 	while(resultSet.next()) {
 		
 		for(int i = 0; i < favitemID.size(); i++) {
