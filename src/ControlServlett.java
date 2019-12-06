@@ -511,7 +511,10 @@ public class ControlServlett extends HttpServlet{
     
     public void postMostItems(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+    	List<users> postMostItems = InitDatabase.postMostItems();
+    	request.setAttribute("listUsers", postMostItems);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_4.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void usersFavorited(HttpServletRequest request, HttpServletResponse response)

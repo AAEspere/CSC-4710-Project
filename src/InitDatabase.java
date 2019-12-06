@@ -966,7 +966,8 @@ public List<item> excellentGoodComments(String username) throws SQLException {
  --------------------------------------------------------------------------------*/
 public List<users> postMostItems() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
-	String sql;
+	String sql = "SELECT U.*, COUNT(*) as NUM FROM users U, item I WHERE I.itemDate >= '2018-05-01' AND U.username = I.username\r\n" + 
+			"GROUP BY I.username ORDER BY NUM DESC LIMIT 1";
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
@@ -1120,6 +1121,24 @@ public List<users> rNoPoorReview() throws SQLException {
  ------------------------------------------------------------------------------*/
 public List<users> userPairExcellent() throws SQLException {
 	List<users>userPair = new ArrayList<users>();
+	String sql = "SELECT A.username AS UserA, B.username AS UserB\r\n" + 
+			"FROM\r\n" + 
+			"(SELECT R.score, R.username, R.itemID\r\n" + 
+			"FROM reviews R\r\n" + 
+			"INNER JOIN item I ON I.itemID = R.itemID) A,\r\n" + 
+			"(SELECT R.score, R.username, R.itemID\r\n" + 
+			"FROM reviews R\r\n" + 
+			"INNER JOIN item I ON I.itemID = R.itemID) B\r\n" + 
+			"WHERE A.score = 'Excellent'";
+	connect_function();
+	statement = (Statement)connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	while(resultSet.next()){
+		userPair.add(resultSetUserPart3(resultSet));		
+	}
+	resultSet.close();
+	statement.close();
+	disconnect();
 	return userPair;
 }
 
