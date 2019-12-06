@@ -23,6 +23,42 @@
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
 <a href = "logout">log out</a>
+<br>
+<br>
+<form action = "usersFavorited">
+User X<br>
+<select name = "usernameX">
+<c:forEach var = "users" items = "${listUsers}">
+<option value = "${users.userID }">${users.username }</option>
+</c:forEach>
+</select>
+<br>
+<br>
+User Y<br>
+<select name = "usernameY">
+<c:forEach var = "users" items = "${listUsers}">
+<option value = "${users.userID }">${users.username }</option>
+</c:forEach>
+</select>
+<br>
+<br>
+<input type = "submit" value = "SUBMIT TWO USERS">
+</form>
+<br>
+<br>
+<table border="1" cellpadding="5">
+            <caption>List of Users</caption>
+            <tr>
+            	<th>Username</th>
+                <th>ID</th>
+            </tr>
+            <c:forEach var="favoriteUser" items = "${listFavUsers}">
+            <tr>
+            		<td><c:out value="${favoriteUser.favUserID}" /></td>
+                    <td><c:out value="${favoriteUser.favUserUsername}" /></td>
+                    </tr>
+            </c:forEach>
+		</table>
 </div>
 </body>
 </html>

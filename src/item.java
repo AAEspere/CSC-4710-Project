@@ -16,9 +16,13 @@ public class item {
 	
 	//need itemID since it is primary key
 	public item(String username, int itemID, String itemTitle, String itemDescription, String date, double itemPrice, String itemCategory) {
-		this(itemTitle, itemDescription, date, itemPrice, itemCategory);
-		this.itemID = itemID;
 		this.username = username;
+		this.itemID = itemID;
+		this.itemTitle = itemTitle;
+		this.itemDescription = itemDescription;
+		this.date = date;
+		this.itemPrice = itemPrice;
+		this.itemCategory = itemCategory;
 	}
 	
 	//constructor required when inserting an item: them itemID is generateed, and the date is taken from the time of posting

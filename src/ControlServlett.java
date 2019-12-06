@@ -54,6 +54,7 @@ public class ControlServlett extends HttpServlet{
             throws ServletException, IOException {
         String action = request.getServletPath();
         System.out.println(action);
+        RequestDispatcher dispatcher;
         
         try {
         	switch(action) {
@@ -126,11 +127,20 @@ public class ControlServlett extends HttpServlet{
         	case "/sameDay":
         		sameDay(request,response);
         		break;
+        	case "/part3_3":
+        		listUsers(request, response);
+        		dispatcher = request.getRequestDispatcher("part3_3.jsp");
+        		dispatcher.forward(request, response);
         	case "/excellentGood":
         		excellentGood(request,response);
         		break;
         	case "/postMostItems":
         		postMostItems(request,response);
+        		break;
+        	case "/part3_5":
+        		listUsers(request, response);
+        		dispatcher = request.getRequestDispatcher("part3_5.jsp");
+        		dispatcher.forward(request, response);
         		break;
         	case "/usersFavorited":
         		usersFavorited(request,response);
@@ -338,7 +348,8 @@ public class ControlServlett extends HttpServlet{
     		throws SQLException, IOException, ServletException {
     	
     		currentReviewID = Integer.parseInt(request.getParameter("itemID"));
-    		if(InitDatabase.checkSameUsername(currentReviewID) == currentUser) {
+    		String compare = InitDatabase.checkSameUsername(currentReviewID);
+    		if(compare == currentUser) {
     			RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");
     			dispatcher.forward(request, response);
     		}
@@ -472,6 +483,12 @@ public class ControlServlett extends HttpServlet{
     public void excellentGood(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
     	
+    	String username = request.getParameter("usernameX");
+    	List<item> excellentGood = InitDatabase.excellentGoodComments(username);
+    	request.setAttribute("listItem", excellentGood);
+    	listUsers(request, response);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_3.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void postMostItems(HttpServletRequest request, HttpServletResponse response)
@@ -481,7 +498,12 @@ public class ControlServlett extends HttpServlet{
     
     public void usersFavorited(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+    	int user1 = Integer.valueOf(request.getParameter("usernameX"));
+    	int user2 = Integer.valueOf(request.getParameter("usernameY"));
+    	List<favoriteUser> usersFavorited = InitDatabase.usersFavorited(user1, user2);
+    	request.setAttribute("listFavUsers", usersFavorited);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_5.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void noExcellentItems(HttpServletRequest request, HttpServletResponse response)
@@ -515,6 +537,9 @@ public class ControlServlett extends HttpServlet{
     
     public void userPairExcellent(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+    	List<users> listUsers = InitDatabase.userPairExcellent();
+    	request.setAttribute("listUsers", listUsers);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_10.jsp");
+    	dispatcher.forward(request, response);
     }
 }

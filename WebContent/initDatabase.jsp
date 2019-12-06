@@ -44,6 +44,7 @@
             <tr>
             		<td><c:out value="${item.username}" /></td>
                     <td><c:out value="${item.itemID}" /></td>
+                    
                     <td><c:out value="${item.itemTitle}" /></td>
                     <td><c:out value="${item.itemDescription}" /></td>
                     <td><c:out value="${item.date}" /></td>
@@ -71,7 +72,6 @@
             <tr>
             	<th>Username</th>
                 <th>ID</th>
-                <th>Password</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -83,7 +83,6 @@
             <tr>
             		<td><c:out value="${users.username}" /></td>
                     <td><c:out value="${users.userID}" /></td>
-                    <td><c:out value="${users.pass}" /></td>
                     <td><c:out value="${users.firstName}" /></td>
                     <td><c:out value="${users.lastName}" /></td>
                     <td><c:out value="${users.email}"/></td>

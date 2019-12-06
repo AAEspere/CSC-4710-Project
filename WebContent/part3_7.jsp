@@ -23,10 +23,12 @@
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
 <a href = "logout">log out</a>
+<h2>List users who have never posted a Poor review</h2>
 <form action = "pNoPoorReview">
 <input type = "submit" value = "List users who never posted a bad review">
 </form>
-
+<br>
+<br>
 <table border="1" cellpadding="5">
             <caption>List of Users</caption>
             <tr>

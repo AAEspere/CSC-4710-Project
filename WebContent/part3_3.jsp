@@ -24,26 +24,31 @@
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
 <a href = "logout">log out</a>
 <h2>List all items posted by user X, such that all comments are "Excellent" or "Good"</h2>
-<form action = "excellentGood" method = "post">
-<input type = "text" name = "username" placeholder = "Enter username..." id = "LRFillin">
-<input type = "submit" value = "SUBMIT USERNAME">
+<br>
+<br>
+<form action = "excellentGood">
+User X<br>
+<select name = "usernameX">
+<c:forEach var = "users" items = "${listUsers}">
+<option value = "${users.username }">${users.username }</option>
+</c:forEach>
+</select>
+<br>
+<br>
+<input type = "submit" value = "SUBMIT USER">
 </form>
 <table border="1" cellpadding="5">
             <caption>List of Items</caption>
             <tr>
-            	<th>Username</th>
                 <th>ID</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Date</th>
                 <th>Price</th>
                 <th>Categories</th>
-                <th>Favorite?</th>
-                <th>Write a Review</th>
             </tr>
             <c:forEach var="item" items = "${listItem}">
             <tr>
-            		<td><c:out value="${item.username}" /></td>
                     <td><c:out value="${item.itemID}" /></td>
                     <td><c:out value="${item.itemTitle}" /></td>
                     <td><c:out value="${item.itemDescription}" /></td>

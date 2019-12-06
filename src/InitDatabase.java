@@ -136,7 +136,8 @@ public void addItems() throws SQLException {
 	String addItem7 = "INSERT INTO item VALUES('AA7','423465674','Milk','2% Milk','2005-05-23','2.00','food,produce');";
 	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Roomba', 'Self Operating Vaccuum Cleaner','2019-12-2','3.00','electronics,home');";
 	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Macbook Air','2017 Macbook Air', '2019-12-3','649.00','electronics,computers');";
-	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Book','Book', 2019-01-01','10.00','reading');";		
+	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Book','Book', '2019-01-01','10.00','reading');";		
+	String addItem11 = "INSERT INTO item VALUES('AA2','434253123','Box','Box', '2019-01-01','10.00','reading');";		
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -149,6 +150,7 @@ public void addItems() throws SQLException {
 		statement.executeUpdate(addItem8);
 		statement.executeUpdate(addItem9);
 		statement.executeUpdate(addItem10);
+		statement.executeUpdate(addItem11);
 	}
 	catch (SQLException e) {
 	}
@@ -199,6 +201,7 @@ public void addUsers() throws SQLException {
 	String addUsers8 = "INSERT INTO users VALUES('AA8','55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
 	String addUsers9 = "INSERT INTO users VALUES('AA9','19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
 	String addUsers10 = "INSERT INTO users VALUES('AA10','11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
+	String addUsers11 = "INSERT INTO users VALUES('root','00000','pass1234','Admin1','Admin1','admin@gmail.com','Male','30');";
 			
 	try {
 		statement.executeUpdate(addUsers1);
@@ -211,6 +214,7 @@ public void addUsers() throws SQLException {
 		statement.executeUpdate(addUsers8);
 		statement.executeUpdate(addUsers9);
 		statement.executeUpdate(addUsers10);
+		statement.executeUpdate(addUsers11);
 	}
 	catch (SQLException e) {
 		
@@ -257,6 +261,7 @@ public void addReviews() throws SQLException {
 	String addReviews9 = "INSERT INTO reviews VALUES('AA3','423465674','Milk','Poor','SPOILED');";
 	String addReviews10 = "INSERT INTO reviews VALUES('AA1','987654321','Soccer Ball','Excellent','Example Review');";
 	String addReviews11 = "INSERT INTO reviews VALUES('AA10','555555555','Nintendo Switch','Excellent','Great System! My kids loved it.');";
+	String addReviews12 = "INSERT INTO reviews VALUES('AA1','434253123','Box','Poor','Cannot live inside it');";
 	
 	try {
 		statement.executeUpdate(addReviews1);
@@ -270,6 +275,7 @@ public void addReviews() throws SQLException {
 		statement.executeUpdate(addReviews9);
 		statement.executeUpdate(addReviews10);
 		statement.executeUpdate(addReviews11);
+		statement.executeUpdate(addReviews12);
 	}
 	catch (SQLException e) {
 		
@@ -294,7 +300,7 @@ public item resultSetItem(ResultSet resultSet) throws SQLException {
 	double itemPrice = resultSet.getDouble("itemPrice");
 	String itemCategory = resultSet.getString("itemCategory");
 	
-	item items = new item(username,itemID,itemTitle,itemDescription,date,itemPrice,itemCategory);
+	item items = new item(username,itemID, itemTitle , itemDescription , date , itemPrice ,itemCategory);
 	
 	return items;
 }
@@ -562,7 +568,7 @@ public String getItemName(int itemID) throws SQLException {
 public String checkSameUsername(int itemID) throws SQLException {
 	
 	connect_function();
-	String sql = "SELECT username FROM item WHERE itemID = ?";
+	String sql = "SELECT * FROM item WHERE itemID = ?";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 	preparedStatement.setInt(1, itemID);
 	ResultSet resultSet = preparedStatement.executeQuery();
@@ -915,19 +921,19 @@ public List<users> sameDay() throws SQLException {
  * (in other words, these items must have comments but these items don’t have any other kinds of comments such as “bad” or “fair” comments).
  *  User X is arbitrary and will be determined by the instructor.
  ----------------------------------------------------------------------------------*/
-public List<item> excellentGoodComments() throws SQLException {
+public List<item> excellentGoodComments(String username) throws SQLException {
 	List<item> excellentGood = new ArrayList<item>();
 	//SQL to select the items that have only received a good or excellent review
 	//Select the item where the username is selected
 	//and the itemID is selected from the ones that are not in the ones where there are excellent and good remarks
-	String sql = "SELECT * FROM item where username = ? AND itemID IN"
-			//select the itemID from review table 
-			+ "(SELECT DISTINCT itemID FROM review WHERE itemID NOT IN"
-			+ "SELECT DISTINCT itemID from review"
-			+ "WHERE remark = Excellent OR remark = Good";
+	String sql = "SELECT * FROM item where username = ? AND itemID IN " +
+			"(SELECT DISTINCT itemID FROM reviews WHERE itemID IN " +
+			"(SELECT DISTINCT itemID from reviews " +
+			"WHERE score = 'Excellent' OR score = 'Good'));";
 	connect_function();
-	statement = (Statement) connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1,username);
+	ResultSet resultSet = preparedStatement.executeQuery();
 	
 	while(resultSet.next()){
 		excellentGood.add(resultSetItem(resultSet));
@@ -964,13 +970,15 @@ public List<users> postMostItems() throws SQLException {
  * Usernames X and Y will be selected from dropdown menus by the instructor. 
  * In other words, the user (or users) C are the favorite for both X and Y.
  ----------------------------------------------------------------------------------*/
-public List<favoriteUser> usersFavorited() throws SQLException {
+public List<favoriteUser> usersFavorited(int userID1, int userID2) throws SQLException {
 	List<favoriteUser>listUsers = new ArrayList<favoriteUser>();
 	String sql = "SELECT X.favoriteUserID, X.favoriteUserUsername FROM favoriteuser X, favoriteuser Y "
 			+ "WHERE X.currentUserID = ? AND Y.currentUserID = ? AND X.favoriteUserID = Y.favoriteUserID;";
 	connect_function();
-	statement = (Statement)connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setInt(1,userID1);
+	preparedStatement.setInt(2,userID2);
+	ResultSet resultSet = preparedStatement.executeQuery();
 	
 	while(resultSet.next()){
 		
@@ -980,9 +988,6 @@ public List<favoriteUser> usersFavorited() throws SQLException {
 		favoriteUser favoriteUser = new favoriteUser(favoriteUserID,favoriteUserUserName);
 		listUsers.add(favoriteUser);
 	}
-	resultSet.close();
-	statement.close();
-	disconnect();
 	return listUsers;
 }
 
@@ -1044,7 +1049,7 @@ public List<users> pAllPoorReview() throws SQLException {
 	//so select the userID and the username users where they are not 
 	//in the search where users have posted poor reviews
 	//and then eliminate users that haven't posted a review
-	String sql = "SELECT U.username, U.userID "
+	String sql = "SELECT DISTINCT U.username, U.userID "
 			+ "FROM users U "
 			+ "LEFT JOIN reviews R ON R.username = U.username "
 			+ "WHERE U.username NOT IN "
@@ -1090,6 +1095,15 @@ public List<users> rNoPoorReview() throws SQLException {
 	return listUsers;
 }
 
+/*-----------------------------------------------------------------------------
+ * REQUIREMENT 10 - List a user pair (A, B) such that they always gave each other 
+ * "excellent” review for every single item they posted. 
+ ------------------------------------------------------------------------------*/
+public List<users> userPairExcellent() throws SQLException {
+	List<users>userPair = new ArrayList<users>();
+	return userPair;
+}
+
 public users resultSetUserPart3(ResultSet resultSet) throws SQLException {
 	
 	int userID = resultSet.getInt("userID");
@@ -1099,5 +1113,4 @@ public users resultSetUserPart3(ResultSet resultSet) throws SQLException {
 	return users;
 	
 }
-
 }

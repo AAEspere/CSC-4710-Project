@@ -23,7 +23,14 @@
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
 <a href = "logout">log out</a>
-<h2></h2>
+<h2>List the users who posted at least two items that are posted on the same day, one has a category of X and another has a category of Y.</h2>
+<form action = "sameDay" method = "post">
+	<input type = "text" name = "category1" placeholder = "Enter category 1" id = "LRFillin">
+	<input type = "text" name = "category2" placeholder = "Enter category 2" id = "LRFillin">
+	<input type = "submit" value = "SUBMIT CATEGORY">
+</form>
+<br>
+<br>
 </div>
 </body>
 </html>

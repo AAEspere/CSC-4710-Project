@@ -25,9 +25,9 @@
 <h2>Show Queries Menu: click on any of the links to be redirected</h2>
 <table border = "1">
 <tr><td><a href = "part3_2.jsp">List users who posted two items that are posted on the same day</a></td></tr>
-<tr><td><a href = "part3_3.jsp">List all items posted by a user which only have "Excellent" or "Good" comments</a></td></tr>
+<tr><td><a href = "part3_3">List all items posted by a user which only have "Excellent" or "Good" comments</a></td></tr>
 <tr><td><a href = "part3_4.jsp">List the user who posted the most items since 5/01/18</a></td></tr>
-<tr><td><a href = "part3_5.jsp">List other users who are both favorited by user X and Y</a></td></tr>
+<tr><td><a href = "part3_5">List other users who are both favorited by user X and Y</a></td></tr>
 <tr><td><a href = "part3_6.jsp">List users who have no Excellent items</a></td></tr>
 <tr><td><a href = "part3_7.jsp">List users who have never posted a Poor review</a></td></tr>
 <tr><td><a href = "part3_8.jsp">List users who have only posted poor reviews</a></td></tr>
