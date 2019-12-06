@@ -477,7 +477,13 @@ public class ControlServlett extends HttpServlet{
     
     public void sameDay(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	
+
+    	String category1 = request.getParameter("category1");
+    	String category2 = request.getParameter("category2");
+    	List<users> sameDay = InitDatabase.sameDay(category1, category2);
+    	request.setAttribute("listUsers", sameDay);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_2.jsp");
+    	dispatcher.forward(request, response);
     }
     
     public void excellentGood(HttpServletRequest request, HttpServletResponse response)
@@ -508,6 +514,11 @@ public class ControlServlett extends HttpServlet{
     
     public void noExcellentItems(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
+    	
+    	List<users> noExcellentItems = InitDatabase.noExcellentItems();
+    	request.setAttribute("listUsers", noExcellentItems);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_6.jsp");
+    	dispatcher.forward(request, response);
     	
     }
     

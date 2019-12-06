@@ -31,6 +31,26 @@
 </form>
 <br>
 <br>
+<table border="1" cellpadding="5">
+            <caption>List of Users</caption>
+            <tr>
+            	<th>Username</th>
+                <th>ID</th>
+                <th>Favorite?</th>
+            </tr>
+            <c:forEach var="users" items = "${listUsers}">
+            <tr>
+            		<td><c:out value="${users.username}" /></td>
+                    <td><c:out value="${users.userID}" /></td>
+                    <td>
+					<form action = "addFavoriteUser">
+                    <input type = "hidden" value = "${users.userID}" name = "userID">
+                    <input type = "submit" value = "Add to Favorites">
+                    </form>
+					</td>
+                    </tr>
+            </c:forEach>
+		</table>
 </div>
 </body>
 </html>

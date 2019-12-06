@@ -137,7 +137,10 @@ public void addItems() throws SQLException {
 	String addItem8 = "INSERT INTO item VALUES('AA8','343242351','Roomba', 'Self Operating Vaccuum Cleaner','2019-12-2','3.00','electronics,home');";
 	String addItem9 = "INSERT INTO item VALUES('AA9','654764567','Macbook Air','2017 Macbook Air', '2019-12-3','649.00','electronics,computers');";
 	String addItem10 = "INSERT INTO item VALUES('AA10','235790456','Book','Book', '2019-01-01','10.00','reading');";		
-	String addItem11 = "INSERT INTO item VALUES('AA2','434253123','Box','Box', '2019-01-01','10.00','reading');";		
+	String addItem11 = "INSERT INTO item VALUES('AA2','434253123','Box','Box', '2019-01-01','10.00','reading');";	
+	String addItem12 = "INSERT INTO item VALUES('AA2','345612345','Iphone X', 'Newest Iphone','2019-06-21','1000.00','mobile');";
+	String addItem13 = "INSERT INTO item VALUES('AA2','574835261','40 Inch Smart Tv', 'Smart Television','2019-06-21','300.00','electronics');";
+	
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -151,6 +154,8 @@ public void addItems() throws SQLException {
 		statement.executeUpdate(addItem9);
 		statement.executeUpdate(addItem10);
 		statement.executeUpdate(addItem11);
+		statement.executeUpdate(addItem12);
+		statement.executeUpdate(addItem13);
 	}
 	catch (SQLException e) {
 	}
@@ -262,6 +267,7 @@ public void addReviews() throws SQLException {
 	String addReviews10 = "INSERT INTO reviews VALUES('AA1','987654321','Soccer Ball','Excellent','Example Review');";
 	String addReviews11 = "INSERT INTO reviews VALUES('AA10','555555555','Nintendo Switch','Excellent','Great System! My kids loved it.');";
 	String addReviews12 = "INSERT INTO reviews VALUES('AA1','434253123','Box','Poor','Cannot live inside it');";
+	String addReviews13 = "INSERT INTO reviews VALUES('AA3','555555555','Nintendo Switch','Excellent','Great System I get to play old games!');";
 	
 	try {
 		statement.executeUpdate(addReviews1);
@@ -276,6 +282,7 @@ public void addReviews() throws SQLException {
 		statement.executeUpdate(addReviews10);
 		statement.executeUpdate(addReviews11);
 		statement.executeUpdate(addReviews12);
+		statement.executeUpdate(addReviews13);
 	}
 	catch (SQLException e) {
 		
@@ -899,12 +906,20 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
  *  has a category in the second text field.
  ---------------------------------------------------------------*/
 
-public List<users> sameDay() throws SQLException {
+public List<users> sameDay(String category1, String category2) throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
-	String sql;
+	String sql = "SELECT DISTINCT u.* " +
+			"FROM users u, item item1, item item2 " +
+			"WHERE item1.itemID != item2.itemID AND item1.itemDate = item2.itemDate " +
+			"AND item1.username = item2.username " +
+			"AND item1.itemCategory = ? " +
+			"AND item2.itemCategory = ? " +
+			"AND item1.username = u.username;";
 	connect_function();
-	statement = (Statement)connect.createStatement();
-	ResultSet resultSet = statement.executeQuery(sql);
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1,category1);
+	preparedStatement.setString(2,category2);
+	ResultSet resultSet = preparedStatement.executeQuery();
 	
 	while(resultSet.next()){
 		listUsers.add(resultSetUser(resultSet));		
@@ -998,7 +1013,11 @@ public List<favoriteUser> usersFavorited(int userID1, int userID2) throws SQLExc
  --------------------------------------------------------------------------------*/
 public List<users> noExcellentItems() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
-	String sql;
+	String sql = "SELECT * FROM users WHERE username NOT IN( " +
+				 "SELECT username FROM item WHERE itemID IN( " +
+				 "SELECT itemID FROM reviews WHERE itemID IN( " +
+				 "SELECT itemID FROM reviews WHERE score = 'Excellent' GROUP BY itemID, score HAVING COUNT(*) >=3)));";
+			
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
