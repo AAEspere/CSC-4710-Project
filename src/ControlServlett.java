@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
 
 
 @WebServlet(name = "/ControlServlett", urlPatterns = { "/"})
@@ -32,11 +33,14 @@ public class ControlServlett extends HttpServlet{
 	//gets the current userID when the user logs in or signs up
 	int userID = 0;
 	//int favUserID = 0;
-	int userItem = 0;
-	int userReview = 0;
+	int userItem = -1;
+	int userReview = -1;
 	String currentUser = "";
 	int currentReviewID = 0;
 	int currentFavoriteUserID = 0;
+	
+	String localDate = java.time.LocalDate.now().toString();
+	
 	
 	public void init(){
 		InitDatabase = new InitDatabase();
@@ -207,6 +211,9 @@ public class ControlServlett extends HttpServlet{
     	
     	//CHECK HOW MANY ITEMS THE USER HAS SUBMITTEED
     	//IF GOOD THEN PROCEED WITH THE INSERT ITEM FUNCTION
+    	if(localDate == java.time.LocalDate.now().toString()) {
+    		userItem++;
+    	}
     	if(userItem <= 5) {
     		
     	//basically you get all the parameters that were added, and create a new item with it
@@ -223,16 +230,16 @@ public class ControlServlett extends HttpServlet{
     	//indication if the item was successfully added
     	if(InitDatabase.insertItem(insertItem) == true) {
     		System.out.println("Successfully inserted");
-    		userItem++;
     	}
     	else {
     		System.out.println("Item unsuccessful in inserting");
-    		response.sendRedirect("problemItem.jsp");
+    		response.sendRedirect("initDatabase.jsp");
     	}
     	}
     	//User post limit reached -- print to the user that they have reached the post limit
     	else {
     		System.out.println("User Post Limit Reached");
+    		response.sendRedirect("initDatabase.jsp");
     	}
     	
     }
@@ -362,6 +369,10 @@ public class ControlServlett extends HttpServlet{
     private void addReview(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	    	
+    		if(localDate == java.time.LocalDate.now().toString()) {
+    			userReview++;
+    		}
+    	
     		if(userReview <= 5) {
     		String score = request.getParameter("remark");
     		String remark = request.getParameter("review");
@@ -371,10 +382,11 @@ public class ControlServlett extends HttpServlet{
     		reviews addReview = new reviews(currentUser, itemID, itemTitle, score, remark);
     		
     		InitDatabase.insertReview(addReview);
-    		userReview++;
     		}
     		else {
     			System.out.println("User Review Limit Reached");
+        		RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");
+        		dispatcher.forward(request, response);
     		}
     }
         
