@@ -427,7 +427,7 @@ public class ControlServlett extends HttpServlet{
     		String gender = request.getParameter("gender");
     		int age = Integer.parseInt(request.getParameter("age"));
     		
-    		if(password != password2) {
+    		if(!(password.equals(password2))) {
     			dispatcher = request.getRequestDispatcher("register.jsp");
         		dispatcher.forward(request, response);
     		}
@@ -437,10 +437,10 @@ public class ControlServlett extends HttpServlet{
         		dispatcher.forward(request, response);
     		}
     		
-    		//else if(duplicateEmail(email) == true) {
-    		//	dispatcher = request.getRequestDispatcher("register.jsp");
-    		//	dispatcher.forward(request, response);
-    		//}
+    		else if(duplicateEmail(email) == true) {
+    			dispatcher = request.getRequestDispatcher("register.jsp");
+    			dispatcher.forward(request, response);
+    		}
     		
     		else {
     		//add the user to the database -- this is successfully working

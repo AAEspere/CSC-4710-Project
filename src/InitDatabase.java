@@ -908,9 +908,10 @@ public boolean deleteItem(int itemID, int userID) throws SQLException {
  ----------------------------------------------------------------------------------*/
 
 /*THINGS I NEEDED TO FIX IN THE DEMONSTRATION
- * REQUIREMENT 1 
+ * REQUIREMENT 1 - FIXED
  * REQUIREMENT 3
- * REQUIREMENT 4
+ * REQUIREMENT 4 - FIXED
+ * REQUIREMENT 6 - NO PROBLEMS AT ALL
  * REQUIREMENT 10
  */
 
@@ -923,7 +924,7 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 	
 	while(resultSet.next()) {
 		String currentUsername = resultSet.getString("username");
-		if(currentUsername == username) {
+		if(currentUsername.equals(username)) {
 			return true;
 		}	
 	}
@@ -940,7 +941,7 @@ public boolean checkDuplicateEmail(String email) throws SQLException {
 	
 	while(resultSet.next()) {
 		String currentEmail = resultSet.getString("email");
-		if(currentEmail == email) {
+		if(currentEmail.equals(email)) {
 			return true;
 		}
 	}
@@ -990,10 +991,8 @@ public List<item> excellentGoodComments(String username) throws SQLException {
 	//SQL to select the items that have only received a good or excellent review
 	//Select the item where the username is selected
 	//and the itemID is selected from the ones that are not in the ones where there are excellent and good remarks
-	String sql = "SELECT * FROM item where username = ? AND itemID IN " +
-			"(SELECT DISTINCT itemID FROM reviews WHERE itemID IN " +
-			"(SELECT DISTINCT itemID from reviews " +
-			"WHERE score = 'Excellent' OR score = 'Good'));";
+	String sql = "SELECT DISTINCT I.* FROM reviews R, item I WHERE I.username = ? AND I.itemID = R.itemID AND R.itemID NOT IN( " +
+			"SELECT itemID from reviews WHERE score = 'Poor' OR score = 'Fair')";
 	connect_function();
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 	preparedStatement.setString(1,username);
@@ -1087,6 +1086,13 @@ public List<users> noExcellentItems() throws SQLException {
 	disconnect();
 	return listUsers;
 }
+
+public List<users> postedExcellentItems() throws SQLException {
+	List<users> listUsers = new ArrayList<users>();
+	
+	return listUsers;
+}
+
 /*-------------------------------------------------------------------------------
  * REQUIREMENT 7 - Display all the users who never posted a �poor� review.
  --------------------------------------------------------------------------------*/
