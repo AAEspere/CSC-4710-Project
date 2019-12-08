@@ -23,6 +23,25 @@
 <a href = "searchItem.jsp">Search for Item</a>
 <a href = "project3Queries.jsp">View Project 3 Query options</a>
 <a href = "logout">log out</a>
+<h2>List a user pair (A, B) such that they always gave each other "excellent” review for every single item they posted. </h2>
+<form action = "userPairExcellent">
+<input type = "submit" value = "List a user pair (A, B) such that they always gave each other 'excellent' review for every single item they posted.">
+</form>
+<table border="1" cellpadding="5">
+            <caption>List of Users Pairs</caption>
+            <tr>
+            	<th>Username A</th>
+                <th>Username B</th>
+            </tr>
+            <c:forEach var="users" items = "${userPair}">
+            <tr>
+            		<td><c:out value="${users.userGive}" /></td>
+                    <td><c:out value="${users.userReceive}" /></td>
+                    </tr>
+            </c:forEach>
+		</table>
+<br>
+<br>
 </div>
 </body>
 </html>

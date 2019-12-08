@@ -1181,27 +1181,48 @@ public List<users> rNoPoorReview() throws SQLException {
  * REQUIREMENT 10 - List a user pair (A, B) such that they always gave each other 
  * "excellent� review for every single item they posted. 
  ------------------------------------------------------------------------------*/
-public List<users> userPairExcellent() throws SQLException {
-	List<users>userPair = new ArrayList<users>();
-	String sql = "SELECT A.username AS UserA, B.username AS UserB\r\n" + 
-			"FROM\r\n" + 
-			"(SELECT R.score, R.username, R.itemID\r\n" + 
-			"FROM reviews R\r\n" + 
-			"INNER JOIN item I ON I.itemID = R.itemID) A,\r\n" + 
-			"(SELECT R.score, R.username, R.itemID\r\n" + 
-			"FROM reviews R\r\n" + 
-			"INNER JOIN item I ON I.itemID = R.itemID) B\r\n" + 
-			"WHERE A.score = 'Excellent'";
+public List<userPair> userPairExcellent() throws SQLException {
+	List <userPair> allExcellent = new ArrayList<userPair>();
+	List <userPair> userPairExcellent = new ArrayList<userPair>();
+	String sql = "SELECT R.username AS userWrite, I.username userReceive " +
+			"FROM reviews R " +
+			"INNER JOIN item I ON I.itemID = R.itemID " +
+            "WHERE R.score = 'Excellent' " + 
+			"GROUP BY R.username, I.username";
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	while(resultSet.next()){
-		userPair.add(resultSetUserPart3(resultSet));		
+		
+		String userGive = resultSet.getString("userWrite");
+		String userReceive = resultSet.getString("userReceive");
+		
+		userPair userPair = new userPair(userGive, userReceive);
+		allExcellent.add(userPair);
+		
 	}
+	
+	for(int i = 0; i < allExcellent.size(); i++) {
+		
+		for(int j = 1; j < allExcellent.size(); j++) {
+			
+			if(allExcellent.get(i).userGive.equals(allExcellent.get(j).userReceive)
+					&& allExcellent.get(i).userReceive.equals(allExcellent.get(j).userGive)) {
+				
+				userPairExcellent.add(allExcellent.get(i));
+				allExcellent.remove(j);
+				continue;
+				
+			}
+			
+		}
+		
+	}
+	
 	resultSet.close();
 	statement.close();
 	disconnect();
-	return userPair;
+	return userPairExcellent;
 }
 
 public users resultSetUserPart3(ResultSet resultSet) throws SQLException {

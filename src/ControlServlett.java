@@ -571,8 +571,8 @@ public class ControlServlett extends HttpServlet{
     
     public void userPairExcellent(HttpServletRequest request, HttpServletResponse response)
         	throws SQLException, IOException, ServletException {
-    	List<users> listUsers = InitDatabase.userPairExcellent();
-    	request.setAttribute("listUsers", listUsers);
+    	List<userPair> userPair = InitDatabase.userPairExcellent();
+    	request.setAttribute("userPair", userPair);
     	RequestDispatcher dispatcher = request.getRequestDispatcher("part3_10.jsp");
     	dispatcher.forward(request, response);
     }
