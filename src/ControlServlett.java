@@ -81,6 +81,10 @@ public class ControlServlett extends HttpServlet{
         	case "/showQueries":
         		showAllInformation(request, response);
         		break;
+        	case "/addToBlacklist":
+        		addToBlacklist(request,response);
+        		showAllInformation(request, response);
+        		break;
         	//Pertaining to Project Part 2
         	case "/insertItem":
         		insertItem(request,response);
@@ -191,6 +195,7 @@ public class ControlServlett extends HttpServlet{
             	InitDatabase.addReviews();
             	InitDatabase.createFavoriteItemsTable();
             	InitDatabase.createFavoriteUsersTable();
+            	InitDatabase.createBlacklist();
             	//InitDatabase.addFavoriteUsers();
             	//go to the welcome page -- which is where you have to login/signup
     			RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");       
@@ -204,6 +209,14 @@ public class ControlServlett extends HttpServlet{
     		listItem(request, response);
     		listUsers(request, response);
     		listReviews(request, response);
+    }
+    
+    private void addToBlacklist(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	
+    	String username = request.getParameter("username");
+    	InitDatabase.insertBlacklist(username);
+    	
     }
     
     //for inserting a singular item into the list
@@ -348,8 +361,16 @@ public class ControlServlett extends HttpServlet{
             throws SQLException, IOException, ServletException {
             	List<reviews> listReviews = InitDatabase.listAllReviews();
             	request.setAttribute("listReviews", listReviews);
-            	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
-                dispatcher.forward(request, response);
+            	
+                
+                if(currentUser.equals("root")) {
+                	RequestDispatcher dispatcher = request.getRequestDispatcher("adminInitDatabase.jsp");
+                	dispatcher.forward(request, response);
+                }
+                else {
+                	RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");       
+                	dispatcher.forward(request, response);
+                }
             }
     
     private void reviewID(HttpServletRequest request, HttpServletResponse response) 
@@ -398,12 +419,19 @@ public class ControlServlett extends HttpServlet{
     		String email = request.getParameter("email");
 			String pass = request.getParameter("password");
 			//This checks if the login and the password is sending correctly.
+			
 			if(InitDatabase.loginCheck(email, pass) == true) {
 				userID = InitDatabase.getCurrentID(email, pass);
 				currentUser = InitDatabase.getCurrentUsername(email, pass);
 				//if successfully logged in, then you should be redirected to showing all information
 				//if not then it fails and should be redirected back into login page.
+				if(InitDatabase.checkBlacklist(currentUser) == true) {
+					RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+					dispatcher.forward(request, response);
+				}
+				else {
 				showAllInformation(request, response);
+				}
 			}
 			//login check fails -- so redirect back to the index page AS A TEST
 			else  {

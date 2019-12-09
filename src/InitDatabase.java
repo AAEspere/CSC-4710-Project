@@ -84,10 +84,12 @@ public void dropAllTables() throws SQLException {
 	String dropItemTable = "DROP TABLE IF EXISTS item;";
 	String dropFavoriteItemsTable = "DROP TABLE IF EXISTS favoriteItem;";
 	String dropFavoriteUsersTable = "DROP TABLE IF EXISTS favoriteUser";
+	String dropBlackList = "DROP TABLE IF EXISTS blacklist";
 	
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	
+	statement.executeUpdate(dropBlackList);
 	statement.executeUpdate(dropFavoriteItemsTable);
 	statement.executeUpdate(dropFavoriteUsersTable);
 	statement.executeUpdate(dropReviewTable);
@@ -207,7 +209,7 @@ public void addUsers() throws SQLException {
 	String addUsers8 = "INSERT INTO users VALUES('AA8','55555','Super123','Aaron8','Espere8','example8@gmail.com', 'Male','21');";
 	String addUsers9 = "INSERT INTO users VALUES('AA9','19284','Dont123','Aaron9','Espere9','example9@gmail.com', 'Male','21');";
 	String addUsers10 = "INSERT INTO users VALUES('AA10','11111','Secret123','Aaron10','Espere10','example10@gmail.com', 'Male','21');";
-	String addUsers11 = "INSERT INTO users VALUES('root','00001','pass1234','Admin1','Admin1','admin@gmail.com','Male','30');";
+	String addUsers11 = "INSERT INTO users VALUES('root','00001','pass1234','Admin1','Admin1','root','Male','30');";
 			
 	try {
 		statement.executeUpdate(addUsers1);
@@ -300,6 +302,7 @@ public void addReviews() throws SQLException {
 public void createBlacklist() throws SQLException{
 	
 	connect_function();
+	statement = (Statement)connect.createStatement();
 	String createBlacklist = "CREATE TABLE IF NOT EXISTS blacklist" + 
 							"(username VARCHAR(50) NOT NULL, " +
 							"CONSTRAINT f_key_Busername FOREIGN KEY (username) REFERENCES users (username));";
@@ -317,24 +320,35 @@ public void createBlacklist() throws SQLException{
 
 public boolean checkBlacklist(String username) throws SQLException {
 	
+	connect_function();
 	String sql = "SELECT * FROM blacklist WHERE username = ?";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 	preparedStatement.setString(1,username);
 	
 	ResultSet resultSet = preparedStatement.executeQuery();
-	resultSet.next();
 	
+	if(resultSet.next() == false) {
+		return false;
+	}
+	else {
+	//if it is true, that means the username is blacklisted. Don't let them log in. 
 	String checkUsername = resultSet.getString("username");
 	if(checkUsername.equals(username)) {
 		return true;
 	}
 	else return false;
+	}
 	
 }
 
 public void insertBlacklist(String username) throws SQLException {
 	
-	String sql = 
+	connect_function();
+	String sql =  "INSERT INTO blacklist(username) VALUES (?)";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, username);
+	
+	preparedStatement.executeUpdate();
 	
 }
 
