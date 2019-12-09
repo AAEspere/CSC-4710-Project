@@ -140,7 +140,7 @@ public void addItems() throws SQLException {
 	String addItem11 = "INSERT INTO item VALUES('AA2','434253123','Box','Box', '2019-01-01','10.00','reading');";	
 	String addItem12 = "INSERT INTO item VALUES('AA2','345612345','Iphone X', 'Newest Iphone','2019-06-21','1000.00','mobile');";
 	String addItem13 = "INSERT INTO item VALUES('AA2','574835261','40 Inch Smart Tv', 'Smart Television','2019-06-21','300.00','electronics');";
-	
+	String addItem14 = "INSERT INTO item VALUES('AA9','372487928','Macbook Pro','2019 Macbook Pro', '2019-12-3','2100.00','electronics,computers');";
 	
 	try {
 		statement.executeUpdate(addItem1);
@@ -156,6 +156,7 @@ public void addItems() throws SQLException {
 		statement.executeUpdate(addItem11);
 		statement.executeUpdate(addItem12);
 		statement.executeUpdate(addItem13);
+		statement.executeUpdate(addItem14);
 	}
 	catch (SQLException e) {
 	}
@@ -269,6 +270,7 @@ public void addReviews() throws SQLException {
 	String addReviews12 = "INSERT INTO reviews VALUES('AA1','434253123','Box','Poor','Cannot live inside it');";
 	String addReviews13 = "INSERT INTO reviews VALUES('AA3','555555555','Nintendo Switch','Excellent','Great System I get to play old games!');";
 	String addReviews14 = "INSERT INTO reviews VALUES('AA7','123123123','Coffee Table','Poor','This table came with a broken leg, I am very unsatisfied');";
+	String addReviews15 = "INSERT INTO reviews VALUES('AA2','372487928','Macbook Pro','Poor','The butterfly keys are awful! My SHIFT key got stuck!!!');";
 	
 	try {
 		statement.executeUpdate(addReviews1);
@@ -285,6 +287,7 @@ public void addReviews() throws SQLException {
 		statement.executeUpdate(addReviews12);
 		statement.executeUpdate(addReviews13);
 		statement.executeUpdate(addReviews14);
+		statement.executeUpdate(addReviews15);
 	}
 	catch (SQLException e) {
 		
@@ -292,6 +295,47 @@ public void addReviews() throws SQLException {
 	finally {
 		disconnect();
 	}
+}
+
+public void createBlacklist() throws SQLException{
+	
+	connect_function();
+	String createBlacklist = "CREATE TABLE IF NOT EXISTS blacklist" + 
+							"(username VARCHAR(50) NOT NULL, " +
+							"CONSTRAINT f_key_Busername FOREIGN KEY (username) REFERENCES users (username));";
+	
+	try {
+	statement.executeUpdate(createBlacklist);
+	}
+	catch (SQLException e) {
+	}
+	finally {
+		disconnect();
+	}
+	
+}
+
+public boolean checkBlacklist(String username) throws SQLException {
+	
+	String sql = "SELECT * FROM blacklist WHERE username = ?";
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1,username);
+	
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	
+	String checkUsername = resultSet.getString("username");
+	if(checkUsername.equals(username)) {
+		return true;
+	}
+	else return false;
+	
+}
+
+public void insertBlacklist(String username) throws SQLException {
+	
+	String sql = 
+	
 }
 
 /*-------------------------------------------------------------------------------
