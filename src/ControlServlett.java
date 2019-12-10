@@ -33,8 +33,8 @@ public class ControlServlett extends HttpServlet{
 	//gets the current userID when the user logs in or signs up
 	int userID = 0;
 	//int favUserID = 0;
-	int userItem = -1;
-	int userReview = -1;
+	int userItem = 0;
+	int userReview = 0;
 	String currentUser = "";
 	int currentReviewID = 0;
 	int currentFavoriteUserID = 0;
@@ -85,10 +85,14 @@ public class ControlServlett extends HttpServlet{
         		addToBlacklist(request,response);
         		showAllInformation(request, response);
         		break;
+        	case "/deleteBlacklist":
+        		deleteBlacklist(request, response);
+        		break;
+        	case "/listBlacklist":
+        		listBlacklist(request, response);
         	//Pertaining to Project Part 2
         	case "/insertItem":
         		insertItem(request,response);
-        		showAllInformation(request, response);
         		break;
         	case "/searchItem":
         		searchItem(request, response);
@@ -98,7 +102,6 @@ public class ControlServlett extends HttpServlet{
         		break;
         	case "/addReview":
         		addReview(request, response);
-        		showAllInformation(request, response);
         		break;
         	case "/sortExpensive":
         		sortExpensive(request, response);
@@ -213,9 +216,24 @@ public class ControlServlett extends HttpServlet{
     
     private void addToBlacklist(HttpServletRequest request, HttpServletResponse response)
     		throws SQLException, IOException, ServletException {
-    	
     	String username = request.getParameter("username");
     	InitDatabase.insertBlacklist(username);
+    }
+    
+    private void deleteBlacklist(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	String username = request.getParameter("username");
+    	InitDatabase.deleteBlacklist(username);
+    	listBlacklist(request, response);
+    }
+    
+    private void listBlacklist(HttpServletRequest request, HttpServletResponse response)
+    		throws SQLException, IOException, ServletException {
+    	
+    	List<String> listBlacklist = InitDatabase.listBlacklist();
+    	request.setAttribute("listBlacklist", listBlacklist);
+    	RequestDispatcher dispatcher = request.getRequestDispatcher("blacklist.jsp");
+    	dispatcher.forward(request, response);
     	
     }
     
@@ -225,7 +243,7 @@ public class ControlServlett extends HttpServlet{
     	
     	//CHECK HOW MANY ITEMS THE USER HAS SUBMITTEED
     	//IF GOOD THEN PROCEED WITH THE INSERT ITEM FUNCTION
-    	if(localDate == java.time.LocalDate.now().toString()) {
+    	if(localDate.equals(java.time.LocalDate.now().toString())) {
     		userItem++;
     	}
     	if(userItem <= 5) {
@@ -244,6 +262,7 @@ public class ControlServlett extends HttpServlet{
     	//indication if the item was successfully added
     	if(InitDatabase.insertItem(insertItem) == true) {
     		System.out.println("Successfully inserted");
+    		showAllInformation(request, response);
     	}
     	else {
     		System.out.println("Item unsuccessful in inserting");
@@ -253,7 +272,7 @@ public class ControlServlett extends HttpServlet{
     	//User post limit reached -- print to the user that they have reached the post limit
     	else {
     		System.out.println("User Post Limit Reached");
-    		response.sendRedirect("initDatabase.jsp");
+    		response.sendRedirect("insertItem.jsp");
     	}
     	
     }
@@ -391,7 +410,7 @@ public class ControlServlett extends HttpServlet{
     private void addReview(HttpServletRequest request, HttpServletResponse response) 
     		throws SQLException, IOException, ServletException {
     	    	
-    		if(localDate == java.time.LocalDate.now().toString()) {
+    		if(localDate.equals(java.time.LocalDate.now().toString())) {
     			userReview++;
     		}
     	
@@ -401,13 +420,21 @@ public class ControlServlett extends HttpServlet{
     		int itemID = currentReviewID;
     		String itemTitle = InitDatabase.getItemName(itemID);
     		
+    		if(!(currentUser.equals(InitDatabase.itemUsername(itemID)))) {
     		reviews addReview = new reviews(currentUser, itemID, itemTitle, score, remark);
     		
     		InitDatabase.insertReview(addReview);
+    		showAllInformation(request, response);
+    		}
+    		
+    		else {
+        		RequestDispatcher dispatcher = request.getRequestDispatcher("writeReview.jsp");
+        		dispatcher.forward(request, response);
+    		}
     		}
     		else {
     			System.out.println("User Review Limit Reached");
-        		RequestDispatcher dispatcher = request.getRequestDispatcher("initDatabase.jsp");
+        		RequestDispatcher dispatcher = request.getRequestDispatcher("writeReview.jsp");
         		dispatcher.forward(request, response);
     		}
     }
@@ -489,6 +516,8 @@ public class ControlServlett extends HttpServlet{
     		throws SQLException, IOException, ServletException {
     	RequestDispatcher dispatcher = request.getRequestDispatcher("Welcome.jsp");
     	dispatcher.forward(request, response);
+    	userReview = 0;
+    	userItem = 0;
     }
     
     /*-----------------------------------------------------------------------------------------------------------

@@ -49,7 +49,7 @@ protected void connect_function() throws SQLException {
 		//changed connect to match with what project said i should use
 		connect = (Connection) DriverManager
 				.getConnection("jdbc:mysql://127.0.0.1:3306/projectdb?"
-	  			          + "user=root&password=Superiormelee98");
+	  			          + "user=john&password=pass1234");
 		System.out.println(connect);
 	}
 }
@@ -352,6 +352,33 @@ public void insertBlacklist(String username) throws SQLException {
 	
 }
 
+public void deleteBlacklist(String username) throws SQLException {
+	connect_function();
+	String sql = "DELETE FROM blacklist WHERE username = ?";
+	
+	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+	preparedStatement.setString(1, username);
+	
+	preparedStatement.executeUpdate();
+	preparedStatement.close();
+	
+}
+
+public List<String> listBlacklist() throws SQLException {
+	List<String> listBlacklist = new ArrayList<String>();
+	connect_function();
+	String sql = "SELECT * FROM blacklist";
+	statement = (Statement) connect.createStatement();
+	ResultSet resultSet = statement.executeQuery(sql);
+	
+	while(resultSet.next()) {
+		String username = resultSet.getString("username");
+		listBlacklist.add(username);
+	}
+	
+	return listBlacklist;
+}
+
 /*-------------------------------------------------------------------------------
  * LISTING THE RESULTS OF THE TABLES
  --------------------------------------------------------------------------------*/
@@ -612,6 +639,17 @@ public boolean insertReview(reviews reviews) throws SQLException{
     preparedStatement.close();
 //    disconnect();
     return rowInserted;
+}
+
+public String itemUsername(int itemID) throws SQLException {
+	connect_function();
+	String sql = "SELECT username FROM item WHERE itemID = ?";
+	preparedStatement = (PreparedStatement)connect.prepareStatement(sql);
+	preparedStatement.setInt(1, itemID);
+	ResultSet resultSet = preparedStatement.executeQuery();
+	resultSet.next();
+	String itemUsername = resultSet.getString("username");
+	return itemUsername;
 }
 
 //getting the item title because I can only pass the itemID;
@@ -967,10 +1005,10 @@ public boolean deleteItem(int itemID, int userID) throws SQLException {
 
 /*THINGS I NEEDED TO FIX IN THE DEMONSTRATION
  * REQUIREMENT 1 - FIXED
- * REQUIREMENT 3
+ * REQUIREMENT 3 - FIXED
  * REQUIREMENT 4 - FIXED
  * REQUIREMENT 6 - NO PROBLEMS AT ALL
- * REQUIREMENT 10
+ * REQUIREMENT 10 - FIXED (I THINK)
  */
 
 public boolean checkDuplicateUsername(String username) throws SQLException {
@@ -1018,10 +1056,11 @@ public List<users> sameDay(String category1, String category2) throws SQLExcepti
 	List<users>listUsers = new ArrayList<users>();
 	String sql = "SELECT DISTINCT u.* " +
 			"FROM users u, item item1, item item2 " +
-			"WHERE item1.itemID != item2.itemID AND item1.itemDate = item2.itemDate " +
-			"AND item1.username = item2.username " +
+			"WHERE item1.itemID != item2.itemID " +
+			"AND item1.itemDate = item2.itemDate " +
 			"AND item1.itemCategory = ? " +
 			"AND item2.itemCategory = ? " +
+			"AND item1.username = item2.username " +
 			"AND item1.username = u.username;";
 	connect_function();
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);

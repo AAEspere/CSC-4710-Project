@@ -23,34 +23,15 @@
             <caption>List of Users</caption>
             <tr>
             	<th>Username</th>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Gender</th>
-                <th>Age</th>
-                <th>Favorite?</th>
-                <th>Blacklist</th>
+                <th>Remove</th>
             </tr>
-            <c:forEach var="users" items = "${listUsers}">
+            <c:forEach var="users" items = "${listBlacklist}">
             <tr>
-            		<td><c:out value="${users.username}" /></td>
-                    <td><c:out value="${users.userID}" /></td>
-                    <td><c:out value="${users.firstName}" /></td>
-                    <td><c:out value="${users.lastName}" /></td>
-                    <td><c:out value="${users.email}"/></td>
-                    <td><c:out value="${users.gender}"/></td>
-                    <td><c:out value="${users.age}"/></td>
+            		<td><c:out value="${users}" /></td>
                     <td>
-					<form action = "addFavoriteUser">
-                    <input type = "hidden" value = "${users.userID}" name = "userID">
-                    <input type = "submit" value = "Add to Favorites">
-                    </form>
-                    </td>
-                    <td>
-                    <form action = "addToBlacklist">
-                    <input type = "hidden" value = "${users.username}" name = "username">
-                    <input type = "submit" value = "BLACKLIST">
+                    <form action = "deleteBlacklist">
+                    <input type = "hidden" value = "${users}" name = "username">
+                    <input type = "submit" value = "DELETE FROM BLACKLIST">
                     </form>
 					</td>
                     </tr>
