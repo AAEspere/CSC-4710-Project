@@ -17,10 +17,6 @@ import java.util.List;
 
 import java.time.LocalDateTime;
 
-//code for initializing the Database, this includes creating the tables
-//and adding the original 10 tuples into each table
-//this originally had all of the functionality included but was separated to improve
-//readability
 public class InitDatabase {
 	
 	private Connection connect = null;
@@ -59,8 +55,7 @@ protected void disconnect() throws SQLException {
 		connect.close();
 	}
 }
-
-//create the Database
+	
 public void createDatabase() {
 	try {
 		connect_function();
@@ -75,8 +70,6 @@ public void createDatabase() {
 	}	
 }
 
-//tables are not successfully dropping because there are foreign key constraints
-//I just made separate tables for dropping
 public void dropAllTables() throws SQLException {
 	
 	String dropReviewTable = "DROP TABLE IF EXISTS reviews;";
@@ -99,16 +92,11 @@ public void dropAllTables() throws SQLException {
 	connect.close();
 }
 
-/*-------------------------------------------------------------------
- * CREATING AND ADDING TUPLES
- * ------------------------------------------------------------------*/
 public void createItemTable() throws SQLException {
 	//the two statements required for making table
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	String createItemTable = "CREATE TABLE IF NOT EXISTS item" +
-			//Project Part 2, editing statement so that AUTO_INCREMENT is added
-			//Project Part 2, editing statement so that username is incorporated for all items
 			"(username VARCHAR(50) NOT NULL, " + 
 			"itemID INTEGER AUTO_INCREMENT, " +
 			"itemTitle VARCHAR(50) NOT NULL," +
@@ -167,7 +155,6 @@ public void addItems() throws SQLException {
 	}	
 }
 
-//create the table for users
 public void createUserTable() throws SQLException {
 	
 	connect_function();
@@ -194,7 +181,7 @@ public void createUserTable() throws SQLException {
 		disconnect();
 	}
 }
-//Part 1 Requires About 10 tuples, so I just input 10 user stuff to show on the table
+	
 public void addUsers() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
@@ -254,7 +241,6 @@ public void createReviewTable() throws SQLException {
 	}
 }
 
-//this is for adding 10 tuples into the reviews table 
 public void addReviews() throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
@@ -382,8 +368,6 @@ public List<String> listBlacklist() throws SQLException {
 /*-------------------------------------------------------------------------------
  * LISTING THE RESULTS OF THE TABLES
  --------------------------------------------------------------------------------*/
-//I noticed this code was being used in multiple places throughout the project,
-//So I refactored it into one spot
 public item resultSetItem(ResultSet resultSet) throws SQLException {
 	
 	String username = resultSet.getString("username");
@@ -399,7 +383,6 @@ public item resultSetItem(ResultSet resultSet) throws SQLException {
 	return items;
 }
 
-//this is for listing the items table
 public List<item> listAllItems() throws SQLException{
 	List<item> listItems = new ArrayList<item>();
 	String sql = "SELECT * FROM item";
@@ -434,7 +417,6 @@ public users resultSetUser(ResultSet resultSet) throws SQLException {
 	
 }
 
-//this is for listing the users
 public List<users> listAllUsers() throws SQLException{
 	List<users> listUsers = new ArrayList<users>();
 	String sql = "SELECT * FROM users";
@@ -451,7 +433,6 @@ public List<users> listAllUsers() throws SQLException{
 	return listUsers;
 }
 
-//this is for listing the reviews
 public List<reviews> listAllReviews() throws SQLException{
 	List<reviews> listReviews = new ArrayList<reviews>();
 	String sql = "SELECT * FROM reviews";
@@ -479,7 +460,6 @@ public List<reviews> listAllReviews() throws SQLException{
  * LOGIN OR REGISTER FUNCTIONS
  --------------------------------------------------------------------------------*/
 
-//this function is for checking if the correct username and password was used for login
 public boolean loginCheck(String email, String pass) throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
@@ -492,11 +472,9 @@ public boolean loginCheck(String email, String pass) throws SQLException {
 			return true;
 		}
 	}
-	//if there isn't anything to return, then just return false
 	return false;
 }
 
-//When you register, 
 public boolean addOneUser(users user) throws SQLException {
 	//adding a singular user, this is to add the user who registers onto the server
 	connect_function();         
@@ -531,7 +509,6 @@ public int getCurrentID(String email, String pass) throws SQLException {
 	return userID;
 }
 
-//getting username
 public String getCurrentUsername(String email, String pass) throws SQLException {
 	connect_function();
 	statement = (Statement)connect.createStatement();
@@ -561,7 +538,6 @@ public String getCurrentUsername(String email, String pass) throws SQLException 
 //Project Part 2 Requirement 1 -- inserting an item
 public boolean insertItem(item item) throws SQLException {
 	
-	//need to insert conditional which will limit the amount of times a person can post a review
 	connect_function();         
 	String sql = "INSERT INTO item(username, itemTitle, itemDescription, itemDate, itemPrice, itemCategory) VALUES (?,?,?,?,?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -569,8 +545,7 @@ public boolean insertItem(item item) throws SQLException {
 	preparedStatement.setString(1, item.username);
 	preparedStatement.setString(2, item.itemTitle);
 	preparedStatement.setString(3, item.itemDescription);
-	//gets the local time. When this function is called, that means the user has submitted an item
-	//and will take the date of when that item was created
+
 	preparedStatement.setDate(4,java.sql.Date.valueOf(java.time.LocalDate.now()));
 	preparedStatement.setDouble(5,item.itemPrice);
 	preparedStatement.setString(6,item.itemCategory);
@@ -584,9 +559,6 @@ public boolean insertItem(item item) throws SQLException {
  * REQUIREMENT 2 - SEARCH INTERFACE
  ----------------------------------------------------------------------------------*/
 //Project Part 2 --> Search function which displays all items under a certain category
-//This should be similar to the listItems function because instead of listing all items
-//you are listing all items that match a specific category
-//STILL WORKS CORRECTLY -- NO NEED TO CHANGE
 public List<item> searchItem(String category) throws SQLException{
 	
 	List<item> listItems = new ArrayList<item>();
@@ -596,18 +568,11 @@ public List<item> searchItem(String category) throws SQLException{
 	ResultSet resultSet = statement.executeQuery(sql);
 	
 	while(resultSet.next()){
-	//so scan all of the categories, and if one matches an item then add it onto the items
-	//that will be listed
 		
-		//parse the string based on comma separation
-		//I used comma separation because 
 		String[] parsedCategories = resultSet.getString("itemCategory").split("\\s*,\\s*");
-		
-		//so use for loop to scan through parsed categories array
+
 		for (int i = 0; i < parsedCategories.length; i++) {
-			
-			//if the category matches the parsed ones, then add that to the list
-			//of items to display
+
 			if(category.equals(parsedCategories[i])) {
 				listItems.add(resultSetItem(resultSet));
 				}	
@@ -633,7 +598,6 @@ public boolean insertReview(reviews reviews) throws SQLException{
 	preparedStatement.setString(3, reviews.itemTitle);
 	preparedStatement.setString(4, reviews.score);
 	preparedStatement.setString(5, reviews.remark);
-//	preparedStatement.executeUpdate();
 	
     boolean rowInserted = preparedStatement.executeUpdate() > 0;
     preparedStatement.close();
@@ -785,18 +749,13 @@ public List<favoriteUser> listFavoriteUsers(int currentUserID) throws SQLExcepti
 	return favUsers;
 	
 }
-
-//Using SQL to handle the creation and deletion of favorite users/items,
-//So I think I need to make a separate table in order to add and delete item ID's
+	
 public void createFavoriteItemsTable() throws SQLException {
 	
 	connect_function();
 	statement = (Statement)connect.createStatement();
 	String createFavoriteItemsTable = "CREATE TABLE IF NOT EXISTS favoriteItem" +
 			
-			//Since I am using a separate table, and am using itemID to DELETE the item
-			//this table will need the userID (the current user) and the itemID(of the item
-			//they selected)
 			"(userID INTEGER NOT NULL, " +
 			"itemID INTEGER NOT NULL, " +
 			"CONSTRAINT f_key_favuserID FOREIGN KEY (userID) REFERENCES users(userID)," +
@@ -816,16 +775,13 @@ public void createFavoriteItemsTable() throws SQLException {
 
 public boolean addFavoriteItem(favoriteItem favoriteItem) throws SQLException{
 	connect_function();
-	//get the current UserID and the itemID they selected and add to the 
-	//favorite item table
+
 	String sql = "INSERT INTO favoriteItem(userID, itemID) VALUES (?,?)";
 	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 	preparedStatement.setInt(1, favoriteItem.userID);
 	preparedStatement.setInt(2, favoriteItem.itemID);
 	boolean rowInserted = preparedStatement.executeUpdate() > 0;
 	preparedStatement.close();
-	//return true and redirect with successful add message, or return false
-	//if fails and redirect with error message
 	return rowInserted;
 }
 
@@ -838,8 +794,7 @@ public ArrayList<Integer> getUserFavItemID(int userID) throws SQLException {
 	preparedStatement.setInt(1, userID);
 	ResultSet resultSet = preparedStatement.executeQuery();
 	while (resultSet.next()) {
-		//get the Item ID's that are currently associated with the 
-		//current user ID under favorites
+
 		favItemID.add(resultSet.getInt("itemID"));
 	}
 	preparedStatement.close();
@@ -925,13 +880,7 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 		for(int i = 0; i < favitemID.size(); i++) {
 			
 			if(favitemID.get(i) == resultSet.getInt("itemID")) {
-				//need to edit this to include the username that posted this item
-				
 				favItems.add(resultSetItem(resultSet));
-				
-				//since itemID's are unique you can go to the next iteration
-				//this will somewhat shorten the realtime execution but this
-				//is still O(n^4)
 				continue;
 			}
 		}
@@ -942,7 +891,6 @@ public List<item> listFavoriteItems(ArrayList<Integer> favitemID) throws SQLExce
 	return favItems;
 }
 
-//still works correctly but need to sort by category
 public List<item> sortExpensive() throws SQLException {
 	
 	List<item> sortExpensive = new ArrayList<item>();
@@ -950,9 +898,6 @@ public List<item> sortExpensive() throws SQLException {
 	connect_function();
 	statement = (Statement) connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
-	
-	//this will go through the table and since they are sorted already
-	//so just prints the items
 
 	while(resultSet.next()) {
 		sortExpensive.add(resultSetItem(resultSet));
@@ -1003,14 +948,6 @@ public boolean deleteItem(int itemID, int userID) throws SQLException {
  * 
  ----------------------------------------------------------------------------------*/
 
-/*THINGS I NEEDED TO FIX IN THE DEMONSTRATION
- * REQUIREMENT 1 - FIXED
- * REQUIREMENT 3 - FIXED
- * REQUIREMENT 4 - FIXED
- * REQUIREMENT 6 - NO PROBLEMS AT ALL
- * REQUIREMENT 10 - FIXED (I THINK)
- */
-
 public boolean checkDuplicateUsername(String username) throws SQLException {
 	
 	String sql = "SELECT * FROM users";
@@ -1024,7 +961,6 @@ public boolean checkDuplicateUsername(String username) throws SQLException {
 			return true;
 		}	
 	}
-	//if you get to this part, then the emails were not duplicates, which means that 
 	return false;
 }
 
@@ -1085,9 +1021,6 @@ public List<users> sameDay(String category1, String category2) throws SQLExcepti
  ----------------------------------------------------------------------------------*/
 public List<item> excellentGoodComments(String username) throws SQLException {
 	List<item> excellentGood = new ArrayList<item>();
-	//SQL to select the items that have only received a good or excellent review
-	//Select the item where the username is selected
-	//and the itemID is selected from the ones that are not in the ones where there are excellent and good remarks
 	String sql = "SELECT DISTINCT I.* FROM reviews R, item I WHERE I.username = ? AND I.itemID = R.itemID AND R.itemID NOT IN( " +
 			"SELECT itemID from reviews WHERE score = 'Poor' OR score = 'Fair')";
 	connect_function();
@@ -1117,10 +1050,8 @@ public List<users> postMostItems() throws SQLException {
 	statement = (Statement)connect.createStatement();
 	ResultSet resultSet = statement.executeQuery(sql);
 	
-	int highestValue = 0; //get the highest value from going through the resultSet. 
+	int highestValue = 0; 
 	
-	//in the case of a tie, if there is a value greater than or equal to the highest, it will get printed
-	//on the first iteration, it will collect the highest value
 	while(resultSet.next()){
 		if(resultSet.getInt("NUM") >= highestValue) {
 		listUsers.add(resultSetUser(resultSet));
@@ -1222,12 +1153,7 @@ public List<users> pNoPoorReview() throws SQLException {
  --------------------------------------------------------------------------------*/
 public List<users> pAllPoorReview() throws SQLException {
 	List<users>listUsers = new ArrayList<users>();
-	//When displaying users (and you're not admin so you don't need to see password) you probably
-	//only need to show the username and the userID
-	
-	//so select the userID and the username users where they are not 
-	//in the search where users have posted poor reviews
-	//and then eliminate users that haven't posted a review
+
 	String sql = "SELECT DISTINCT U.username, U.userID "
 			+ "FROM users U "
 			+ "LEFT JOIN reviews R ON R.username = U.username "
