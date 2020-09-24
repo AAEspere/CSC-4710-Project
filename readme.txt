@@ -1,11 +1,7 @@
-Aaron Espere - gb1962
-I'm working on this project by myself.
+Required downloads: Java Eclipse IDE, Apache Tomcat, MySQL Workbench, JDK and JRE, MySQL connector for Java.
 
-To run, import project (either through WAR method or zip method). First, check the Modulepath. I have been switching between running this on my home PC and my Macbook, so its current Modulepath may not allow it to compile.
+Before setup: set the build path for the JDBC connector. Create new connection on MySQL (username root, password whatever, you will need to change it in the code though), and then on MySQL Workbench create database PROJECTDB with query "CREATE DATABASE PROJECTDB".
 
-Check build path of jar files, I've been getting an error where the jdbc connector cannot be found, and making sure the build path is correct seems to remedy it some of the time. 
+Import project on Java Eclipse under file > import project (import through the ZIP method). Before compiling, check Modulepath, I have been switching between running this on my home PC and my Macbook, so its current Modulepath has kept changing, and it may not allow it to compile.
 
-MAKE SURE PROJECTDB IS ALREADY EXISTING!!!!!!! It doesn't have to have any sort of tables or anything, but it needs to exists for InitDatabase to be able to connect to it in the first place. 
-
-Then you just have to right click the project and click Run as > run on server > Apache Tomcat ____ > Finish.
-It will bring you to index.jsp, where you should be able to run the operations. 
+Afterwards, right click the project and select Run as > run on server > Apache Tomact ______ (version) > Finish. It will bring you to index.jsp, where you should be able to run the operations. 
